@@ -1,30 +1,69 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Container, Typography, Box } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { StoreContext } from './stores/storeContext';
 import rootStore from './stores/rootStore';
-import Counter from './components/Counter';
 import theme from './theme';
 
+// Pages
+import HomePage from './pages/HomePage';
+import ProfilePage from './pages/ProfilePage';
+import ProductFeedPage from './pages/ProductFeedPage';
+import CategoriesPage from './pages/CategoriesPage';
+import MarketingPage from './pages/MarketingPage';
+import SearchPage from './pages/SearchPage';
+import PostCreationPage from './pages/PostCreationPage';
+import SettingsPage from './pages/SettingsPage';
+import LoginPage from './pages/LoginPage';
+import PeopleYouMightLikePage from './pages/PeopleYouMightLikePage';
+
+// Wrapper component to handle user profile routes
+const UserProfileWrapper = ({ isAuthenticated }) => {
+  const { userId } = useParams();
+  return <ProfilePage isAuthenticated={isAuthenticated} userId={userId} />;
+};
+
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // Set to true for development
+  
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+  
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    return <Navigate to="/" replace />;
+  };
+
   return (
     <StoreContext.Provider value={rootStore}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Container maxWidth="sm">
-          <Box sx={{ my: 4, textAlign: 'center' }}>
-            <Typography variant="h4" component="h1" gutterBottom>
-              React + Vite + Material UI + MobX
-            </Typography>
-            
-            <Counter />
-            
-            <Typography variant="body1">
-              Edit <code>src/stores/counterStore.js</code> to modify the state logic
-            </Typography>
-          </Box>
-        </Container>
+        <Router>
+          <Routes>
+            {isAuthenticated ? (
+              <>
+                <Route path="/" element={<HomePage isAuthenticated={true} />} />
+                <Route path="/profile" element={<ProfilePage isAuthenticated={true} userId="me" />} />
+                <Route path="/profile/:userId" element={<UserProfileWrapper isAuthenticated={true} />} />
+                <Route path="/feed" element={<ProductFeedPage isAuthenticated={true} />} />
+                <Route path="/categories" element={<CategoriesPage isAuthenticated={true} />} />
+                <Route path="/search" element={<SearchPage isAuthenticated={true} />} />
+                <Route path="/create" element={<PostCreationPage isAuthenticated={true} />} />
+                <Route path="/settings" element={<SettingsPage isAuthenticated={true} />} />
+                <Route path="/people" element={<PeopleYouMightLikePage isAuthenticated={true} />} />
+                <Route path="/logout" element={<LoginPage onLogin={handleLogin} />} action={handleLogout} />
+              </>
+            ) : (
+              <>
+                <Route path="/" element={<MarketingPage />} />
+                <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </>
+            )}
+          </Routes>
+        </Router>
       </ThemeProvider>
     </StoreContext.Provider>
   );

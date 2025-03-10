@@ -1,12 +1,12 @@
-import counterStore from './counterStore';
+import { createContext } from 'react';
+import UserStore from './userStore';
 
 class RootStore {
   constructor() {
-    this.counterStore = counterStore;
-    // Add other stores here as your application grows
-    // this.userStore = userStore;
-    // this.productStore = productStore;
+    this.userStore = new UserStore();
+    // Add other stores here as needed
   }
 }
 
-export default new RootStore(); 
+const rootStore = new RootStore();
+export default rootStore; 
