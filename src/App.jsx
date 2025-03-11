@@ -14,6 +14,9 @@ import CategoriesPage from './pages/CategoriesPage';
 import MarketingPage from './pages/MarketingPage';
 import SearchPage from './pages/SearchPage';
 import PostCreationPage from './pages/PostCreationPage';
+import AIEnhancedPostCreationPage from './pages/AIEnhancedPostCreationPage';
+import AIProductDiscoveryPage from './pages/AIProductDiscoveryPage';
+import AIChatDiscoveryPage from './pages/AIChatDiscoveryPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
 import PeopleYouMightLikePage from './pages/PeopleYouMightLikePage';
@@ -51,6 +54,9 @@ function App() {
                 <Route path="/categories" element={<CategoriesPage isAuthenticated={true} />} />
                 <Route path="/search" element={<SearchPage isAuthenticated={true} />} />
                 <Route path="/create" element={<PostCreationPage isAuthenticated={true} />} />
+                <Route path="/ai-create" element={<AIEnhancedPostCreationPage isAuthenticated={true} />} />
+                <Route path="/ai-discover" element={<AIProductDiscoveryPage isAuthenticated={true} />} />
+                <Route path="/ai-chat" element={<AIChatDiscoveryPage isAuthenticated={true} />} />
                 <Route path="/settings" element={<SettingsPage isAuthenticated={true} />} />
                 <Route path="/people" element={<PeopleYouMightLikePage isAuthenticated={true} />} />
                 <Route path="/logout" element={<LoginPage onLogin={handleLogin} />} action={handleLogout} />

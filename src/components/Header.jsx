@@ -31,6 +31,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import ZebblyLogo from './ZebblyLogo';
 import PeopleIcon from '@mui/icons-material/People';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -260,23 +262,27 @@ const AuthenticatedNav = () => {
         >
           People
         </NavButton>
+        <NavButton 
+          component={Link}
+          to="/ai-chat"
+          active={isActive('/ai-chat') ? 1 : 0}
+          startIcon={<SmartToyIcon />}
+        >
+          AI Chat
+        </NavButton>
       </Box>
       
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <IconButton 
+        <Button
+          variant="contained"
           color="primary"
+          startIcon={<AutoAwesomeIcon />}
           component={Link}
-          to="/create"
-          sx={{ 
-            mr: 2,
-            bgcolor: theme.palette.brand.mint,
-            '&:hover': {
-              bgcolor: theme.palette.primary.dark,
-            }
-          }}
+          to="/ai-create"
+          sx={{ ml: 1 }}
         >
-          <AddIcon />
-        </IconButton>
+          AI Create
+        </Button>
         <IconButton
           edge="end"
           aria-label="account of current user"
