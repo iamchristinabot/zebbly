@@ -31,6 +31,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import ZebblyLogo from './ZebblyLogo';
 import PeopleIcon from '@mui/icons-material/People';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -188,6 +189,12 @@ const AuthenticatedNav = () => {
           </ListItemIcon>
           <ListItemText primary="People" />
         </ListItem>
+        <ListItem button component={Link} to="/rewards" selected={isActive('/rewards')}>
+          <ListItemIcon>
+            <EmojiEventsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Rewards" />
+        </ListItem>
       </List>
       <Divider />
       <List>
@@ -259,6 +266,14 @@ const AuthenticatedNav = () => {
           startIcon={<PeopleIcon />}
         >
           People
+        </NavButton>
+        <NavButton 
+          component={Link}
+          to="/rewards"
+          active={isActive('/rewards') ? 1 : 0}
+          startIcon={<EmojiEventsIcon />}
+        >
+          Rewards
         </NavButton>
       </Box>
       

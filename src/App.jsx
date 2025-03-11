@@ -17,6 +17,7 @@ import PostCreationPage from './pages/PostCreationPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
 import PeopleYouMightLikePage from './pages/PeopleYouMightLikePage';
+import RewardsPage from './pages/RewardsPage';
 
 // Wrapper component to handle user profile routes
 const UserProfileWrapper = ({ isAuthenticated }) => {
@@ -53,6 +54,7 @@ function App() {
                 <Route path="/create" element={<PostCreationPage isAuthenticated={true} />} />
                 <Route path="/settings" element={<SettingsPage isAuthenticated={true} />} />
                 <Route path="/people" element={<PeopleYouMightLikePage isAuthenticated={true} />} />
+                <Route path="/rewards" element={<RewardsPage isAuthenticated={true} />} />
                 <Route path="/logout" element={<LoginPage onLogin={handleLogin} />} action={handleLogout} />
               </>
             ) : (

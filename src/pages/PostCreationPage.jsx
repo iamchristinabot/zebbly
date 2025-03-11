@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   Box,
   Container,
@@ -15,93 +15,169 @@ import {
   MenuItem,
   IconButton,
   Autocomplete,
-  useTheme
+  useTheme,
+  InputAdornment
 } from '@mui/material';
+import { observer } from 'mobx-react-lite';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import LinkIcon from '@mui/icons-material/Link';
 import CloseIcon from '@mui/icons-material/Close';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import { useNavigate } from 'react-router-dom';
+import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
 
-const PostCreationPage = ({ isAuthenticated = true }) => {
+const categories = [
+  'Fashion',
+  'Electronics',
+  'Home Decor',
+  'Beauty',
+  'Fitness',
+  'Kitchen',
+  'Books',
+  'Toys',
+  'Outdoor',
+  'Pets'
+];
+
+const stores = [
+  'Amazon',
+  'Target',
+  'Walmart',
+  'Best Buy',
+  'Etsy',
+  'eBay',
+  'Nordstrom',
+  'Sephora',
+  'Home Depot',
+  'Other'
+];
+
+const PostCreationPage = observer(({ isAuthenticated = true }) => {
   const theme = useTheme();
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [store, setStore] = useState('');
-  const [category, setCategory] = useState('');
-  const [tags, setTags] = useState([]);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [inputTag, setInputTag] = useState('');
+  const navigate = useNavigate();
+  const { rewardsStore } = useContext(StoreContext);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    price: '',
+    category: '',
+    store: '',
+    productUrl: '',
+    tags: []
+  });
+  const [images, setImages] = useState([]);
+  const [currentTag, setCurrentTag] = useState('');
+  const [errors, setErrors] = useState({});
   
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value);
-  };
-  
-  const handleDescriptionChange = (event) => {
-    setDescription(event.target.value);
-  };
-  
-  const handlePriceChange = (event) => {
-    setPrice(event.target.value);
-  };
-  
-  const handleStoreChange = (event) => {
-    setStore(event.target.value);
-  };
-  
-  const handleCategoryChange = (event) => {
-    setCategory(event.target.value);
-  };
-  
-  const handleAddTag = (tag) => {
-    if (tag && !tags.includes(tag)) {
-      setTags([...tags, tag]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+    
+    // Clear error when field is edited
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null
+      });
     }
-    setInputTag('');
+  };
+  
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files);
+    
+    if (files.length > 0) {
+      const newImages = files.map(file => ({
+        file,
+        preview: URL.createObjectURL(file)
+      }));
+      
+      setImages([...images, ...newImages]);
+    }
+  };
+  
+  const handleRemoveImage = (index) => {
+    const newImages = [...images];
+    URL.revokeObjectURL(newImages[index].preview);
+    newImages.splice(index, 1);
+    setImages(newImages);
+  };
+  
+  const handleAddTag = () => {
+    if (currentTag.trim() && !formData.tags.includes(currentTag.trim())) {
+      setFormData({
+        ...formData,
+        tags: [...formData.tags, currentTag.trim()]
+      });
+      setCurrentTag('');
+    }
   };
   
   const handleRemoveTag = (tagToRemove) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
+    setFormData({
+      ...formData,
+      tags: formData.tags.filter(tag => tag !== tagToRemove)
+    });
   };
   
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddTag();
     }
   };
   
-  const handleRemoveImage = () => {
-    setImagePreview(null);
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.title.trim()) {
+      newErrors.title = 'Title is required';
+    }
+    
+    if (!formData.price.trim()) {
+      newErrors.price = 'Price is required';
+    } else if (isNaN(parseFloat(formData.price))) {
+      newErrors.price = 'Price must be a number';
+    }
+    
+    if (!formData.category) {
+      newErrors.category = 'Category is required';
+    }
+    
+    if (!formData.store) {
+      newErrors.store = 'Store is required';
+    }
+    
+    if (images.length === 0) {
+      newErrors.images = 'At least one image is required';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
   
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // In a real app, this would send the data to your backend
-    console.log({
-      title,
-      description,
-      price,
-      store,
-      category,
-      tags,
-      image: imagePreview
-    });
+  const handleSubmit = (e) => {
+    e.preventDefault();
     
-    // Reset form
-    setTitle('');
-    setDescription('');
-    setPrice('');
-    setStore('');
-    setCategory('');
-    setTags([]);
-    setImagePreview(null);
-    
-    // Show success message or redirect
-    alert('Post created successfully!');
+    if (validateForm()) {
+      // In a real app, this would send the data to an API
+      console.log('Form submitted:', formData);
+      console.log('Images:', images);
+      
+      // Add points for sharing a product
+      rewardsStore.addPoints(25, 'Shared a product');
+      
+      // Check if this is the first product shared to award badge
+      if (!rewardsStore.userBadges.find(b => b.id === 'first_share').earned) {
+        rewardsStore.earnBadge('first_share');
+      }
+      
+      // Navigate to the home page after submission
+      navigate('/');
+    }
   };
   
   return (
@@ -109,10 +185,6 @@ const PostCreationPage = ({ isAuthenticated = true }) => {
       <Header isAuthenticated={isAuthenticated} />
       
       <Container maxWidth="md" sx={{ py: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Create a Post
-        </Typography>
-        
         <Paper 
           elevation={0} 
           sx={{ 
@@ -121,76 +193,27 @@ const PostCreationPage = ({ isAuthenticated = true }) => {
             borderRadius: 2
           }}
         >
+          <Typography variant="h4" component="h1" gutterBottom>
+            Share a Product
+          </Typography>
+          <Typography variant="body1" color="text.secondary" paragraph>
+            Share your favorite products with the community. Add details, images, and links to help others find and purchase them.
+          </Typography>
+          
+          <Divider sx={{ my: 3 }} />
+          
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <Box 
-                  sx={{ 
-                    border: `2px dashed ${theme.palette.brand.lightGray}`,
-                    borderRadius: 2,
-                    p: 3,
-                    textAlign: 'center',
-                    mb: 2,
-                    position: 'relative'
-                  }}
-                >
-                  {imagePreview ? (
-                    <>
-                      <Box 
-                        component="img"
-                        src={imagePreview}
-                        alt="Product preview"
-                        sx={{ 
-                          maxWidth: '100%',
-                          maxHeight: '300px',
-                          objectFit: 'contain'
-                        }}
-                      />
-                      <IconButton 
-                        sx={{ 
-                          position: 'absolute',
-                          top: 8,
-                          right: 8,
-                          bgcolor: 'rgba(255, 255, 255, 0.8)'
-                        }}
-                        onClick={handleRemoveImage}
-                      >
-                        <CloseIcon />
-                      </IconButton>
-                    </>
-                  ) : (
-                    <>
-                      <input
-                        accept="image/*"
-                        id="upload-product-image"
-                        type="file"
-                        style={{ display: 'none' }}
-                        onChange={handleImageUpload}
-                      />
-                      <label htmlFor="upload-product-image">
-                        <Button
-                          variant="outlined"
-                          component="span"
-                          startIcon={<AddPhotoAlternateIcon />}
-                        >
-                          Upload Product Image
-                        </Button>
-                      </label>
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Drag and drop an image or click to browse
-                      </Typography>
-                    </>
-                  )}
-                </Box>
-              </Grid>
-              
-              <Grid item xs={12}>
                 <TextField
-                  required
                   fullWidth
                   label="Product Title"
-                  value={title}
-                  onChange={handleTitleChange}
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  error={!!errors.title}
+                  helperText={errors.title}
+                  required
                 />
               </Grid>
               
@@ -198,10 +221,12 @@ const PostCreationPage = ({ isAuthenticated = true }) => {
                 <TextField
                   fullWidth
                   label="Description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
                   multiline
                   rows={4}
-                  value={description}
-                  onChange={handleDescriptionChange}
+                  placeholder="What do you like about this product? Why are you recommending it?"
                 />
               </Grid>
               
@@ -209,13 +234,36 @@ const PostCreationPage = ({ isAuthenticated = true }) => {
                 <TextField
                   fullWidth
                   label="Price"
-                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
                   InputProps={{
-                    startAdornment: <Box component="span" sx={{ mr: 1 }}>$</Box>,
+                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
                   }}
-                  value={price}
-                  onChange={handlePriceChange}
+                  error={!!errors.price}
+                  helperText={errors.price}
+                  required
                 />
+              </Grid>
+              
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="category-label">Category</InputLabel>
+                  <Select
+                    labelId="category-label"
+                    id="category"
+                    value={formData.category}
+                    label="Category"
+                    onChange={handleChange}
+                    error={!!errors.category}
+                  >
+                    {categories.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               
               <Grid item xs={12} sm={6}>
@@ -224,109 +272,181 @@ const PostCreationPage = ({ isAuthenticated = true }) => {
                   <Select
                     labelId="store-label"
                     id="store"
-                    value={store}
+                    value={formData.store}
                     label="Store"
-                    onChange={handleStoreChange}
+                    onChange={handleChange}
+                    error={!!errors.store}
                   >
-                    <MenuItem value="amazon">Amazon</MenuItem>
-                    <MenuItem value="target">Target</MenuItem>
-                    <MenuItem value="walmart">Walmart</MenuItem>
-                    <MenuItem value="bestbuy">Best Buy</MenuItem>
-                    <MenuItem value="nordstrom">Nordstrom</MenuItem>
-                    <MenuItem value="other">Other</MenuItem>
+                    {stores.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Grid>
               
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id="category-label">Category</InputLabel>
-                  <Select
-                    labelId="category-label"
-                    id="category"
-                    value={category}
-                    label="Category"
-                    onChange={handleCategoryChange}
-                  >
-                    <MenuItem value="electronics">Electronics</MenuItem>
-                    <MenuItem value="home">Home & Furniture</MenuItem>
-                    <MenuItem value="fashion">Fashion</MenuItem>
-                    <MenuItem value="sports">Sports & Fitness</MenuItem>
-                    <MenuItem value="beauty">Beauty & Personal Care</MenuItem>
-                    <MenuItem value="kids">Baby & Kids</MenuItem>
-                    <MenuItem value="food">Food & Drink</MenuItem>
-                    <MenuItem value="accessories">Accessories</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              
-              <Grid item xs={12}>
-                <Autocomplete
-                  multiple
-                  freeSolo
-                  options={[]}
-                  value={tags}
-                  inputValue={inputTag}
-                  onInputChange={(event, newValue) => {
-                    setInputTag(newValue);
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Product URL"
+                  name="productUrl"
+                  value={formData.productUrl}
+                  onChange={handleChange}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LinkIcon />
+                      </InputAdornment>
+                    ),
                   }}
-                  onChange={(event, newValue) => {
-                    setTags(newValue);
-                  }}
-                  renderTags={(value, getTagProps) =>
-                    value.map((option, index) => (
-                      <Chip
-                        label={option}
-                        {...getTagProps({ index })}
-                        onDelete={() => handleRemoveTag(option)}
-                      />
-                    ))
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Tags"
-                      placeholder="Add tags"
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          handleAddTag(inputTag);
-                        }
-                      }}
-                    />
-                  )}
+                  placeholder="https://"
                 />
-                <Typography variant="caption" color="text.secondary">
-                  Press Enter to add a tag
-                </Typography>
               </Grid>
               
               <Grid item xs={12}>
-                <Divider sx={{ my: 2 }} />
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Button variant="outlined">
-                    Save as Draft
-                  </Button>
-                  <Box>
-                    <Button 
-                      variant="outlined" 
-                      sx={{ mr: 2 }}
-                      onClick={() => {
-                        // Preview functionality would go here
-                        alert('Preview functionality would open in a modal or new tab');
+                <Typography variant="subtitle1" gutterBottom>
+                  Product Images
+                </Typography>
+                
+                <Box 
+                  sx={{ 
+                    display: 'flex', 
+                    flexWrap: 'wrap', 
+                    gap: 2,
+                    mb: 2
+                  }}
+                >
+                  {images.map((image, index) => (
+                    <Box 
+                      key={index}
+                      sx={{ 
+                        position: 'relative',
+                        width: 100,
+                        height: 100,
+                        borderRadius: 1,
+                        overflow: 'hidden'
                       }}
                     >
-                      Preview
-                    </Button>
-                    <Button 
-                      type="submit" 
-                      variant="contained" 
-                      color="primary"
-                    >
-                      Publish
-                    </Button>
-                  </Box>
+                      <img 
+                        src={image.preview} 
+                        alt={`Preview ${index}`} 
+                        style={{ 
+                          width: '100%', 
+                          height: '100%', 
+                          objectFit: 'cover' 
+                        }}
+                      />
+                      <IconButton
+                        size="small"
+                        sx={{
+                          position: 'absolute',
+                          top: 4,
+                          right: 4,
+                          bgcolor: 'rgba(0, 0, 0, 0.5)',
+                          color: 'white',
+                          '&:hover': {
+                            bgcolor: 'rgba(0, 0, 0, 0.7)',
+                          },
+                          p: 0.5
+                        }}
+                        onClick={() => handleRemoveImage(index)}
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  ))}
+                  
+                  <Button
+                    component="label"
+                    variant="outlined"
+                    startIcon={<AddPhotoAlternateIcon />}
+                    sx={{ 
+                      width: 100,
+                      height: 100,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      borderStyle: 'dashed'
+                    }}
+                  >
+                    Add Image
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageUpload}
+                    />
+                  </Button>
                 </Box>
+                
+                {errors.images && (
+                  <Typography variant="caption" color="error">
+                    {errors.images}
+                  </Typography>
+                )}
+              </Grid>
+              
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" gutterBottom>
+                  Tags
+                </Typography>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <TextField
+                    fullWidth
+                    placeholder="Add tags (e.g., summer, gift idea)"
+                    value={currentTag}
+                    onChange={(e) => setCurrentTag(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    sx={{ mr: 1 }}
+                  />
+                  <Button 
+                    variant="outlined" 
+                    onClick={handleAddTag}
+                    disabled={!currentTag.trim()}
+                  >
+                    Add
+                  </Button>
+                </Box>
+                
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  {formData.tags.map((tag, index) => (
+                    <Chip
+                      key={index}
+                      label={tag}
+                      onDelete={() => handleRemoveTag(tag)}
+                    />
+                  ))}
+                </Box>
+              </Grid>
+              
+              <Grid item xs={12}>
+                <Box 
+                  sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    p: 2, 
+                    bgcolor: theme.palette.brand.lightTeal,
+                    borderRadius: 2,
+                    mb: 3
+                  }}
+                >
+                  <EmojiEventsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
+                  <Typography variant="body2">
+                    Earn <strong>25 points</strong> by sharing this product!
+                  </Typography>
+                </Box>
+                
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  fullWidth
+                >
+                  Share Product
+                </Button>
               </Grid>
             </Grid>
           </form>
@@ -334,6 +454,6 @@ const PostCreationPage = ({ isAuthenticated = true }) => {
       </Container>
     </>
   );
-};
+});
 
 export default PostCreationPage; 

@@ -9,6 +9,7 @@ import {
   Button,
   Divider,
   CircularProgress,
+  LinearProgress,
   useTheme
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
@@ -16,11 +17,12 @@ import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import UserSuggestionCard from '../components/UserSuggestionCard';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 const HomePage = observer(({ isAuthenticated }) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { userStore } = useContext(StoreContext);
+  const { userStore, rewardsStore } = useContext(StoreContext);
   const [loading, setLoading] = useState(true);
   const [trendingProducts, setTrendingProducts] = useState([]);
   const [recentlyViewed, setRecentlyViewed] = useState([]);
@@ -67,6 +69,10 @@ const HomePage = observer(({ isAuthenticated }) => {
       setLoading(false);
     }, 1500);
   }, []);
+  
+  // Calculate progress to next level
+  const pointsToNextLevel = (rewardsStore.userLevel * 500) - rewardsStore.totalPoints;
+  const progressPercentage = ((500 - pointsToNextLevel) / 500) * 100;
   
   return (
     <>
@@ -115,6 +121,56 @@ const HomePage = observer(({ isAuthenticated }) => {
                   Update Profile
                 </Button>
               </Paper>
+              
+              <Paper 
+                elevation={0} 
+                sx={{ 
+                  p: 3, 
+                  border: `1px solid ${theme.palette.brand.lightGray}`,
+                  borderRadius: 2,
+                  bgcolor: theme.palette.brand.lightTeal,
+                  mb: 4,
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                <EmojiEventsIcon sx={{ fontSize: 40, mr: 2 }} />
+                <Box sx={{ flexGrow: 1 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="h6">
+                      Level {rewardsStore.userLevel}
+                    </Typography>
+                    <Typography variant="body1">
+                      {rewardsStore.totalPoints} points
+                    </Typography>
+                  </Box>
+                  <LinearProgress 
+                    variant="determinate" 
+                    value={progressPercentage} 
+                    sx={{ 
+                      height: 8, 
+                      borderRadius: 4,
+                      my: 1,
+                      bgcolor: 'rgba(255, 255, 255, 0.5)',
+                      '& .MuiLinearProgress-bar': {
+                        bgcolor: theme.palette.primary.main
+                      }
+                    }}
+                  />
+                  <Typography variant="body2">
+                    {pointsToNextLevel} points to Level {rewardsStore.userLevel + 1}
+                  </Typography>
+                </Box>
+                <Button 
+                  variant="contained" 
+                  color="primary"
+                  component={Link}
+                  to="/rewards"
+                  sx={{ ml: 2 }}
+                >
+                  View Rewards
+                </Button>
+              </Paper>
             </Box>
             
             {loading ? (
@@ -128,11 +184,7 @@ const HomePage = observer(({ isAuthenticated }) => {
                     <Typography variant="h5" component="h2">
                       Trending Products
                     </Typography>
-                    <Button 
-                      variant="text" 
-                      component={Link} 
-                      to="/feed"
-                    >
+                    <Button variant="text">
                       See All
                     </Button>
                   </Box>
