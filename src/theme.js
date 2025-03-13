@@ -1,61 +1,65 @@
 import { createTheme } from '@mui/material/styles';
 
-// Mercari-inspired color palette with a friendlier touch
+// Pinterest-inspired aesthetic (without the red)
 const colors = {
   primary: {
-    main: '#4E41D9', // Mercari purple/blue from logo
-    light: '#7B71E3',
-    dark: '#3730A3',
+    main: '#6C5CE7', // Soft purple - inspirational but not corporate
+    light: '#A29BFE',
+    dark: '#5541D7',
     contrastText: '#FFFFFF',
   },
   secondary: {
-    main: '#FF0211', // Mercari red
-    light: '#FF5A5F',
-    dark: '#C70012',
+    main: '#333333', // Rich black for buttons
+    light: '#555555',
+    dark: '#222222',
     contrastText: '#FFFFFF',
   },
   error: {
-    main: '#FF0211',
-    light: '#FF5A5F',
-    dark: '#C70012',
+    main: '#FF7675', // Soft coral
+    light: '#FF9A99',
+    dark: '#E05756',
     contrastText: '#FFFFFF',
   },
   warning: {
-    main: '#FFA000',
-    light: '#FFC107',
-    dark: '#FF8F00',
-    contrastText: '#000000',
+    main: '#FDCB6E', // Muted yellow
+    light: '#FFE29D',
+    dark: '#E0B25C',
+    contrastText: '#333333',
   },
   info: {
-    main: '#4E41D9',
-    light: '#7B71E3',
-    dark: '#3730A3',
+    main: '#74B9FF', // Soft blue
+    light: '#A3D0FF',
+    dark: '#5A99DB',
     contrastText: '#FFFFFF',
   },
   success: {
-    main: '#4CAF50',
-    light: '#81C784',
-    dark: '#388E3C',
-    contrastText: '#FFFFFF',
+    main: '#55EFC4', // Mint green
+    light: '#7FFFD4',
+    dark: '#41C7A7',
+    contrastText: '#333333',
   },
   text: {
-    primary: '#333333',
-    secondary: '#757575',
-    disabled: '#BDBDBD',
+    primary: '#2D3436', // Soft black
+    secondary: '#636E72', // Medium gray
+    disabled: '#B2BEC3',
   },
   background: {
-    default: '#F8F8F8', // Lighter background for a friendlier feel
+    default: '#FAFAFA', // Very light gray
     paper: '#FFFFFF',
   },
-  divider: '#EEEEEE',
+  divider: '#E9ECEF', // Subtle off-white divider
   // Custom brand colors
   brand: {
-    lightGray: '#F0F0F0',
-    mediumGray: '#CCCCCC',
-    darkGray: '#757575',
-    black: '#333333',
-    red: '#FF0211',
-    purple: '#4E41D9',
+    softPurple: '#6C5CE7', // Primary brand color
+    black: '#333333', // Secondary for buttons
+    lavenderMist: '#E2D8F3', // Light purple
+    deepLavender: '#5246B8', // Darker purple
+    softTeal: '#B4E0E0', // Soft teal/aqua
+    dustyRose: '#D8A9B7', // Muted pink
+    slateBlue: '#7986CB', // Soft blue with purple undertones
+    mintGreen: '#B5E6D8', // Soft mint
+    paleLilac: '#D0C4DF', // Very soft purple
+    lightGray: '#F0F2F5', // Background gray
   },
 };
 
@@ -64,6 +68,7 @@ const theme = createTheme({
   palette: colors,
   typography: {
     fontFamily: [
+      'Montserrat',
       '-apple-system',
       'BlinkMacSystemFont',
       '"Segoe UI"',
@@ -73,52 +78,87 @@ const theme = createTheme({
       'sans-serif',
     ].join(','),
     h1: {
-      fontWeight: 600, // Slightly less bold for a friendlier look
-      fontSize: '2.5rem',
+      fontWeight: 600,
+      fontSize: '2rem',
+      color: colors.text.primary,
+      letterSpacing: '-0.01em',
     },
     h2: {
       fontWeight: 600,
-      fontSize: '2rem',
+      fontSize: '1.75rem',
+      color: colors.text.primary,
+      letterSpacing: '-0.01em',
     },
     h3: {
       fontWeight: 600,
-      fontSize: '1.75rem',
+      fontSize: '1.5rem',
+      color: colors.text.primary,
     },
     h4: {
-      fontWeight: 500, // Medium weight for a friendlier look
-      fontSize: '1.5rem',
+      fontWeight: 500,
+      fontSize: '1.25rem',
+      color: colors.text.primary,
     },
     h5: {
       fontWeight: 500,
-      fontSize: '1.25rem',
+      fontSize: '1.1rem',
+      color: colors.text.primary,
     },
     h6: {
       fontWeight: 500,
       fontSize: '1rem',
+      color: colors.text.primary,
     },
     subtitle1: {
       fontSize: '1rem',
       fontWeight: 500,
+      color: colors.text.secondary,
+      letterSpacing: '0.01em',
     },
     subtitle2: {
       fontSize: '0.875rem',
       fontWeight: 500,
+      color: colors.text.secondary,
+      letterSpacing: '0.01em',
     },
     body1: {
       fontSize: '1rem',
-      lineHeight: 1.6, // Increased line height for better readability
+      lineHeight: 1.6,
+      color: colors.text.primary,
+      fontFamily: [
+        'Source Sans Pro',
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+      ].join(','),
     },
     body2: {
       fontSize: '0.875rem',
       lineHeight: 1.6,
+      color: colors.text.secondary,
+      fontFamily: [
+        'Source Sans Pro',
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+      ].join(','),
     },
     button: {
-      textTransform: 'none', // Mercari doesn't use uppercase buttons
-      fontWeight: 500, // Medium weight for a friendlier look
+      textTransform: 'none',
+      fontWeight: 500,
+      letterSpacing: '0.02em',
     },
   },
   shape: {
-    borderRadius: 8, // More rounded corners for a friendlier feel
+    borderRadius: 8,
   },
   components: {
     MuiButton: {
@@ -127,16 +167,30 @@ const theme = createTheme({
           borderRadius: 8,
           padding: '10px 20px',
           fontWeight: 500,
-          fontSize: '0.9375rem',
+          boxShadow: 'none',
+          transition: 'all 0.2s ease-in-out',
         },
         contained: {
-          boxShadow: 'none',
           '&:hover': {
-            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+            transform: 'translateY(-1px)',
+          },
+        },
+        containedSecondary: {
+          '&:hover': {
+            boxShadow: '0px 4px 8px rgba(231, 111, 81, 0.2)',
           },
         },
         outlined: {
-          borderWidth: 1.5, // Slightly thicker border
+          borderWidth: 1.5, // Slightly thicker border for a crafted feel
+          '&:hover': {
+            borderWidth: 1.5,
+          },
+        },
+        text: {
+          '&:hover': {
+            backgroundColor: 'rgba(42, 157, 143, 0.05)',
+          },
         },
       },
       defaultProps: {
@@ -147,7 +201,12 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05)',
-          borderRadius: 12, // More rounded cards
+          borderRadius: 12,
+          transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.08)',
+          },
         },
       },
     },
@@ -166,22 +225,59 @@ const theme = createTheme({
         root: {
           '& .MuiOutlinedInput-root': {
             borderRadius: 8,
+            '&.Mui-focused': {
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: colors.primary.main,
+                borderWidth: 2,
+              },
+            },
           },
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: colors.primary.light,
+          },
+        },
+        notchedOutline: {
+          borderColor: colors.divider,
+          transition: 'border-color 0.2s ease-in-out',
         },
       },
     },
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: 16, // Fully rounded chips like Mercari
-          fontWeight: 500,
+          borderRadius: 16, // More rounded chips
+          backgroundColor: colors.brand.cream,
+          color: colors.text.primary,
+          '&.MuiChip-clickable:hover': {
+            backgroundColor: colors.brand.sand,
+          },
+        },
+        outlined: {
+          borderColor: colors.divider,
+          borderWidth: 1.5, // Slightly thicker border for a crafted feel
+        },
+        colorPrimary: {
+          backgroundColor: 'rgba(42, 157, 143, 0.1)',
+          color: colors.primary.dark,
+        },
+        colorSecondary: {
+          backgroundColor: 'rgba(231, 111, 81, 0.1)',
+          color: colors.secondary.dark,
         },
       },
     },
     MuiAppBar: {
       styleOverrides: {
         root: {
-          boxShadow: '0px 1px 5px rgba(0, 0, 0, 0.05)',
+          boxShadow: 'none',
+          borderBottom: `1px solid ${colors.divider}`,
         },
       },
       defaultProps: {
@@ -196,7 +292,9 @@ const theme = createTheme({
           fontWeight: 500,
           minWidth: 'auto',
           padding: '12px 16px',
-          borderRadius: 0,
+          '&.Mui-selected': {
+            color: colors.primary.main,
+          },
         },
       },
     },
@@ -212,6 +310,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05)',
+          borderRadius: 12,
         },
         elevation1: {
           boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05)',
@@ -225,18 +324,71 @@ const theme = createTheme({
         },
       },
     },
+    MuiRadio: {
+      styleOverrides: {
+        root: {
+          color: colors.primary.main,
+        },
+      },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          color: colors.primary.main,
+        },
+      },
+    },
+    MuiSelect: {
+      styleOverrides: {
+        outlined: {
+          borderRadius: 8,
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+        },
+      },
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          borderRadius: 8,
+          boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.05)',
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            backgroundColor: 'rgba(42, 157, 143, 0.05)',
+          },
+          '&.Mui-selected': {
+            backgroundColor: 'rgba(42, 157, 143, 0.1)',
+            '&:hover': {
+              backgroundColor: 'rgba(42, 157, 143, 0.15)',
+            },
+          },
+        },
+      },
+    },
     MuiListItem: {
       styleOverrides: {
         root: {
-          paddingTop: 12,
-          paddingBottom: 12,
+          borderRadius: 8,
+          '&:hover': {
+            backgroundColor: 'rgba(42, 157, 143, 0.05)',
+          },
         },
       },
     },
     MuiAvatar: {
       styleOverrides: {
         root: {
-          border: `1px solid ${colors.divider}`,
+          backgroundColor: colors.primary.light,
         },
       },
     },
@@ -244,55 +396,20 @@ const theme = createTheme({
       styleOverrides: {
         badge: {
           fontWeight: 500,
-          borderRadius: 12, // Fully rounded badges
         },
       },
     },
-    MuiIconButton: {
+    MuiSwitch: {
       styleOverrides: {
         root: {
-          padding: 10,
+          padding: 8,
         },
-      },
-    },
-    // Add styles for the search field like Mercari's
-    MuiInputBase: {
-      styleOverrides: {
-        root: {
-          borderRadius: 20, // Fully rounded search field
-          backgroundColor: '#F0F0F0',
-          '&.Mui-focused': {
-            backgroundColor: '#FFFFFF',
-            boxShadow: '0px 0px 0px 2px rgba(78, 65, 217, 0.2)',
-          },
+        track: {
+          backgroundColor: colors.brand.clay,
+          opacity: 0.5,
         },
-        input: {
-          padding: '12px 16px',
-        },
-      },
-    },
-    // Navigation tabs like Mercari's bottom navigation
-    MuiBottomNavigation: {
-      styleOverrides: {
-        root: {
-          height: 60,
-        },
-      },
-    },
-    MuiBottomNavigationAction: {
-      styleOverrides: {
-        root: {
-          padding: '8px 0',
-          minWidth: 'auto',
-          '&.Mui-selected': {
-            paddingTop: 8,
-          },
-        },
-        label: {
-          fontSize: '0.75rem',
-          '&.Mui-selected': {
-            fontSize: '0.75rem',
-          },
+        thumb: {
+          backgroundColor: '#FFFFFF',
         },
       },
     },
