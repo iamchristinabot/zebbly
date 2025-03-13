@@ -1,45 +1,50 @@
-import AddIcon from "@mui/icons-material/Add";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import ChildCareIcon from "@mui/icons-material/ChildCare";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import PersonIcon from "@mui/icons-material/Person";
-import SmartToyIcon from "@mui/icons-material/SmartToy";
-import StyleIcon from "@mui/icons-material/Style";
+import React, { useState, useEffect, useContext } from "react";
+import { observer } from "mobx-react-lite";
 import {
-  Avatar,
   Box,
+  Container,
+  Typography,
+  Grid,
+  Paper,
   Button,
   Card,
-  CardActions,
   CardContent,
   CardMedia,
-  Chip,
-  CircularProgress,
-  Container,
+  CardActions,
+  Avatar,
+  TextField,
   Dialog,
-  DialogActions,
-  DialogContent,
   DialogTitle,
-  Grid,
+  DialogContent,
+  DialogActions,
   IconButton,
+  Chip,
+  Divider,
   List,
   ListItem,
-  ListItemIcon,
+  ListItemAvatar,
   ListItemText,
+  ListItemSecondaryAction,
   Menu,
   MenuItem,
-  TextField,
-  Typography,
-  useTheme
+  Tooltip,
+  CircularProgress,
+  useTheme,
+  ListItemIcon,
 } from "@mui/material";
-import { observer } from "mobx-react-lite";
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import PersonIcon from "@mui/icons-material/Person";
+import ChildCareIcon from "@mui/icons-material/ChildCare";
+import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import StyleIcon from "@mui/icons-material/Style";
+import SmartToyIcon from "@mui/icons-material/SmartToy";
+import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../stores/storeContext";
+import Header from "../components/Header";
 
 const ShoppingProfilesPage = observer(({ isAuthenticated = true }) => {
   const theme = useTheme();
@@ -49,26 +54,11 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }) => {
   // State for profiles and UI
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [aiDialogOpen, setAiDialogOpen] = useState(false);
   const [currentProfile, setCurrentProfile] = useState(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [selectedProfileId, setSelectedProfileId] = useState(null);
   const [aiGenerating, setAiGenerating] = useState(false);
-
-  // Form state
-  const [formData, setFormData] = useState({
-    name: "",
-    relationship: "self",
-    age: "",
-    gender: "",
-    bio: "",
-    interests: "",
-    stylePreferences: "",
-    favoriteColors: "",
-    favoriteCategories: "",
-    avatar: null,
-  });
 
   // AI prompt state
   const [aiPrompt, setAiPrompt] = useState("");
@@ -171,73 +161,15 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }) => {
     handleMenuClose();
   };
 
-  // Handle create profile dialog open
-  const handleCreateDialogOpen = () => {
-    setFormData({
-      name: "",
-      relationship: "self",
-      age: "",
-      gender: "",
-      bio: "",
-      interests: "",
-      stylePreferences: "",
-      favoriteColors: "",
-      favoriteCategories: "",
-      avatar: null,
-    });
-    setCreateDialogOpen(true);
-  };
-
   // Handle AI dialog open
   const handleAiDialogOpen = () => {
     setAiPrompt("");
     setAiDialogOpen(true);
   };
 
-  // Handle form input change
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
   // Handle AI prompt change
   const handleAiPromptChange = (e) => {
     setAiPrompt(e.target.value);
-  };
-
-  // Handle create profile submit
-  const handleCreateProfileSubmit = () => {
-    // Simulate API call to create profile
-    const newProfile = {
-      id: `profile${profiles.length + 1}`,
-      name: formData.name,
-      relationship: formData.relationship,
-      age: parseInt(formData.age),
-      gender: formData.gender,
-      bio: formData.bio,
-      interests: formData.interests.split(",").map((item) => item.trim()),
-      stylePreferences: formData.stylePreferences
-        .split(",")
-        .map((item) => item.trim()),
-      favoriteColors: formData.favoriteColors
-        .split(",")
-        .map((item) => item.trim()),
-      favoriteCategories: formData.favoriteCategories
-        .split(",")
-        .map((item) => item.trim()),
-      avatar:
-        formData.avatar ||
-        `https://randomuser.me/api/portraits/${
-          formData.gender.toLowerCase() === "female" ? "women" : "men"
-        }/${Math.floor(Math.random() * 100)}.jpg`,
-      isDefault: profiles.length === 0,
-    };
-
-    setProfiles([...profiles, newProfile]);
-    setCreateDialogOpen(false);
   };
 
   // Handle AI profile generation
@@ -316,22 +248,9 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }) => {
         isDefault: profiles.length === 0,
       };
 
-      setFormData({
-        name: aiGeneratedProfile.name,
-        relationship: aiGeneratedProfile.relationship,
-        age: aiGeneratedProfile.age,
-        gender: aiGeneratedProfile.gender,
-        bio: aiPrompt,
-        interests: aiGeneratedProfile.interests.join(", "),
-        stylePreferences: aiGeneratedProfile.stylePreferences.join(", "),
-        favoriteColors: aiGeneratedProfile.favoriteColors.join(", "),
-        favoriteCategories: aiGeneratedProfile.favoriteCategories.join(", "),
-        avatar: aiGeneratedProfile.avatar,
-      });
-
       setAiGenerating(false);
       setAiDialogOpen(false);
-      setCreateDialogOpen(true);
+      navigate(`/shopping-profiles/add?aiProfile=${JSON.stringify(aiGeneratedProfile)}`);
     }, 2000);
   };
 
@@ -358,7 +277,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }) => {
     <>
       <Header isAuthenticated={isAuthenticated} />
 
-      <Container maxWidth="md" sx={{ mt: 4, mb: 8 }}>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
         <Box
           sx={{
             display: "flex",
@@ -383,10 +302,12 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }) => {
 
             <Button
               variant="contained"
+              color="primary"
               startIcon={<AddIcon />}
-              onClick={handleCreateDialogOpen}
+              onClick={() => navigate('/shopping-profiles/add')}
+              sx={{ mr: 2 }}
             >
-              New Profile
+              Create Profile
             </Button>
           </Box>
         </Box>
@@ -403,7 +324,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }) => {
         ) : (
           <Grid container spacing={3} sx={{ mt: 2 }}>
             {profiles.map((profile) => (
-              <Grid item xs={12} sm={6} md={4} key={profile.id}>
+              <Grid item xs={12} sm={6} md={3} key={profile.id}>
                 <Card
                   sx={{
                     height: "100%",
@@ -572,146 +493,6 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }) => {
             </MenuItem>
           )}
         </Menu>
-
-        {/* Create profile dialog */}
-        <Dialog
-          open={createDialogOpen}
-          onClose={() => setCreateDialogOpen(false)}
-          maxWidth="sm"
-          fullWidth
-        >
-          <DialogTitle>Create Shopping Profile</DialogTitle>
-          <DialogContent>
-            <Grid container spacing={2} sx={{ mt: 0.5 }}>
-              <Grid item xs={12}>
-                <TextField
-                  name="name"
-                  label="Profile Name"
-                  fullWidth
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  name="relationship"
-                  label="Relationship"
-                  select
-                  fullWidth
-                  value={formData.relationship}
-                  onChange={handleInputChange}
-                >
-                  <MenuItem value="self">Self</MenuItem>
-                  <MenuItem value="spouse">Spouse/Partner</MenuItem>
-                  <MenuItem value="child">Child</MenuItem>
-                  <MenuItem value="parent">Parent</MenuItem>
-                  <MenuItem value="friend">Friend</MenuItem>
-                  <MenuItem value="other">Other</MenuItem>
-                </TextField>
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  name="age"
-                  label="Age"
-                  type="number"
-                  fullWidth
-                  value={formData.age}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  name="gender"
-                  label="Gender"
-                  select
-                  fullWidth
-                  value={formData.gender}
-                  onChange={handleInputChange}
-                >
-                  <MenuItem value="Female">Female</MenuItem>
-                  <MenuItem value="Male">Male</MenuItem>
-                  <MenuItem value="Non-binary">Non-binary</MenuItem>
-                  <MenuItem value="Other">Other</MenuItem>
-                </TextField>
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  name="bio"
-                  label="About this person (freeform)"
-                  fullWidth
-                  multiline
-                  rows={3}
-                  value={formData.bio || ""}
-                  onChange={handleInputChange}
-                  helperText="Describe this person in your own words. Include any details that might help with recommendations."
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  name="interests"
-                  label="Interests (comma separated)"
-                  fullWidth
-                  multiline
-                  rows={2}
-                  value={formData.interests}
-                  onChange={handleInputChange}
-                  helperText="E.g., Technology, Hiking, Cooking"
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  name="stylePreferences"
-                  label="Style Preferences (comma separated)"
-                  fullWidth
-                  multiline
-                  rows={2}
-                  value={formData.stylePreferences}
-                  onChange={handleInputChange}
-                  helperText="E.g., Casual, Sporty, Classic"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  name="favoriteColors"
-                  label="Favorite Colors (comma separated)"
-                  fullWidth
-                  value={formData.favoriteColors}
-                  onChange={handleInputChange}
-                  helperText="E.g., Blue, Gray, Black"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  name="favoriteCategories"
-                  label="Favorite Categories (comma separated)"
-                  fullWidth
-                  value={formData.favoriteCategories}
-                  onChange={handleInputChange}
-                  helperText="E.g., Electronics, Clothing, Books"
-                />
-              </Grid>
-            </Grid>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setCreateDialogOpen(false)}>Cancel</Button>
-            <Button
-              variant="contained"
-              onClick={handleCreateProfileSubmit}
-              disabled={!formData.name}
-            >
-              Create
-            </Button>
-          </DialogActions>
-        </Dialog>
 
         {/* AI profile generation dialog */}
         <Dialog
