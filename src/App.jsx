@@ -16,7 +16,6 @@ import SearchPage from './pages/SearchPage';
 import PostCreationPage from './pages/PostCreationPage';
 import AIEnhancedPostCreationPage from './pages/AIEnhancedPostCreationPage';
 import AIProductDiscoveryPage from './pages/AIProductDiscoveryPage';
-import AIChatDiscoveryPage from './pages/AIChatDiscoveryPage';
 import AIStyleTwinPage from './pages/AIStyleTwinPage';
 import ShoppingProfilesPage from './pages/ShoppingProfilesPage';
 import SettingsPage from './pages/SettingsPage';
@@ -27,6 +26,7 @@ import CommunityDetailPage from './pages/CommunityDetailPage';
 import EditShoppingProfilePage from './pages/EditShoppingProfilePage';
 import AddProfilePage from './pages/shopping-profiles/AddProfilePage';
 import EditProfilePage from './pages/shopping-profiles/EditProfilePage';
+import ShoppingAssistantPage from './pages/ShoppingAssistantPage';
 
 // Wrapper component to handle user profile routes
 const UserProfileWrapper = ({ isAuthenticated }) => {
@@ -63,7 +63,6 @@ function App() {
                 <Route path="/create" element={<PostCreationPage isAuthenticated={true} />} />
                 <Route path="/ai-create" element={<AIEnhancedPostCreationPage isAuthenticated={true} />} />
                 <Route path="/ai-discover" element={<AIProductDiscoveryPage isAuthenticated={true} />} />
-                <Route path="/ai-chat" element={<AIChatDiscoveryPage isAuthenticated={true} />} />
                 <Route path="/style-twins" element={<AIStyleTwinPage />} />
                 <Route path="/style-twins/:profileId" element={<AIStyleTwinPage />} />
                 <Route path="/shopping-profiles" element={<ShoppingProfilesPage isAuthenticated={true} />} />
@@ -74,6 +73,7 @@ function App() {
                 <Route path="/communities" element={<CommunitiesPage isAuthenticated={true} />} />
                 <Route path="/communities/:communityId" element={<CommunityDetailPage isAuthenticated={true} />} />
                 <Route path="/logout" element={<LoginPage onLogin={handleLogin} />} action={handleLogout} />
+                <Route path="/shopping-assistant" element={<ShoppingAssistantPage isAuthenticated={true} />} />
               </>
             ) : (
               <>

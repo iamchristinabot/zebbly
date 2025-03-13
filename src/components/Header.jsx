@@ -177,11 +177,11 @@ const AuthenticatedNav = () => {
         
         <NavButton 
           component={Link}
-          to="/ai-chat"
-          active={isActive('/ai-chat') ? 1 : 0}
+          to="/shopping-assistant"
+          active={isActive('/shopping-assistant') ? 1 : 0}
           startIcon={<SmartToyIcon />}
         >
-          AI Chat
+          Shopping Assistant
         </NavButton>
         
         <NavButton 
@@ -373,10 +373,10 @@ const AuthenticatedNav = () => {
               color="secondary"
               startIcon={<SmartToyIcon />}
               component={Link}
-              to="/ai-chat"
+              to="/shopping-assistant"
               sx={{ ml: 1, display: { xs: 'none', sm: 'flex' } }}
             >
-              AI Chat
+              Shopping Assistant
             </Button>
             
             <Button

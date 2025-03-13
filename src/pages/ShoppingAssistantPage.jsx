@@ -40,7 +40,7 @@ const MESSAGE_TYPE = {
   RECOMMENDATIONS: 'recommendations'
 };
 
-const AIChatDiscoveryPage = observer(({ isAuthenticated = true }) => {
+const ShoppingAssistantPage = observer(({ isAuthenticated = true }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { userStore, aiRecommendationStore } = useContext(StoreContext);
@@ -344,7 +344,7 @@ const AIChatDiscoveryPage = observer(({ isAuthenticated = true }) => {
           </Grid>
           
           <Grid item xs={12} md={4}>
-            {/* Suggested prompts */}
+            {/* Shopping preferences */}
             <Paper 
               elevation={0} 
               sx={{ 
@@ -352,47 +352,6 @@ const AIChatDiscoveryPage = observer(({ isAuthenticated = true }) => {
                 border: `1px solid ${theme.palette.brand.lightGray}`,
                 borderRadius: 2,
                 mb: 3
-              }}
-            >
-              <Typography variant="h6" gutterBottom>
-                Try asking about:
-              </Typography>
-              
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                {[
-                  "I need a new laptop for work under $1000",
-                  "Show me minimalist home decor items",
-                  "I'm looking for workout clothes for summer",
-                  "What are the trending tech gadgets right now?",
-                  "I need a gift for my mom who loves cooking"
-                ].map((prompt, index) => (
-                  <Button 
-                    key={index}
-                    variant="outlined"
-                    color="primary"
-                    size="small"
-                    onClick={() => {
-                      setInputValue(prompt);
-                    }}
-                    sx={{ 
-                      justifyContent: 'flex-start',
-                      textTransform: 'none',
-                      borderRadius: 2
-                    }}
-                  >
-                    {prompt}
-                  </Button>
-                ))}
-              </Box>
-            </Paper>
-            
-            {/* Shopping preferences */}
-            <Paper 
-              elevation={0} 
-              sx={{ 
-                p: 3, 
-                border: `1px solid ${theme.palette.brand.lightGray}`,
-                borderRadius: 2
               }}
             >
               <Typography variant="h6" gutterBottom>
@@ -437,6 +396,47 @@ const AIChatDiscoveryPage = observer(({ isAuthenticated = true }) => {
               >
                 Edit Preferences
               </Button>
+            </Paper>
+            
+            {/* Suggested prompts */}
+            <Paper 
+              elevation={0} 
+              sx={{ 
+                p: 3, 
+                border: `1px solid ${theme.palette.brand.lightGray}`,
+                borderRadius: 2
+              }}
+            >
+              <Typography variant="h6" gutterBottom>
+                Try asking about:
+              </Typography>
+              
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                {[
+                  "I need a new laptop for work under $1000",
+                  "Show me minimalist home decor items",
+                  "I'm looking for workout clothes for summer",
+                  "What are the trending tech gadgets right now?",
+                  "I need a gift for my mom who loves cooking"
+                ].map((prompt, index) => (
+                  <Button 
+                    key={index}
+                    variant="outlined"
+                    color="primary"
+                    size="small"
+                    onClick={() => {
+                      setInputValue(prompt);
+                    }}
+                    sx={{ 
+                      justifyContent: 'flex-start',
+                      textTransform: 'none',
+                      borderRadius: 2
+                    }}
+                  >
+                    {prompt}
+                  </Button>
+                ))}
+              </Box>
             </Paper>
           </Grid>
         </Grid>
@@ -552,4 +552,4 @@ const ProductCard = ({ recommendation }) => {
   );
 };
 
-export default AIChatDiscoveryPage; 
+export default ShoppingAssistantPage; 
