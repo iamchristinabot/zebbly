@@ -24,6 +24,7 @@ import LoginPage from './pages/LoginPage';
 import PeopleYouMightLikePage from './pages/PeopleYouMightLikePage';
 import CommunitiesPage from './pages/CommunitiesPage';
 import CommunityDetailPage from './pages/CommunityDetailPage';
+import EditShoppingProfilePage from './pages/EditShoppingProfilePage';
 
 // Wrapper component to handle user profile routes
 const UserProfileWrapper = ({ isAuthenticated }) => {
@@ -64,6 +65,7 @@ function App() {
                 <Route path="/style-twins" element={<AIStyleTwinPage />} />
                 <Route path="/style-twins/:profileId" element={<AIStyleTwinPage />} />
                 <Route path="/shopping-profiles" element={<ShoppingProfilesPage isAuthenticated={true} />} />
+                <Route path="/shopping-profiles/edit/:profileId" element={<EditShoppingProfilePage />} />
                 <Route path="/settings" element={<SettingsPage isAuthenticated={true} />} />
                 <Route path="/people" element={<PeopleYouMightLikePage isAuthenticated={true} />} />
                 <Route path="/communities" element={<CommunitiesPage isAuthenticated={true} />} />

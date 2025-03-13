@@ -413,6 +413,35 @@ const theme = createTheme({
         },
       },
     },
+    MuiBreadcrumbs: {
+      styleOverrides: {
+        root: {
+          fontSize: '0.85rem',
+          '& .MuiBreadcrumbs-separator': {
+            fontSize: '0.85rem',
+          },
+          '& a': {
+            textDecoration: 'none',
+            '&:hover': {
+              textDecoration: 'none',
+              opacity: 0.8,
+            },
+          },
+        },
+      },
+    },
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          '&.MuiBreadcrumbs-link': {
+            textDecoration: 'none',
+            '&:hover': {
+              textDecoration: 'none',
+            },
+          },
+        },
+      },
+    },
   },
 });
 
