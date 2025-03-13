@@ -93,24 +93,24 @@ const ProfileForm = ({
           </TextField>
         </Grid>
         
-        {/* Description section with more spacing */}
+        {/* Description section with AI context */}
         <Grid item xs={12}>
           <Divider sx={{ my: 2 }} />
           <Typography variant="subtitle1" color="primary" fontWeight="medium" gutterBottom sx={{ mt: 2 }}>
-            Description
+            AI Description
           </Typography>
         </Grid>
         
         <Grid item xs={12}>
           <TextField
             name="bio"
-            label="About this person (freeform)"
+            label="About this person (for AI personalization)"
             fullWidth
             multiline
             rows={4}
             value={formData.bio}
             onChange={handleInputChange}
-            helperText="Describe this person in your own words. Include any details that might help with recommendations."
+            helperText="Describe this person in your own words. This helps our AI understand their preferences and provide better recommendations."
           />
         </Grid>
         

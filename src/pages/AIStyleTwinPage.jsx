@@ -23,6 +23,10 @@ import {
   DialogContent,
   DialogActions,
   useTheme,
+  MenuItem,
+  FormControl,
+  Select,
+  InputLabel,
 } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -51,9 +55,37 @@ const AIStyleTwinPage = observer(({ isAuthenticated = true }) => {
   const [selectedTwin, setSelectedTwin] = useState(null);
   const [comparisonDialogOpen, setComparisonDialogOpen] = useState(false);
   const [currentProfile, setCurrentProfile] = useState(null);
+  const [availableProfiles, setAvailableProfiles] = useState([]);
 
-  // Load profile and style twins on component mount
+  // Load profiles and style twins on component mount
   useEffect(() => {
+    // Get all available shopping profiles
+    const loadProfiles = async () => {
+      // In a real app, this would fetch profiles from an API
+      // For now, simulate a delay and use mock data
+      setTimeout(() => {
+        const mockProfiles = [
+          {
+            id: 'profile1',
+            name: 'My Style',
+            avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+          },
+          {
+            id: 'profile2',
+            name: 'Michael (Husband)',
+            avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+          },
+          {
+            id: 'profile3',
+            name: 'Emma (Daughter)',
+            avatar: 'https://randomuser.me/api/portraits/women/67.jpg',
+          }
+        ];
+        
+        setAvailableProfiles(mockProfiles);
+      }, 500);
+    };
+    
     // Get the shopping profile
     const loadProfile = async () => {
       setLoading(true);
@@ -239,19 +271,95 @@ const AIStyleTwinPage = observer(({ isAuthenticated = true }) => {
       }, 1500);
     };
 
+    loadProfiles();
     loadProfile();
   }, [profileId, shoppingProfileStore]);
 
-  const handleRefreshTwins = () => {
+  const handleLoadMoreTwins = () => {
     setAnalyzing(true);
     setTimeout(() => {
-      // Shuffle the array to simulate new recommendations
-      const newTwins = [...styleTwins];
-      for (let i = newTwins.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newTwins[i], newTwins[j]] = [newTwins[j], newTwins[i]];
-      }
-      setStyleTwins(newTwins);
+      // Generate additional mock twins
+      const additionalTwins = [
+        {
+          id: "user5",
+          name: "Jennifer Wilson",
+          avatar: "https://randomuser.me/api/portraits/women/63.jpg",
+          matchScore: 0.76,
+          bio: "Interior design enthusiast with a passion for Scandinavian aesthetics and sustainable home products.",
+          location: "Seattle, WA",
+          followers: 892,
+          following: 345,
+          styleTraits: ["Minimalist", "Scandinavian", "Eco-friendly", "Functional"],
+          favoriteCategories: ["Home Decor", "Furniture", "Lighting"],
+          favoriteBrands: ["IKEA", "West Elm", "Crate & Barrel", "Parachute"],
+          recentProducts: [
+            {
+              id: "p13",
+              title: "Linen Duvet Cover",
+              image: "https://picsum.photos/seed/product13/300/200",
+              price: 129.99,
+            },
+            {
+              id: "p14",
+              title: "Ceramic Table Lamp",
+              image: "https://picsum.photos/seed/product14/300/200",
+              price: 89.99,
+            },
+            {
+              id: "p15",
+              title: "Wool Area Rug",
+              image: "https://picsum.photos/seed/product15/300/200",
+              price: 249.99,
+            },
+          ],
+          commonInterests: [
+            "Sustainable Living",
+            "Interior Design",
+            "DIY Home Projects",
+          ],
+        },
+        {
+          id: "user6",
+          name: "Robert Kim",
+          avatar: "https://randomuser.me/api/portraits/men/42.jpg",
+          matchScore: 0.73,
+          bio: "Tech enthusiast and early adopter. Always looking for the latest gadgets and smart home innovations.",
+          location: "Austin, TX",
+          followers: 1243,
+          following: 567,
+          styleTraits: ["Tech-forward", "Modern", "Practical", "Quality-focused"],
+          favoriteCategories: ["Electronics", "Smart Home", "Gadgets"],
+          favoriteBrands: ["Apple", "Google", "Samsung", "Sonos"],
+          recentProducts: [
+            {
+              id: "p16",
+              title: "Smart Speaker",
+              image: "https://picsum.photos/seed/product16/300/200",
+              price: 199.99,
+            },
+            {
+              id: "p17",
+              title: "Wireless Charging Pad",
+              image: "https://picsum.photos/seed/product17/300/200",
+              price: 49.99,
+            },
+            {
+              id: "p18",
+              title: "Smart Thermostat",
+              image: "https://picsum.photos/seed/product18/300/200",
+              price: 249.99,
+            },
+          ],
+          commonInterests: [
+            "Home Automation",
+            "Tech Gadgets",
+            "Productivity Tools",
+          ],
+        },
+      ];
+      
+      // Add the new twins to the existing ones
+      setStyleTwins([...styleTwins, ...additionalTwins]);
       setAnalyzing(false);
     }, 2000);
   };
@@ -275,11 +383,17 @@ const AIStyleTwinPage = observer(({ isAuthenticated = true }) => {
     );
   };
 
+  // Handle profile change
+  const handleProfileChange = (event) => {
+    const newProfileId = event.target.value;
+    navigate(`/style-twins/${newProfileId}`);
+  };
+
   return (
     <>
       <Header isAuthenticated={isAuthenticated} />
 
-      <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
         <Box
           sx={{
             mb: 4,
@@ -299,16 +413,29 @@ const AIStyleTwinPage = observer(({ isAuthenticated = true }) => {
             </Typography>
           </Box>
 
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<AutoAwesomeIcon />}
-            onClick={handleRefreshTwins}
-            disabled={analyzing}
-            sx={{ height: 40 }}
-          >
-            {analyzing ? "Analyzing Style..." : "Refresh Style Twins"}
-          </Button>
+          {/* Profile selector */}
+          <FormControl sx={{ minWidth: 200 }}>
+            <InputLabel id="profile-select-label">Shopping Profile</InputLabel>
+            <Select
+              labelId="profile-select-label"
+              id="profile-select"
+              value={profileId || ''}
+              label="Shopping Profile"
+              onChange={handleProfileChange}
+            >
+              {availableProfiles.map((profile) => (
+                <MenuItem key={profile.id} value={profile.id}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Avatar 
+                      src={profile.avatar} 
+                      sx={{ width: 24, height: 24, mr: 1 }}
+                    />
+                    {profile.name}
+                  </Box>
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
 
         <Grid container spacing={4}>
@@ -333,6 +460,20 @@ const AIStyleTwinPage = observer(({ isAuthenticated = true }) => {
             )}
           </Grid>
         </Grid>
+        
+        {/* Refresh button moved to bottom */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6, mb: 2 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            startIcon={<AutoAwesomeIcon />}
+            onClick={handleLoadMoreTwins}
+            disabled={analyzing}
+          >
+            {analyzing ? "Finding More Twins..." : "Load More Style Twins"}
+          </Button>
+        </Box>
       </Container>
 
       {/* Style Comparison Dialog */}
