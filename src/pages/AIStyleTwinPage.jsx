@@ -33,14 +33,16 @@ import StyleIcon from "@mui/icons-material/Style";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { Link, useNavigate } from "react-router-dom";
+import CloseIcon from "@mui/icons-material/Close";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { StoreContext } from "../stores/storeContext";
 import Header from "../components/Header";
 
 const AIStyleTwinPage = observer(({ isAuthenticated = true }) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { userStore, aiRecommendationStore } = useContext(StoreContext);
+  const { profileId } = useParams(); // Get profile ID from URL
+  const { userStore, aiRecommendationStore, shoppingProfileStore } = useContext(StoreContext);
 
   // State for style twins and UI
   const [loading, setLoading] = useState(true);
@@ -48,210 +50,197 @@ const AIStyleTwinPage = observer(({ isAuthenticated = true }) => {
   const [styleTwins, setStyleTwins] = useState([]);
   const [selectedTwin, setSelectedTwin] = useState(null);
   const [comparisonDialogOpen, setComparisonDialogOpen] = useState(false);
-  const [styleProfile, setStyleProfile] = useState(null);
+  const [currentProfile, setCurrentProfile] = useState(null);
 
-  // Load style twins on component mount
+  // Load profile and style twins on component mount
   useEffect(() => {
-    // Generate style profile
-    generateStyleProfile();
+    // Get the shopping profile
+    const loadProfile = async () => {
+      setLoading(true);
+      
+      // In a real app, this would fetch the profile from an API
+      // For now, simulate a delay and use mock data
+      setTimeout(() => {
+        // Find the profile by ID or use a default
+        const profile = shoppingProfileStore?.getProfileById(profileId) || {
+          id: profileId || 'default',
+          name: 'Default Profile',
+          stylePreferences: ['Minimalist', 'Modern', 'Casual'],
+          favoriteColors: ['Black', 'White', 'Gray'],
+          favoriteCategories: ['Fashion', 'Tech', 'Home'],
+          avatar: 'https://randomuser.me/api/portraits/women/44.jpg'
+        };
+        
+        setCurrentProfile(profile);
+        
+        // Generate mock style twins based on profile preferences
+        const mockTwins = [
+          {
+            id: "user1",
+            name: "Emma Thompson",
+            avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+            matchScore: 0.92,
+            bio: "Fashion enthusiast with a love for minimalist design and sustainable brands.",
+            location: "New York, NY",
+            followers: 1243,
+            following: 567,
+            styleTraits: ["Minimalist", "Sustainable", "Modern", "Casual Chic"],
+            favoriteCategories: ["Fashion", "Home Decor", "Accessories"],
+            favoriteBrands: ["Everlane", "Reformation", "Muji", "IKEA"],
+            recentProducts: [
+              {
+                id: "p1",
+                title: "Linen Shirt Dress",
+                image: "https://picsum.photos/seed/product1/300/200",
+                price: 89.99,
+              },
+              {
+                id: "p2",
+                title: "Ceramic Planter",
+                image: "https://picsum.photos/seed/product2/300/200",
+                price: 34.99,
+              },
+              {
+                id: "p3",
+                title: "Minimalist Watch",
+                image: "https://picsum.photos/seed/product3/300/200",
+                price: 129.99,
+              },
+            ],
+            commonInterests: [
+              "Sustainable Fashion",
+              "Indoor Plants",
+              "Scandinavian Design",
+            ],
+          },
+          {
+            id: "user2",
+            name: "Michael Chen",
+            avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+            matchScore: 0.87,
+            bio: "Tech enthusiast and design lover. Always looking for smart home gadgets and sleek accessories.",
+            location: "San Francisco, CA",
+            followers: 892,
+            following: 345,
+            styleTraits: ["Modern", "Tech-Forward", "Minimalist", "Urban"],
+            favoriteCategories: ["Electronics", "Smart Home", "Accessories"],
+            favoriteBrands: ["Apple", "Samsung", "Bose", "Philips Hue"],
+            recentProducts: [
+              {
+                id: "p4",
+                title: "Wireless Earbuds",
+                image: "https://picsum.photos/seed/product4/300/200",
+                price: 149.99,
+              },
+              {
+                id: "p5",
+                title: "Smart Desk Lamp",
+                image: "https://picsum.photos/seed/product5/300/200",
+                price: 79.99,
+              },
+              {
+                id: "p6",
+                title: "Minimalist Backpack",
+                image: "https://picsum.photos/seed/product6/300/200",
+                price: 89.99,
+              },
+            ],
+            commonInterests: [
+              "Smart Home Tech",
+              "Minimalist Design",
+              "Productivity Gadgets",
+            ],
+          },
+          {
+            id: "user3",
+            name: "Sophia Rodriguez",
+            avatar: "https://randomuser.me/api/portraits/women/29.jpg",
+            matchScore: 0.84,
+            bio: "Fitness enthusiast and wellness advocate. Love discovering new workout gear and healthy living products.",
+            location: "Los Angeles, CA",
+            followers: 1567,
+            following: 432,
+            styleTraits: ["Athletic", "Casual", "Functional", "Eco-friendly"],
+            favoriteCategories: ["Fitness", "Wellness", "Activewear"],
+            favoriteBrands: ["Nike", "Lululemon", "Hydroflask", "Manduka"],
+            recentProducts: [
+              {
+                id: "p7",
+                title: "Yoga Mat",
+                image: "https://picsum.photos/seed/product7/300/200",
+                price: 68.99,
+              },
+              {
+                id: "p8",
+                title: "Fitness Tracker",
+                image: "https://picsum.photos/seed/product8/300/200",
+                price: 129.99,
+              },
+              {
+                id: "p9",
+                title: "Reusable Water Bottle",
+                image: "https://picsum.photos/seed/product9/300/200",
+                price: 34.99,
+              },
+            ],
+            commonInterests: [
+              "Fitness Tech",
+              "Sustainable Products",
+              "Outdoor Activities",
+            ],
+          },
+          {
+            id: "user4",
+            name: "David Johnson",
+            avatar: "https://randomuser.me/api/portraits/men/86.jpg",
+            matchScore: 0.79,
+            bio: "Home chef and kitchen gadget collector. Always looking for the next tool to elevate my cooking game.",
+            location: "Chicago, IL",
+            followers: 723,
+            following: 291,
+            styleTraits: [
+              "Practical",
+              "Quality-focused",
+              "Traditional",
+              "Functional",
+            ],
+            favoriteCategories: ["Kitchen", "Cooking", "Home"],
+            favoriteBrands: ["KitchenAid", "Le Creuset", "OXO", "Cuisinart"],
+            recentProducts: [
+              {
+                id: "p10",
+                title: "Cast Iron Dutch Oven",
+                image: "https://picsum.photos/seed/product10/300/200",
+                price: 249.99,
+              },
+              {
+                id: "p11",
+                title: "Chef's Knife",
+                image: "https://picsum.photos/seed/product11/300/200",
+                price: 89.99,
+              },
+              {
+                id: "p12",
+                title: "Smart Kitchen Scale",
+                image: "https://picsum.photos/seed/product12/300/200",
+                price: 59.99,
+              },
+            ],
+            commonInterests: [
+              "Cooking Gadgets",
+              "Quality Kitchenware",
+              "Smart Home",
+            ],
+          },
+        ];
 
-    // Simulate API call to find style twins
-    setLoading(true);
-    setTimeout(() => {
-      // Generate mock style twins
-      const mockTwins = [
-        {
-          id: "user1",
-          name: "Emma Thompson",
-          avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-          matchScore: 0.92,
-          bio: "Fashion enthusiast with a love for minimalist design and sustainable brands.",
-          location: "New York, NY",
-          followers: 1243,
-          following: 567,
-          styleTraits: ["Minimalist", "Sustainable", "Modern", "Casual Chic"],
-          favoriteCategories: ["Fashion", "Home Decor", "Accessories"],
-          favoriteBrands: ["Everlane", "Reformation", "Muji", "IKEA"],
-          recentProducts: [
-            {
-              id: "p1",
-              title: "Linen Shirt Dress",
-              image: "https://picsum.photos/seed/product1/300/200",
-              price: 89.99,
-            },
-            {
-              id: "p2",
-              title: "Ceramic Planter",
-              image: "https://picsum.photos/seed/product2/300/200",
-              price: 34.99,
-            },
-            {
-              id: "p3",
-              title: "Minimalist Watch",
-              image: "https://picsum.photos/seed/product3/300/200",
-              price: 129.99,
-            },
-          ],
-          commonInterests: [
-            "Sustainable Fashion",
-            "Indoor Plants",
-            "Scandinavian Design",
-          ],
-        },
-        {
-          id: "user2",
-          name: "Michael Chen",
-          avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-          matchScore: 0.87,
-          bio: "Tech enthusiast and design lover. Always looking for smart home gadgets and sleek accessories.",
-          location: "San Francisco, CA",
-          followers: 892,
-          following: 345,
-          styleTraits: ["Modern", "Tech-Forward", "Minimalist", "Urban"],
-          favoriteCategories: ["Electronics", "Smart Home", "Accessories"],
-          favoriteBrands: ["Apple", "Samsung", "Bose", "Philips Hue"],
-          recentProducts: [
-            {
-              id: "p4",
-              title: "Wireless Earbuds",
-              image: "https://picsum.photos/seed/product4/300/200",
-              price: 149.99,
-            },
-            {
-              id: "p5",
-              title: "Smart Desk Lamp",
-              image: "https://picsum.photos/seed/product5/300/200",
-              price: 79.99,
-            },
-            {
-              id: "p6",
-              title: "Minimalist Backpack",
-              image: "https://picsum.photos/seed/product6/300/200",
-              price: 89.99,
-            },
-          ],
-          commonInterests: [
-            "Smart Home Tech",
-            "Minimalist Design",
-            "Productivity Gadgets",
-          ],
-        },
-        {
-          id: "user3",
-          name: "Sophia Rodriguez",
-          avatar: "https://randomuser.me/api/portraits/women/29.jpg",
-          matchScore: 0.84,
-          bio: "Fitness enthusiast and wellness advocate. Love discovering new workout gear and healthy living products.",
-          location: "Los Angeles, CA",
-          followers: 1567,
-          following: 432,
-          styleTraits: ["Athletic", "Casual", "Functional", "Eco-friendly"],
-          favoriteCategories: ["Fitness", "Wellness", "Activewear"],
-          favoriteBrands: ["Nike", "Lululemon", "Hydroflask", "Manduka"],
-          recentProducts: [
-            {
-              id: "p7",
-              title: "Yoga Mat",
-              image: "https://picsum.photos/seed/product7/300/200",
-              price: 68.99,
-            },
-            {
-              id: "p8",
-              title: "Fitness Tracker",
-              image: "https://picsum.photos/seed/product8/300/200",
-              price: 129.99,
-            },
-            {
-              id: "p9",
-              title: "Reusable Water Bottle",
-              image: "https://picsum.photos/seed/product9/300/200",
-              price: 34.99,
-            },
-          ],
-          commonInterests: [
-            "Fitness Tech",
-            "Sustainable Products",
-            "Outdoor Activities",
-          ],
-        },
-        {
-          id: "user4",
-          name: "David Johnson",
-          avatar: "https://randomuser.me/api/portraits/men/86.jpg",
-          matchScore: 0.79,
-          bio: "Home chef and kitchen gadget collector. Always looking for the next tool to elevate my cooking game.",
-          location: "Chicago, IL",
-          followers: 723,
-          following: 291,
-          styleTraits: [
-            "Practical",
-            "Quality-focused",
-            "Traditional",
-            "Functional",
-          ],
-          favoriteCategories: ["Kitchen", "Cooking", "Home"],
-          favoriteBrands: ["KitchenAid", "Le Creuset", "OXO", "Cuisinart"],
-          recentProducts: [
-            {
-              id: "p10",
-              title: "Cast Iron Dutch Oven",
-              image: "https://picsum.photos/seed/product10/300/200",
-              price: 249.99,
-            },
-            {
-              id: "p11",
-              title: "Chef's Knife",
-              image: "https://picsum.photos/seed/product11/300/200",
-              price: 89.99,
-            },
-            {
-              id: "p12",
-              title: "Smart Kitchen Scale",
-              image: "https://picsum.photos/seed/product12/300/200",
-              price: 59.99,
-            },
-          ],
-          commonInterests: [
-            "Cooking Gadgets",
-            "Quality Kitchenware",
-            "Smart Home",
-          ],
-        },
-      ];
+        setStyleTwins(mockTwins);
+        setLoading(false);
+      }, 1500);
+    };
 
-      setStyleTwins(mockTwins);
-      setLoading(false);
-    }, 2000);
-  }, [aiRecommendationStore]);
-
-  const generateStyleProfile = () => {
-    // In a real app, this would analyze user's product interactions and preferences
-    setStyleProfile({
-      stylePersonality: "Modern Minimalist",
-      dominantTraits: [
-        { trait: "Minimalist", score: 0.92 },
-        { trait: "Modern", score: 0.87 },
-        { trait: "Tech-Forward", score: 0.83 },
-        { trait: "Sustainable", score: 0.76 },
-      ],
-      colorPreferences: [
-        { color: "Black", percentage: 35 },
-        { color: "White", percentage: 30 },
-        { color: "Gray", percentage: 20 },
-        { color: "Blue", percentage: 15 },
-      ],
-      priceRange: {
-        average: 89.99,
-        range: "$50-150",
-      },
-      topCategories: [
-        { category: "Tech", percentage: 40 },
-        { category: "Home Decor", percentage: 30 },
-        { category: "Fashion", percentage: 20 },
-        { category: "Accessories", percentage: 10 },
-      ],
-    });
-  };
+    loadProfile();
+  }, [profileId, shoppingProfileStore]);
 
   const handleRefreshTwins = () => {
     setAnalyzing(true);
@@ -302,7 +291,7 @@ const AIStyleTwinPage = observer(({ isAuthenticated = true }) => {
           <Box>
             <Typography variant="h4" component="h1" gutterBottom>
               <AutoAwesomeIcon sx={{ mr: 1, verticalAlign: "middle" }} />
-              Find Your Style Twins
+              {currentProfile ? `Style Twins for ${currentProfile.name}` : 'Find Your Style Twins'}
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
               Discover people who share your taste and style preferences,

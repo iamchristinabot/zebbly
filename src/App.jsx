@@ -61,7 +61,8 @@ function App() {
                 <Route path="/ai-create" element={<AIEnhancedPostCreationPage isAuthenticated={true} />} />
                 <Route path="/ai-discover" element={<AIProductDiscoveryPage isAuthenticated={true} />} />
                 <Route path="/ai-chat" element={<AIChatDiscoveryPage isAuthenticated={true} />} />
-                <Route path="/style-twins" element={<AIStyleTwinPage isAuthenticated={true} />} />
+                <Route path="/style-twins" element={<AIStyleTwinPage />} />
+                <Route path="/style-twins/:profileId" element={<AIStyleTwinPage />} />
                 <Route path="/shopping-profiles" element={<ShoppingProfilesPage isAuthenticated={true} />} />
                 <Route path="/settings" element={<SettingsPage isAuthenticated={true} />} />
                 <Route path="/people" element={<PeopleYouMightLikePage isAuthenticated={true} />} />
