@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
-import { StoreContext } from './stores/storeContext';
-import rootStore from './stores/rootStore';
+import { StoreProvider } from './stores/storeContext';
 import theme from './theme';
 
 // Pages
@@ -47,7 +46,7 @@ function App() {
   };
 
   return (
-    <StoreContext.Provider value={rootStore}>
+    <StoreProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Router>
@@ -85,7 +84,7 @@ function App() {
           </Routes>
         </Router>
       </ThemeProvider>
-    </StoreContext.Provider>
+    </StoreProvider>
   );
 }
 

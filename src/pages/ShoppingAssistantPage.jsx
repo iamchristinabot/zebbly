@@ -18,7 +18,11 @@ import {
   CircularProgress,
   Divider,
   Tooltip,
-  useTheme
+  useTheme,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
@@ -36,40 +40,294 @@ import Header from '../components/Header';
 // Message types
 const MESSAGE_TYPE = {
   USER: 'user',
-  AI: 'ai',
-  RECOMMENDATIONS: 'recommendations'
+  ASSISTANT: 'assistant',
+  PRODUCT: 'product'
 };
 
 const ShoppingAssistantPage = observer(({ isAuthenticated = true }) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { userStore, aiRecommendationStore } = useContext(StoreContext);
-  const messagesEndRef = useRef(null);
+  const { userStore, shoppingProfileStore, aiRecommendationStore } = useContext(StoreContext);
+  
+  // Create a fallback for aiRecommendationStore if it's undefined
+  const defaultUserPreferences = {
+    interests: ['Tech', 'Home Decor', 'Fitness'],
+    priceRanges: {
+      'Tech': { min: 50, max: 500 },
+      'Home Decor': { min: 20, max: 200 },
+      'Fitness': { min: 30, max: 150 }
+    },
+    styles: ['Modern', 'Minimalist'],
+    colors: ['Black', 'White', 'Gray', 'Blue'],
+    brands: ['Apple', 'Samsung', 'Nike', 'Adidas', 'IKEA']
+  };
+  
+  // Selected profile for shopping
+  const [selectedProfileId, setSelectedProfileId] = useState(null);
+  const [profilePreferences, setProfilePreferences] = useState({});
+  const [loadingProfiles, setLoadingProfiles] = useState(true);
+  
+  // Use either the store's userPreferences or the profile-specific preferences
+  const userPreferences = profilePreferences[selectedProfileId] || defaultUserPreferences;
   
   // Chat state
   const [messages, setMessages] = useState([
     {
-      type: MESSAGE_TYPE.AI,
-      content: "Hi there! I'm your AI shopping assistant. Tell me what you're looking for, and I'll help you find the perfect products. You can describe the item, your preferences, or even your needs, and I'll suggest products that match.",
+      type: MESSAGE_TYPE.ASSISTANT,
+      content: "Hi there! I'm your AI shopping assistant. How can I help you find products today?",
       timestamp: new Date()
     }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef(null);
+  
+  // Product recommendations
+  const [recommendedProducts, setRecommendedProducts] = useState([]);
+  
+  // Load profiles from store
+  useEffect(() => {
+    const loadProfiles = async () => {
+      setLoadingProfiles(true);
+      
+      try {
+        if (!shoppingProfileStore) {
+          console.error("Shopping profile store is not available");
+          setLoadingProfiles(false);
+          return;
+        }
+        
+        // Load profiles from store
+        await shoppingProfileStore.loadProfiles();
+        
+        // Set default profile if available
+        const defaultProfile = shoppingProfileStore.profiles.find(p => p.isDefault);
+        if (defaultProfile) {
+          setSelectedProfileId(defaultProfile.id);
+        } else if (shoppingProfileStore.profiles.length > 0) {
+          // Fallback to first profile if no default is set
+          setSelectedProfileId(shoppingProfileStore.profiles[0].id);
+        }
+        
+        // Generate preferences for each profile
+        const preferences = {};
+        shoppingProfileStore.profiles.forEach(profile => {
+          preferences[profile.id] = generateProfilePreferences(profile);
+        });
+        setProfilePreferences(preferences);
+      } catch (error) {
+        console.error('Error loading profiles:', error);
+      } finally {
+        setLoadingProfiles(false);
+      }
+    };
+    
+    loadProfiles();
+  }, [shoppingProfileStore]);
+  
+  // Generate profile-specific preferences based on profile data
+  const generateProfilePreferences = (profile) => {
+    // If profile has specific preferences, use those
+    if (profile.interests && profile.stylePreferences && profile.favoriteColors) {
+      return {
+        interests: profile.interests || ['Fashion', 'Home Decor', 'Tech'],
+        priceRanges: {
+          'Tech': { min: 50, max: 500 },
+          'Home Decor': { min: 20, max: 200 },
+          'Fashion': { min: 30, max: 300 },
+          'Fitness': { min: 30, max: 150 }
+        },
+        styles: profile.stylePreferences || ['Modern', 'Minimalist'],
+        colors: profile.favoriteColors || ['Black', 'White', 'Gray', 'Blue'],
+        brands: profile.favoriteStores || ['Apple', 'Samsung', 'Nike', 'Adidas', 'IKEA']
+      };
+    }
+    
+    // Otherwise, generate based on relationship
+    if (profile.relationship === 'spouse') {
+      return {
+        interests: ['Tech', 'Sports', 'Cooking'],
+        priceRanges: {
+          'Tech': { min: 100, max: 1000 },
+          'Sports': { min: 50, max: 300 },
+          'Cooking': { min: 30, max: 200 }
+        },
+        styles: ['Casual', 'Sporty', 'Classic'],
+        colors: ['Blue', 'Gray', 'Black', 'Green'],
+        brands: ['Samsung', 'Nike', 'Under Armour', 'North Face', 'Weber']
+      };
+    } else if (profile.relationship === 'child') {
+      return {
+        interests: ['Toys', 'Books', 'Games'],
+        priceRanges: {
+          'Toys': { min: 20, max: 100 },
+          'Books': { min: 10, max: 50 },
+          'Games': { min: 20, max: 60 }
+        },
+        styles: ['Colorful', 'Fun', 'Playful'],
+        colors: ['Red', 'Blue', 'Yellow', 'Green'],
+        brands: ['Lego', 'Disney', 'Nintendo', 'Marvel']
+      };
+    } else {
+      // Default for self or other
+      return {
+        interests: ['Fashion', 'Home Decor', 'Beauty'],
+        priceRanges: {
+          'Fashion': { min: 30, max: 300 },
+          'Home Decor': { min: 20, max: 200 },
+          'Beauty': { min: 15, max: 100 }
+        },
+        styles: ['Modern', 'Minimalist', 'Elegant'],
+        colors: ['Black', 'White', 'Beige', 'Pink'],
+        brands: ['Zara', 'H&M', 'Sephora', 'IKEA', 'West Elm']
+      };
+    }
+  };
   
   // Scroll to bottom of chat when messages change
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
   
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-  
+  // Handle input change
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
   
+  // Handle profile change
+  const handleProfileChange = (e) => {
+    const newProfileId = e.target.value;
+    setSelectedProfileId(newProfileId);
+    
+    // Add a message about the profile change
+    const selectedProfile = shoppingProfileStore.profiles.find(p => p.id === newProfileId);
+    if (selectedProfile) {
+      setMessages(prev => [
+        ...prev,
+        {
+          type: MESSAGE_TYPE.ASSISTANT,
+          content: `I've switched to shopping for ${selectedProfile.name}. I'll adjust my recommendations based on their preferences.`,
+          timestamp: new Date()
+        }
+      ]);
+    }
+  };
+  
+  // Handle send message
+  const handleSendMessage = () => {
+    if (!inputValue.trim()) return;
+    
+    // Add user message
+    const userMessage = {
+      type: MESSAGE_TYPE.USER,
+      content: inputValue,
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue('');
+    setIsTyping(true);
+    
+    // Simulate AI response
+    setTimeout(() => {
+      const aiResponse = generateAIResponse(inputValue);
+      setMessages(prev => [...prev, aiResponse]);
+      setIsTyping(false);
+      
+      // If the message is about product recommendations, show some products
+      if (inputValue.toLowerCase().includes('recommend') || 
+          inputValue.toLowerCase().includes('suggest') ||
+          inputValue.toLowerCase().includes('show me')) {
+        generateProductRecommendations();
+      }
+    }, 1500);
+  };
+  
+  // Generate AI response based on user input
+  const generateAIResponse = (userInput) => {
+    const userInputLower = userInput.toLowerCase();
+    let responseContent = '';
+    
+    if (userInputLower.includes('hello') || userInputLower.includes('hi')) {
+      responseContent = `Hello! I'm here to help you find products that match your preferences. What are you looking for today?`;
+    } else if (userInputLower.includes('recommend') || userInputLower.includes('suggest')) {
+      if (userInputLower.includes('tech') || userInputLower.includes('gadget') || userInputLower.includes('electronic')) {
+        responseContent = `Based on your preferences for ${userPreferences.interests.join(', ')}, I'd recommend checking out these tech products. They match your modern, minimalist style and fall within your price range of $${userPreferences.priceRanges['Tech'].min}-$${userPreferences.priceRanges['Tech'].max}.`;
+      } else if (userInputLower.includes('home') || userInputLower.includes('decor') || userInputLower.includes('furniture')) {
+        responseContent = `I've found some home decor items that match your ${userPreferences.styles.join(', ')} style preferences. These items feature your favorite colors: ${userPreferences.colors.join(', ')}.`;
+      } else if (userInputLower.includes('fitness') || userInputLower.includes('workout') || userInputLower.includes('exercise')) {
+        responseContent = `Here are some fitness products I think you'll love. They're from brands you prefer like ${userPreferences.brands.filter(b => b === 'Nike' || b === 'Adidas').join(', ')}.`;
+      } else {
+        responseContent = `I'd be happy to recommend some products for you. Based on your preferences, I think you might like these items. They match your style and interests in ${userPreferences.interests.join(', ')}.`;
+      }
+    } else if (userInputLower.includes('price') || userInputLower.includes('budget') || userInputLower.includes('cost')) {
+      responseContent = `I can help you find products within your budget. What price range are you looking for?`;
+    } else if (userInputLower.includes('thank')) {
+      responseContent = `You're welcome! Is there anything else I can help you with today?`;
+    } else {
+      responseContent = `I understand you're interested in "${userInput}". Let me find some relevant products that match your preferences for ${userPreferences.interests.join(', ')} and your ${userPreferences.styles.join(', ')} style.`;
+    }
+    
+    return {
+      type: MESSAGE_TYPE.ASSISTANT,
+      content: responseContent,
+      timestamp: new Date()
+    };
+  };
+  
+  // Generate product recommendations
+  const generateProductRecommendations = () => {
+    // Simulate API call to get product recommendations
+    setTimeout(() => {
+      const mockProducts = [
+        {
+          id: 'p1',
+          title: 'Wireless Noise Cancelling Headphones',
+          description: 'Premium sound quality with adaptive noise cancellation.',
+          price: 249.99,
+          image: 'https://via.placeholder.com/300x200',
+          store: 'Amazon',
+          rating: 4.7,
+          reviews: 1245
+        },
+        {
+          id: 'p2',
+          title: 'Smart Home Hub',
+          description: 'Control all your smart devices from one central hub.',
+          price: 129.99,
+          image: 'https://via.placeholder.com/300x200',
+          store: 'Best Buy',
+          rating: 4.5,
+          reviews: 867
+        },
+        {
+          id: 'p3',
+          title: 'Fitness Tracker Watch',
+          description: 'Track your workouts, heart rate, and sleep patterns.',
+          price: 179.99,
+          image: 'https://via.placeholder.com/300x200',
+          store: 'Nike',
+          rating: 4.6,
+          reviews: 932
+        }
+      ];
+      
+      setRecommendedProducts(mockProducts);
+      
+      // Add product message to chat
+      setMessages(prev => [
+        ...prev, 
+        {
+          type: MESSAGE_TYPE.PRODUCT,
+          content: 'Here are some products you might like:',
+          products: mockProducts,
+          timestamp: new Date()
+        }
+      ]);
+    }, 1000);
+  };
+  
+  // Handle key press (Enter to send)
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -77,365 +335,360 @@ const ShoppingAssistantPage = observer(({ isAuthenticated = true }) => {
     }
   };
   
-  const handleSendMessage = () => {
-    if (inputValue.trim() === '') return;
-    
-    // Add user message to chat
-    const userMessage = {
-      type: MESSAGE_TYPE.USER,
-      content: inputValue,
-      timestamp: new Date()
-    };
-    
-    setMessages(prevMessages => [...prevMessages, userMessage]);
-    setInputValue('');
-    setIsTyping(true);
-    
-    // Simulate AI thinking
-    setTimeout(() => {
-      processUserMessage(userMessage.content);
-    }, 1000);
+  // Handle product like
+  const handleLikeProduct = (productId) => {
+    setRecommendedProducts(prev => 
+      prev.map(p => p.id === productId ? { ...p, liked: !p.liked } : p)
+    );
   };
   
-  const processUserMessage = (userInput) => {
-    // Analyze user input to determine intent
-    const userInputLower = userInput.toLowerCase();
-    
-    // Check if user is looking for specific product categories
-    const categories = ['tech', 'electronics', 'fashion', 'clothing', 'home', 'decor', 'fitness', 'beauty'];
-    const mentionedCategories = categories.filter(category => userInputLower.includes(category));
-    
-    // Check for price mentions
-    const priceRegex = /(\$\d+|\d+ dollars|\d+\$|\d+ bucks)/g;
-    const priceMentions = userInputLower.match(priceRegex);
-    
-    // Check for style/preference mentions
-    const styles = ['modern', 'vintage', 'minimalist', 'luxury', 'casual', 'formal', 'sporty'];
-    const mentionedStyles = styles.filter(style => userInputLower.includes(style));
-    
-    // Generate AI response
-    let aiResponse = "";
-    
-    if (mentionedCategories.length > 0) {
-      aiResponse = `I found some great ${mentionedCategories.join(', ')} products that might interest you.`;
-      if (mentionedStyles.length > 0) {
-        aiResponse += ` I've focused on ${mentionedStyles.join(', ')} styles as you mentioned.`;
-      }
-      if (priceMentions) {
-        aiResponse += ` I've considered your budget preferences as well.`;
-      }
-    } else if (userInputLower.includes('recommend') || userInputLower.includes('suggest')) {
-      aiResponse = "Based on your request, here are some personalized recommendations I think you'll love:";
-    } else {
-      aiResponse = "I found some products that match what you're looking for:";
+  // Handle product save
+  const handleSaveProduct = (productId) => {
+    setRecommendedProducts(prev => 
+      prev.map(p => p.id === productId ? { ...p, saved: !p.saved } : p)
+    );
+  };
+  
+  // Handle product buy
+  const handleBuyProduct = (productId) => {
+    // In a real app, this would navigate to the product page or add to cart
+    console.log(`Buy product: ${productId}`);
+  };
+  
+  // Render message based on type
+  const renderMessage = (message, index) => {
+    switch (message.type) {
+      case MESSAGE_TYPE.USER:
+        return (
+          <Box
+            key={index}
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              mb: 2
+            }}
+          >
+            <Paper
+              sx={{
+                p: 2,
+                maxWidth: '70%',
+                bgcolor: theme.palette.primary.main,
+                color: theme.palette.primary.contrastText,
+                borderRadius: '12px 12px 0 12px'
+              }}
+            >
+              <Typography variant="body1">{message.content}</Typography>
+            </Paper>
+          </Box>
+        );
+        
+      case MESSAGE_TYPE.ASSISTANT:
+        return (
+          <Box
+            key={index}
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-start',
+              mb: 2
+            }}
+          >
+            <Avatar
+              sx={{
+                bgcolor: theme.palette.secondary.main,
+                mr: 1
+              }}
+            >
+              <SmartToyIcon />
+            </Avatar>
+            <Paper
+              sx={{
+                p: 2,
+                maxWidth: '70%',
+                bgcolor: theme.palette.grey[100],
+                borderRadius: '12px 12px 12px 0'
+              }}
+            >
+              <Typography variant="body1">{message.content}</Typography>
+            </Paper>
+          </Box>
+        );
+        
+      case MESSAGE_TYPE.PRODUCT:
+        return (
+          <Box
+            key={index}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              mb: 2
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                mb: 2
+              }}
+            >
+              <Avatar
+                sx={{
+                  bgcolor: theme.palette.secondary.main,
+                  mr: 1
+                }}
+              >
+                <SmartToyIcon />
+              </Avatar>
+              <Paper
+                sx={{
+                  p: 2,
+                  maxWidth: '70%',
+                  bgcolor: theme.palette.grey[100],
+                  borderRadius: '12px 12px 12px 0'
+                }}
+              >
+                <Typography variant="body1">{message.content}</Typography>
+              </Paper>
+            </Box>
+            
+            <Grid container spacing={2} sx={{ ml: 5 }}>
+              {message.products.map((product) => (
+                <Grid item xs={12} sm={6} md={4} key={product.id}>
+                  <Card>
+                    <CardMedia
+                      component="img"
+                      height="140"
+                      image={product.image}
+                      alt={product.title}
+                    />
+                    <CardContent>
+                      <Typography variant="h6" component="div" noWrap>
+                        {product.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                        {product.description}
+                      </Typography>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="h6" component="div">
+                          ${product.price}
+                        </Typography>
+                        <Chip label={product.store} size="small" />
+                      </Box>
+                    </CardContent>
+                    <CardActions>
+                      <IconButton onClick={() => handleLikeProduct(product.id)}>
+                        {product.liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
+                      </IconButton>
+                      <IconButton onClick={() => handleSaveProduct(product.id)}>
+                        {product.saved ? <BookmarkIcon color="primary" /> : <BookmarkBorderIcon />}
+                      </IconButton>
+                      <Button 
+                        variant="contained" 
+                        size="small" 
+                        startIcon={<ShoppingCartIcon />}
+                        onClick={() => handleBuyProduct(product.id)}
+                        sx={{ ml: 'auto' }}
+                      >
+                        Buy
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        );
+        
+      default:
+        return null;
     }
-    
-    // Add AI response to chat
-    setMessages(prevMessages => [
-      ...prevMessages, 
-      {
-        type: MESSAGE_TYPE.AI,
-        content: aiResponse,
-        timestamp: new Date()
-      }
-    ]);
-    
-    // Add product recommendations
-    setTimeout(() => {
-      // Get recommendations from store (in a real app, this would be filtered based on user input)
-      const recommendations = aiRecommendationStore.personalizedRecommendations.slice(0, 3);
-      
-      setMessages(prevMessages => [
-        ...prevMessages,
-        {
-          type: MESSAGE_TYPE.RECOMMENDATIONS,
-          content: recommendations,
-          timestamp: new Date()
-        }
-      ]);
-      
-      setIsTyping(false);
-    }, 1000);
   };
   
   return (
     <>
       <Header isAuthenticated={isAuthenticated} />
       
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            <AutoAwesomeIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-            AI Shopping Assistant
-          </Typography>
-          <Typography variant="body1" color="text.secondary" paragraph>
-            Chat with our AI to discover products tailored to your needs and preferences.
-          </Typography>
-        </Box>
-        
-        <Grid container spacing={4}>
-          <Grid item xs={12} md={8}>
-            {/* Chat interface */}
-            <Paper 
-              elevation={0} 
-              sx={{ 
-                p: 3, 
-                border: `1px solid ${theme.palette.brand.lightGray}`,
-                borderRadius: 2,
-                height: 'calc(100vh - 240px)',
-                display: 'flex',
-                flexDirection: 'column'
-              }}
-            >
-              {/* Chat messages */}
-              <Box 
-                sx={{ 
-                  flexGrow: 1, 
-                  overflowY: 'auto',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 2,
-                  mb: 2
-                }}
-              >
-                {messages.map((message, index) => (
-                  <React.Fragment key={index}>
-                    {message.type === MESSAGE_TYPE.USER && (
-                      <Box 
-                        sx={{ 
-                          alignSelf: 'flex-end',
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          maxWidth: '80%'
-                        }}
-                      >
-                        <Box 
-                          sx={{ 
-                            bgcolor: theme.palette.primary.main,
-                            color: 'white',
-                            p: 2,
-                            borderRadius: 2,
-                            borderBottomRightRadius: 0,
-                            mr: 1
-                          }}
-                        >
-                          <Typography variant="body1">{message.content}</Typography>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
+        <Grid container spacing={3}>
+          {/* Sidebar */}
+          <Grid item xs={12} md={3}>
+            <Paper sx={{ p: 2, height: '100%' }}>
+              <Typography variant="h6" gutterBottom>
+                Shopping Profiles
+              </Typography>
+              
+              {loadingProfiles ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                  <CircularProgress size={24} />
+                </Box>
+              ) : (
+                <FormControl fullWidth sx={{ mb: 3 }}>
+                  <InputLabel id="profile-select-label">Shop For</InputLabel>
+                  <Select
+                    labelId="profile-select-label"
+                    id="profile-select"
+                    value={selectedProfileId || ''}
+                    label="Shop For"
+                    onChange={handleProfileChange}
+                    disabled={!shoppingProfileStore || shoppingProfileStore.profiles.length === 0}
+                  >
+                    {shoppingProfileStore?.profiles.map((profile) => (
+                      <MenuItem key={profile.id} value={profile.id}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Avatar 
+                            src={profile.avatar} 
+                            sx={{ width: 24, height: 24, mr: 1 }}
+                          >
+                            {!profile.avatar && <PersonIcon fontSize="small" />}
+                          </Avatar>
+                          <Typography>
+                            {profile.name}
+                          </Typography>
                         </Box>
-                        <Avatar sx={{ bgcolor: theme.palette.primary.dark }}>
-                          <PersonIcon />
-                        </Avatar>
-                      </Box>
-                    )}
-                    
-                    {message.type === MESSAGE_TYPE.AI && (
-                      <Box 
-                        sx={{ 
-                          alignSelf: 'flex-start',
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          maxWidth: '80%'
-                        }}
-                      >
-                        <Avatar sx={{ bgcolor: theme.palette.secondary.main, mr: 1 }}>
-                          <SmartToyIcon />
-                        </Avatar>
-                        <Box 
-                          sx={{ 
-                            bgcolor: theme.palette.brand.lightTeal,
-                            p: 2,
-                            borderRadius: 2,
-                            borderBottomLeftRadius: 0
-                          }}
-                        >
-                          <Typography variant="body1">{message.content}</Typography>
-                        </Box>
-                      </Box>
-                    )}
-                    
-                    {message.type === MESSAGE_TYPE.RECOMMENDATIONS && (
-                      <Box 
-                        sx={{ 
-                          alignSelf: 'flex-start',
-                          ml: 5,
-                          width: 'calc(100% - 40px)'
-                        }}
-                      >
-                        <Grid container spacing={2}>
-                          {message.content.map((recommendation, recIndex) => (
-                            <Grid item xs={12} sm={6} md={4} key={recIndex}>
-                              <ProductCard recommendation={recommendation} />
-                            </Grid>
-                          ))}
-                        </Grid>
-                        
-                        <Button 
-                          variant="outlined" 
-                          color="primary"
-                          sx={{ mt: 2 }}
-                          onClick={() => navigate('/ai-discover')}
-                        >
-                          See More Recommendations
-                        </Button>
-                      </Box>
-                    )}
-                  </React.Fragment>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+              
+              <Divider sx={{ my: 2 }} />
+              
+              <Typography variant="h6" gutterBottom>
+                Shopping Preferences
+              </Typography>
+              
+              <Typography variant="subtitle2" gutterBottom>
+                Interests
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+                {userPreferences.interests.map((interest, index) => (
+                  <Chip key={index} label={interest} size="small" />
                 ))}
+              </Box>
+              
+              <Typography variant="subtitle2" gutterBottom>
+                Style
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+                {userPreferences.styles.map((style, index) => (
+                  <Chip key={index} label={style} size="small" />
+                ))}
+              </Box>
+              
+              <Typography variant="subtitle2" gutterBottom>
+                Favorite Colors
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+                {userPreferences.colors.map((color, index) => (
+                  <Chip key={index} label={color} size="small" />
+                ))}
+              </Box>
+              
+              <Typography variant="subtitle2" gutterBottom>
+                Preferred Brands
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {userPreferences.brands.map((brand, index) => (
+                  <Chip key={index} label={brand} size="small" />
+                ))}
+              </Box>
+            </Paper>
+          </Grid>
+          
+          {/* Chat Area */}
+          <Grid item xs={12} md={9}>
+            <Paper sx={{ p: 2, height: '70vh', display: 'flex', flexDirection: 'column' }}>
+              {/* Chat messages */}
+              <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
+                {messages.map((message, index) => renderMessage(message, index))}
                 
                 {isTyping && (
-                  <Box 
-                    sx={{ 
-                      alignSelf: 'flex-start',
+                  <Box
+                    sx={{
                       display: 'flex',
-                      alignItems: 'flex-start',
-                      maxWidth: '80%'
+                      justifyContent: 'flex-start',
+                      mb: 2
                     }}
                   >
-                    <Avatar sx={{ bgcolor: theme.palette.secondary.main, mr: 1 }}>
-                      <SmartToyIcon />
-                    </Avatar>
-                    <Box 
-                      sx={{ 
-                        bgcolor: theme.palette.brand.lightTeal,
-                        p: 2,
-                        borderRadius: 2,
-                        borderBottomLeftRadius: 0,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1
+                    <Avatar
+                      sx={{
+                        bgcolor: theme.palette.secondary.main,
+                        mr: 1
                       }}
                     >
-                      <CircularProgress size={16} />
-                      <Typography variant="body2">Thinking...</Typography>
-                    </Box>
+                      <SmartToyIcon />
+                    </Avatar>
+                    <Paper
+                      sx={{
+                        p: 2,
+                        maxWidth: '70%',
+                        bgcolor: theme.palette.grey[100],
+                        borderRadius: '12px 12px 12px 0'
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <CircularProgress size={16} sx={{ mr: 1 }} />
+                        <Typography variant="body2">Typing...</Typography>
+                      </Box>
+                    </Paper>
                   </Box>
                 )}
                 
                 <div ref={messagesEndRef} />
               </Box>
               
-              {/* Chat input */}
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <TextField
-                  fullWidth
-                  placeholder="Ask me about products you're looking for..."
-                  variant="outlined"
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  onKeyPress={handleKeyPress}
-                  multiline
-                  maxRows={3}
-                  sx={{ 
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 2
-                    }
-                  }}
-                />
-                <Button 
-                  variant="contained" 
-                  color="primary"
-                  onClick={handleSendMessage}
-                  disabled={inputValue.trim() === '' || isTyping}
-                  sx={{ borderRadius: 2 }}
-                >
-                  <SendIcon />
-                </Button>
-              </Box>
-            </Paper>
-          </Grid>
-          
-          <Grid item xs={12} md={4}>
-            {/* Shopping preferences */}
-            <Paper 
-              elevation={0} 
-              sx={{ 
-                p: 3, 
-                border: `1px solid ${theme.palette.brand.lightGray}`,
-                borderRadius: 2,
-                mb: 3
-              }}
-            >
-              <Typography variant="h6" gutterBottom>
-                Your Shopping Preferences
-              </Typography>
-              
-              <Typography variant="subtitle2" gutterBottom sx={{ mt: 2 }}>
-                Favorite Categories
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                {aiRecommendationStore.userPreferences.interests.map((interest, index) => (
-                  <Chip key={index} label={interest} size="small" />
-                ))}
-              </Box>
-              
-              <Typography variant="subtitle2" gutterBottom>
-                Style Preferences
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                {aiRecommendationStore.userPreferences.styles.map((style, index) => (
-                  <Chip key={index} label={style} size="small" />
-                ))}
-              </Box>
-              
-              <Typography variant="subtitle2" gutterBottom>
-                Favorite Brands
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {aiRecommendationStore.userPreferences.brands.slice(0, 3).map((brand, index) => (
-                  <Chip key={index} label={brand} size="small" />
-                ))}
-              </Box>
-              
-              <Divider sx={{ my: 2 }} />
-              
-              <Button 
-                variant="text" 
-                color="primary"
-                fullWidth
-                component={Link}
-                to="/settings"
-              >
-                Edit Preferences
-              </Button>
-            </Paper>
-            
-            {/* Suggested prompts */}
-            <Paper 
-              elevation={0} 
-              sx={{ 
-                p: 3, 
-                border: `1px solid ${theme.palette.brand.lightGray}`,
-                borderRadius: 2
-              }}
-            >
-              <Typography variant="h6" gutterBottom>
-                Try asking about:
-              </Typography>
-              
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                {[
-                  "I need a new laptop for work under $1000",
-                  "Show me minimalist home decor items",
-                  "I'm looking for workout clothes for summer",
-                  "What are the trending tech gadgets right now?",
-                  "I need a gift for my mom who loves cooking"
-                ].map((prompt, index) => (
-                  <Button 
-                    key={index}
-                    variant="outlined"
+              {/* Input area */}
+              <Box sx={{ p: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
+                <Grid container spacing={2}>
+                  <Grid item xs>
+                    <TextField
+                      fullWidth
+                      placeholder="Type your message..."
+                      variant="outlined"
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      onKeyPress={handleKeyPress}
+                      disabled={isTyping}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      endIcon={<SendIcon />}
+                      onClick={handleSendMessage}
+                      disabled={!inputValue.trim() || isTyping}
+                    >
+                      Send
+                    </Button>
+                  </Grid>
+                </Grid>
+                
+                <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  <Chip 
+                    label="Recommend tech gadgets" 
+                    onClick={() => setInputValue("Can you recommend some tech gadgets for me?")}
+                    clickable
                     color="primary"
+                    variant="outlined"
                     size="small"
-                    onClick={() => {
-                      setInputValue(prompt);
-                    }}
-                    sx={{ 
-                      justifyContent: 'flex-start',
-                      textTransform: 'none',
-                      borderRadius: 2
-                    }}
-                  >
-                    {prompt}
-                  </Button>
-                ))}
+                  />
+                  <Chip 
+                    label="Home decor ideas" 
+                    onClick={() => setInputValue("I'm looking for home decor ideas")}
+                    clickable
+                    color="primary"
+                    variant="outlined"
+                    size="small"
+                  />
+                  <Chip 
+                    label="Fitness equipment" 
+                    onClick={() => setInputValue("Show me some fitness equipment")}
+                    clickable
+                    color="primary"
+                    variant="outlined"
+                    size="small"
+                  />
+                </Box>
               </Box>
             </Paper>
           </Grid>
@@ -444,112 +697,5 @@ const ShoppingAssistantPage = observer(({ isAuthenticated = true }) => {
     </>
   );
 });
-
-// Product card component
-const ProductCard = ({ recommendation }) => {
-  const theme = useTheme();
-  const navigate = useNavigate();
-  const [liked, setLiked] = useState(false);
-  const [saved, setSaved] = useState(false);
-  
-  const handleLike = (e) => {
-    e.stopPropagation();
-    setLiked(!liked);
-  };
-  
-  const handleSave = (e) => {
-    e.stopPropagation();
-    setSaved(!saved);
-  };
-  
-  return (
-    <Card 
-      elevation={0} 
-      sx={{ 
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        border: `1px solid ${theme.palette.brand.lightGray}`,
-        borderRadius: 2,
-        transition: 'transform 0.2s, box-shadow 0.2s',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-          cursor: 'pointer'
-        }
-      }}
-      onClick={() => navigate(`/product/${recommendation.id}`)}
-    >
-      <Box sx={{ position: 'relative' }}>
-        <CardMedia
-          component="img"
-          height="140"
-          image={recommendation.image}
-          alt={recommendation.title}
-        />
-        <Box 
-          sx={{ 
-            position: 'absolute', 
-            top: 8, 
-            right: 8, 
-            bgcolor: 'rgba(0,0,0,0.6)', 
-            color: 'white',
-            borderRadius: 1,
-            px: 1,
-            py: 0.5
-          }}
-        >
-          <Typography variant="body2" fontWeight="bold">
-            {Math.round(recommendation.matchScore * 100)}% Match
-          </Typography>
-        </Box>
-      </Box>
-      
-      <CardContent sx={{ flexGrow: 1, p: 2 }}>
-        <Typography variant="subtitle1" component="div" gutterBottom noWrap>
-          {recommendation.title}
-        </Typography>
-        
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-          {recommendation.description.length > 60 
-            ? recommendation.description.substring(0, 60) + '...' 
-            : recommendation.description}
-        </Typography>
-        
-        <Typography variant="h6" color="primary">
-          ${recommendation.price.toFixed(2)}
-        </Typography>
-      </CardContent>
-      
-      <CardActions sx={{ borderTop: `1px solid ${theme.palette.brand.lightGray}`, p: 1 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-          <Box>
-            <Tooltip title={liked ? "Unlike" : "Like"}>
-              <IconButton onClick={handleLike} color={liked ? "primary" : "default"} size="small">
-                {liked ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={saved ? "Unsave" : "Save"}>
-              <IconButton onClick={handleSave} color={saved ? "primary" : "default"} size="small">
-                {saved ? <BookmarkIcon fontSize="small" /> : <BookmarkBorderIcon fontSize="small" />}
-              </IconButton>
-            </Tooltip>
-          </Box>
-          <Button 
-            variant="contained" 
-            size="small" 
-            startIcon={<ShoppingCartIcon />}
-            onClick={(e) => {
-              e.stopPropagation();
-              window.open('#', '_blank');
-            }}
-          >
-            View
-          </Button>
-        </Box>
-      </CardActions>
-    </Card>
-  );
-};
 
 export default ShoppingAssistantPage; 

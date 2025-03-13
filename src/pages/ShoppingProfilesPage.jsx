@@ -51,78 +51,79 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }) => {
   const navigate = useNavigate();
   const { userStore, shoppingProfileStore } = useContext(StoreContext);
 
-  // State for profiles and UI
-  const [profiles, setProfiles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // State for UI
   const [aiDialogOpen, setAiDialogOpen] = useState(false);
-  const [currentProfile, setCurrentProfile] = useState(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [selectedProfileId, setSelectedProfileId] = useState(null);
   const [aiGenerating, setAiGenerating] = useState(false);
+  const [loading, setLoading] = useState(true);
+  
+  // Local state for profiles if store is undefined
+  const [localProfiles, setLocalProfiles] = useState([]);
 
   // AI prompt state
   const [aiPrompt, setAiPrompt] = useState("");
 
   // Load profiles on component mount
   useEffect(() => {
-    // Simulate API call to load profiles
-    setLoading(true);
-    setTimeout(() => {
-      // Mock profiles data
-      const mockProfiles = [
-        {
-          id: "profile1",
-          name: "My Style",
-          relationship: "self",
-          age: 32,
-          gender: "Female",
-          interests: [
-            "Minimalist design",
-            "Sustainable fashion",
-            "Outdoor activities",
-          ],
-          stylePreferences: ["Casual chic", "Business casual", "Athleisure"],
-          favoriteColors: ["Navy", "Beige", "Olive green"],
-          favoriteCategories: ["Clothing", "Home decor", "Accessories"],
-          avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-          isDefault: true,
-        },
-        {
-          id: "profile2",
-          name: "Michael (Husband)",
-          relationship: "spouse",
-          age: 34,
-          gender: "Male",
-          interests: ["Technology", "Hiking", "Cooking"],
-          stylePreferences: ["Casual", "Sporty", "Classic"],
-          favoriteColors: ["Blue", "Gray", "Black"],
-          favoriteCategories: [
-            "Electronics",
-            "Outdoor gear",
-            "Kitchen gadgets",
-          ],
-          avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-          isDefault: false,
-        },
-        {
-          id: "profile3",
-          name: "Emma (Daughter)",
-          relationship: "child",
-          age: 7,
-          gender: "Female",
-          interests: ["Art", "Animals", "Reading"],
-          stylePreferences: ["Colorful", "Comfortable", "Fun"],
-          favoriteColors: ["Pink", "Purple", "Yellow"],
-          favoriteCategories: ["Toys", "Books", "Clothing"],
-          avatar: "https://randomuser.me/api/portraits/women/67.jpg",
-          isDefault: false,
-        },
-      ];
+    if (shoppingProfileStore) {
+      console.log("Using shoppingProfileStore");
+      shoppingProfileStore.loadProfiles().finally(() => setLoading(false));
+    } else {
+      console.log("shoppingProfileStore is undefined, using mock data");
+      // Mock data for when store is undefined
+      setTimeout(() => {
+        setLocalProfiles([
+          {
+            id: 'profile1',
+            name: 'My Style',
+            relationship: 'self',
+            age: 32,
+            gender: 'Female',
+            bio: 'This is my personal shopping profile for everyday items and fashion.',
+            interests: ['Minimalist design', 'Sustainable fashion', 'Outdoor activities'],
+            stylePreferences: ['Casual chic', 'Business casual', 'Athleisure'],
+            favoriteColors: ['Navy', 'Beige', 'Olive green'],
+            favoriteCategories: ['Clothing', 'Home decor', 'Accessories'],
+            avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+            isDefault: true
+          },
+          {
+            id: 'profile2',
+            name: 'Michael (Husband)',
+            relationship: 'spouse',
+            age: 34,
+            gender: 'Male',
+            bio: 'My husband who loves tech gadgets and outdoor gear.',
+            interests: ['Technology', 'Hiking', 'Cooking'],
+            stylePreferences: ['Casual', 'Sporty', 'Classic'],
+            favoriteColors: ['Blue', 'Gray', 'Black'],
+            favoriteCategories: ['Electronics', 'Outdoor gear', 'Kitchen gadgets'],
+            avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+            isDefault: false
+          },
+          {
+            id: 'profile3',
+            name: 'Emma (Daughter)',
+            relationship: 'child',
+            age: 7,
+            gender: 'Female',
+            bio: 'My daughter who loves colorful clothes and toys.',
+            interests: ['Art', 'Animals', 'Reading'],
+            stylePreferences: ['Colorful', 'Comfortable', 'Fun'],
+            favoriteColors: ['Pink', 'Purple', 'Yellow'],
+            favoriteCategories: ['Toys', 'Books', 'Clothing'],
+            avatar: 'https://randomuser.me/api/portraits/women/67.jpg',
+            isDefault: false
+          }
+        ]);
+        setLoading(false);
+      }, 1000);
+    }
+  }, [shoppingProfileStore]);
 
-      setProfiles(mockProfiles);
-      setLoading(false);
-    }, 1000);
-  }, []);
+  // Use either store profiles or local profiles
+  const profiles = shoppingProfileStore?.profiles || localProfiles;
 
   // Handle menu open
   const handleMenuOpen = (event, profileId) => {
@@ -144,20 +145,24 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }) => {
 
   // Handle delete profile
   const handleDeleteProfile = () => {
-    // Simulate API call to delete profile
-    setProfiles(profiles.filter((profile) => profile.id !== selectedProfileId));
+    if (shoppingProfileStore) {
+      shoppingProfileStore.deleteProfile(selectedProfileId);
+    } else {
+      setLocalProfiles(localProfiles.filter(p => p.id !== selectedProfileId));
+    }
     handleMenuClose();
   };
 
   // Handle set as default profile
   const handleSetAsDefault = () => {
-    // Simulate API call to set default profile
-    setProfiles(
-      profiles.map((profile) => ({
-        ...profile,
-        isDefault: profile.id === selectedProfileId,
-      }))
-    );
+    if (shoppingProfileStore) {
+      shoppingProfileStore.setDefaultProfile(selectedProfileId);
+    } else {
+      setLocalProfiles(localProfiles.map(p => ({
+        ...p,
+        isDefault: p.id === selectedProfileId
+      })));
+    }
     handleMenuClose();
   };
 
@@ -245,7 +250,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }) => {
             ? "men"
             : "women"
         }/${Math.floor(Math.random() * 100)}.jpg`,
-        isDefault: profiles.length === 0,
+        isDefault: shoppingProfileStore.profiles.length === 0,
       };
 
       setAiGenerating(false);
@@ -458,6 +463,9 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }) => {
                 </Card>
               </Grid>
             ))}
+            {profiles.length === 0 && (
+              <Typography>No profiles available</Typography>
+            )}
           </Grid>
         )}
 
