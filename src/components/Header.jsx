@@ -359,17 +359,6 @@ const AuthenticatedNav = () => {
             
             <Button
               variant="text"
-              color="primary"
-              startIcon={<AutoAwesomeIcon />}
-              component={Link}
-              to="/ai-create"
-              sx={{ ml: 1, display: { xs: 'none', sm: 'flex' } }}
-            >
-              AI Create
-            </Button>
-            
-            <Button
-              variant="text"
               color="secondary"
               startIcon={<SmartToyIcon />}
               component={Link}

@@ -13,9 +13,8 @@ import CategoriesPage from './pages/CategoriesPage';
 import MarketingPage from './pages/MarketingPage';
 import SearchPage from './pages/SearchPage';
 import PostCreationPage from './pages/PostCreationPage';
-import AIEnhancedPostCreationPage from './pages/AIEnhancedPostCreationPage';
 import AIProductDiscoveryPage from './pages/AIProductDiscoveryPage';
-import AIStyleTwinPage from './pages/AIStyleTwinPage';
+import StyleTwinsPage from './pages/StyleTwinsPage';
 import ShoppingProfilesPage from './pages/ShoppingProfilesPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
@@ -60,10 +59,9 @@ function App() {
                 <Route path="/categories" element={<CategoriesPage isAuthenticated={true} />} />
                 <Route path="/search" element={<SearchPage isAuthenticated={true} />} />
                 <Route path="/create" element={<PostCreationPage isAuthenticated={true} />} />
-                <Route path="/ai-create" element={<AIEnhancedPostCreationPage isAuthenticated={true} />} />
                 <Route path="/ai-discover" element={<AIProductDiscoveryPage isAuthenticated={true} />} />
-                <Route path="/style-twins" element={<AIStyleTwinPage />} />
-                <Route path="/style-twins/:profileId" element={<AIStyleTwinPage />} />
+                <Route path="/style-twins" element={<StyleTwinsPage />} />
+                <Route path="/style-twins/:profileId" element={<StyleTwinsPage />} />
                 <Route path="/shopping-profiles" element={<ShoppingProfilesPage isAuthenticated={true} />} />
                 <Route path="/shopping-profiles/add" element={<AddProfilePage />} />
                 <Route path="/shopping-profiles/edit/:profileId" element={<EditProfilePage />} />
