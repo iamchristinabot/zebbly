@@ -18,6 +18,7 @@ import AIEnhancedPostCreationPage from './pages/AIEnhancedPostCreationPage';
 import AIProductDiscoveryPage from './pages/AIProductDiscoveryPage';
 import AIChatDiscoveryPage from './pages/AIChatDiscoveryPage';
 import AIStyleTwinPage from './pages/AIStyleTwinPage';
+import ShoppingProfilesPage from './pages/ShoppingProfilesPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
 import PeopleYouMightLikePage from './pages/PeopleYouMightLikePage';
@@ -59,6 +60,7 @@ function App() {
                 <Route path="/ai-discover" element={<AIProductDiscoveryPage isAuthenticated={true} />} />
                 <Route path="/ai-chat" element={<AIChatDiscoveryPage isAuthenticated={true} />} />
                 <Route path="/style-twins" element={<AIStyleTwinPage isAuthenticated={true} />} />
+                <Route path="/shopping-profiles" element={<ShoppingProfilesPage isAuthenticated={true} />} />
                 <Route path="/settings" element={<SettingsPage isAuthenticated={true} />} />
                 <Route path="/people" element={<PeopleYouMightLikePage isAuthenticated={true} />} />
                 <Route path="/logout" element={<LoginPage onLogin={handleLogin} />} action={handleLogout} />

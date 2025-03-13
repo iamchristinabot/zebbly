@@ -16,7 +16,9 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  useTheme
+  useTheme,
+  Menu,
+  MenuItem
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
@@ -31,6 +33,8 @@ import AddIcon from '@mui/icons-material/Add';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import StyleIcon from '@mui/icons-material/Style';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ZebblyLogo from './ZebblyLogo';
 
 // Search bar component
@@ -108,6 +112,8 @@ const AuthenticatedNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [browseMenuAnchorEl, setBrowseMenuAnchorEl] = useState(null);
+  const isBrowseMenuOpen = Boolean(browseMenuAnchorEl);
   
   const isActive = (path) => {
     return location.pathname === path;
@@ -115,6 +121,14 @@ const AuthenticatedNav = () => {
   
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+  
+  const handleBrowseMenuOpen = (event) => {
+    setBrowseMenuAnchorEl(event.currentTarget);
+  };
+  
+  const handleBrowseMenuClose = () => {
+    setBrowseMenuAnchorEl(null);
   };
   
   const drawer = (
@@ -187,6 +201,15 @@ const AuthenticatedNav = () => {
           AI Discovery
         </NavButton>
         
+        <NavButton 
+          component={Link}
+          to="/shopping-profiles"
+          active={isActive('/shopping-profiles') ? 1 : 0}
+          startIcon={<AccountBoxIcon />}
+        >
+          Shopping Profiles
+        </NavButton>
+        
         <Divider sx={{ my: 2 }} />
         
         <NavButton 
@@ -230,53 +253,77 @@ const AuthenticatedNav = () => {
           
           <Box sx={{ display: { xs: 'none', md: 'flex' }, ml: 4 }}>
             <Button 
-              component={Link} 
-              to="/"
               color="inherit"
+              onClick={handleBrowseMenuOpen}
+              endIcon={<KeyboardArrowDownIcon />}
               sx={{ 
                 mx: 1,
-                fontWeight: isActive('/') ? 'bold' : 'normal',
-                borderBottom: isActive('/') ? `2px solid ${theme.palette.primary.main}` : 'none'
+                fontWeight: 'medium',
               }}
             >
-              Home
+              Browse
             </Button>
-            <Button 
-              component={Link} 
-              to="/feed"
-              color="inherit"
-              sx={{ 
-                mx: 1,
-                fontWeight: isActive('/feed') ? 'bold' : 'normal',
-                borderBottom: isActive('/feed') ? `2px solid ${theme.palette.primary.main}` : 'none'
+            <Menu
+              anchorEl={browseMenuAnchorEl}
+              open={isBrowseMenuOpen}
+              onClose={handleBrowseMenuClose}
+              MenuListProps={{
+                'aria-labelledby': 'browse-button',
               }}
             >
-              Feed
-            </Button>
-            <Button 
-              component={Link} 
-              to="/categories"
-              color="inherit"
-              sx={{ 
-                mx: 1,
-                fontWeight: isActive('/categories') ? 'bold' : 'normal',
-                borderBottom: isActive('/categories') ? `2px solid ${theme.palette.primary.main}` : 'none'
-              }}
-            >
-              Categories
-            </Button>
-            <Button 
-              component={Link} 
-              to="/people"
-              color="inherit"
-              sx={{ 
-                mx: 1,
-                fontWeight: isActive('/people') ? 'bold' : 'normal',
-                borderBottom: isActive('/people') ? `2px solid ${theme.palette.primary.main}` : 'none'
-              }}
-            >
-              People
-            </Button>
+              <MenuItem 
+                component={Link} 
+                to="/"
+                onClick={handleBrowseMenuClose}
+                sx={{ 
+                  fontWeight: isActive('/') ? 'bold' : 'normal',
+                }}
+              >
+                <ListItemIcon>
+                  <HomeIcon fontSize="small" color={isActive('/') ? 'primary' : 'inherit'} />
+                </ListItemIcon>
+                Home
+              </MenuItem>
+              <MenuItem 
+                component={Link} 
+                to="/feed"
+                onClick={handleBrowseMenuClose}
+                sx={{ 
+                  fontWeight: isActive('/feed') ? 'bold' : 'normal',
+                }}
+              >
+                <ListItemIcon>
+                  <DynamicFeedIcon fontSize="small" color={isActive('/feed') ? 'primary' : 'inherit'} />
+                </ListItemIcon>
+                Feed
+              </MenuItem>
+              <MenuItem 
+                component={Link} 
+                to="/categories"
+                onClick={handleBrowseMenuClose}
+                sx={{ 
+                  fontWeight: isActive('/categories') ? 'bold' : 'normal',
+                }}
+              >
+                <ListItemIcon>
+                  <CategoryIcon fontSize="small" color={isActive('/categories') ? 'primary' : 'inherit'} />
+                </ListItemIcon>
+                Categories
+              </MenuItem>
+              <MenuItem 
+                component={Link} 
+                to="/people"
+                onClick={handleBrowseMenuClose}
+                sx={{ 
+                  fontWeight: isActive('/people') ? 'bold' : 'normal',
+                }}
+              >
+                <ListItemIcon>
+                  <PeopleIcon fontSize="small" color={isActive('/people') ? 'primary' : 'inherit'} />
+                </ListItemIcon>
+                People
+              </MenuItem>
+            </Menu>
           </Box>
           
           <Box sx={{ flexGrow: 1 }} />
@@ -332,6 +379,17 @@ const AuthenticatedNav = () => {
               sx={{ ml: 1, display: { xs: 'none', sm: 'flex' } }}
             >
               Style Twins
+            </Button>
+            
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<AccountBoxIcon />}
+              component={Link}
+              to="/shopping-profiles"
+              sx={{ ml: 1, display: { xs: 'none', sm: 'flex' } }}
+            >
+              Profiles
             </Button>
             
             <IconButton 
