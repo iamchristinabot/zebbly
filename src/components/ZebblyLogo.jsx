@@ -8,7 +8,8 @@ const ZebblyLogo = (props) => {
       sx={{ 
         width: props.width || 150,
         height: props.height || 50,
-        fontSize: 'inherit' 
+        fontSize: 'inherit' ,
+        color: props.color || '#333333'
       }}
       {...props}
     >

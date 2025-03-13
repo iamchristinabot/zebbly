@@ -1,41 +1,36 @@
-import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  IconButton,
-  Box,
-  Avatar,
-  Badge,
-  InputBase,
-  Drawer,
-  Divider,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  useTheme,
-  Menu,
-  MenuItem,
-  Container
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import HomeIcon from '@mui/icons-material/Home';
-import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
-import CategoryIcon from '@mui/icons-material/Category';
-import PeopleIcon from '@mui/icons-material/People';
-import PersonIcon from '@mui/icons-material/Person';
-import SettingsIcon from '@mui/icons-material/Settings';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import AddIcon from '@mui/icons-material/Add';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import CategoryIcon from '@mui/icons-material/Category';
+import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
+import HomeIcon from '@mui/icons-material/Home';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import MenuIcon from '@mui/icons-material/Menu';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import PeopleIcon from '@mui/icons-material/People';
+import PersonIcon from '@mui/icons-material/Person';
+import SearchIcon from '@mui/icons-material/Search';
+import SettingsIcon from '@mui/icons-material/Settings';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import StyleIcon from '@mui/icons-material/Style';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import {
+  AppBar,
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Divider,
+  Drawer,
+  IconButton,
+  InputBase,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Toolbar,
+  useTheme
+} from '@mui/material';
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ZebblyLogo from './ZebblyLogo';
 
 // Search bar component
@@ -135,7 +130,9 @@ const AuthenticatedNav = () => {
   const drawer = (
     <Box sx={{ width: 280, pt: 2 }}>
       <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-        <ZebblyLogo width={100} height={32} />
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+          <ZebblyLogo width={100} height={32} />
+        </Link>
       </Box>
       <Divider />
       <Box sx={{ p: 2 }}>
@@ -249,7 +246,9 @@ const AuthenticatedNav = () => {
           </IconButton>
           
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            <ZebblyLogo width={100} height={32} />
+            <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+              <ZebblyLogo width={100} height={32} />
+            </Link>
           </Box>
           
           <Box sx={{ display: { xs: 'none', md: 'flex' }, ml: 4 }}>
@@ -359,7 +358,7 @@ const AuthenticatedNav = () => {
             
             <Button
               variant="text"
-              color="secondary"
+              color="primary"
               startIcon={<SmartToyIcon />}
               component={Link}
               to="/shopping-assistant"
@@ -433,7 +432,9 @@ const UnauthenticatedNav = () => {
   return (
     <AppBar position="static" color="default" elevation={0} sx={{ borderBottom: `1px solid ${theme.palette.brand.lightGray}` }}>
       <Toolbar>
-        <ZebblyLogo width={100} height={32} />
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+          <ZebblyLogo width={100} height={32} />
+        </Link>
         
         <Box sx={{ flexGrow: 1 }} />
         
