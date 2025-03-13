@@ -1,222 +1,163 @@
 import { createTheme } from '@mui/material/styles';
 
-// Define Zebbly brand colors based on the provided color palette
-const zebblyColors = {
+// Mercari-inspired color palette with a friendlier touch
+const colors = {
   primary: {
-    main: '#90abc5', // Color 0 - Blue
-    light: '#a6bfd5',
-    dark: '#7a91a7',
+    main: '#4E41D9', // Mercari purple/blue from logo
+    light: '#7B71E3',
+    dark: '#3730A3',
     contrastText: '#FFFFFF',
   },
   secondary: {
-    main: '#bad8d8', // Color 1 - Light Teal
-    light: '#d0e5e5',
-    dark: '#9eb8b8',
-    contrastText: '#333333',
+    main: '#FF0211', // Mercari red
+    light: '#FF5A5F',
+    dark: '#C70012',
+    contrastText: '#FFFFFF',
   },
   error: {
-    main: '#f4aaa9', // Color 7 - Coral/Pink
-    light: '#f7bfbe',
-    dark: '#d08e8d',
+    main: '#FF0211',
+    light: '#FF5A5F',
+    dark: '#C70012',
     contrastText: '#FFFFFF',
   },
   warning: {
-    main: '#decfc2', // Color 2 - Beige
-    light: '#e8ddd3',
-    dark: '#beb0a5',
-    contrastText: '#333333',
+    main: '#FFA000',
+    light: '#FFC107',
+    dark: '#FF8F00',
+    contrastText: '#000000',
   },
   info: {
-    main: '#aac8c8', // Color 6 - Medium Teal
-    light: '#c0d7d7',
-    dark: '#8fa9a9',
-    contrastText: '#333333',
+    main: '#4E41D9',
+    light: '#7B71E3',
+    dark: '#3730A3',
+    contrastText: '#FFFFFF',
   },
   success: {
-    main: '#d7e6e3', // Color 5 - Light Mint
-    light: '#e5efed',
-    dark: '#b7c4c1',
-    contrastText: '#333333',
-  },
-  background: {
-    default: '#FFFFFF',
-    paper: '#F8F8F8',
+    main: '#4CAF50',
+    light: '#81C784',
+    dark: '#388E3C',
+    contrastText: '#FFFFFF',
   },
   text: {
     primary: '#333333',
-    secondary: '#959692', // Color 9 - Dark Gray
+    secondary: '#757575',
+    disabled: '#BDBDBD',
   },
+  background: {
+    default: '#F8F8F8', // Lighter background for a friendlier feel
+    paper: '#FFFFFF',
+  },
+  divider: '#EEEEEE',
   // Custom brand colors
   brand: {
-    blue: '#90abc5',       // Color 0
-    lightTeal: '#bad8d8',  // Color 1
-    beige: '#decfc2',      // Color 2
-    pink: '#fad5d1',       // Color 3
-    mauve: '#e0c9c2',      // Color 4
-    mint: '#d7e6e3',       // Color 5
-    teal: '#aac8c8',       // Color 6
-    coral: '#f4aaa9',      // Color 7
-    lightGray: '#cbc9c8',  // Color 8
-    darkGray: '#959692',   // Color 9
-  }
+    lightGray: '#F0F0F0',
+    mediumGray: '#CCCCCC',
+    darkGray: '#757575',
+    black: '#333333',
+    red: '#FF0211',
+    purple: '#4E41D9',
+  },
 };
 
+// Create the theme
 const theme = createTheme({
-  palette: {
-    primary: zebblyColors.primary,
-    secondary: zebblyColors.secondary,
-    error: zebblyColors.error,
-    warning: zebblyColors.warning,
-    info: zebblyColors.info,
-    success: zebblyColors.success,
-    background: zebblyColors.background,
-    text: zebblyColors.text,
-    // Add the brand colors to the palette for easy access
-    brand: zebblyColors.brand,
-  },
+  palette: colors,
   typography: {
-    fontFamily: '"Open Sans", "Helvetica", "Arial", sans-serif',
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+    ].join(','),
     h1: {
-      fontFamily: '"Open Sans", "Helvetica", "Arial", sans-serif',
-      fontWeight: 600,
+      fontWeight: 600, // Slightly less bold for a friendlier look
       fontSize: '2.5rem',
     },
     h2: {
-      fontFamily: '"Open Sans", "Helvetica", "Arial", sans-serif',
       fontWeight: 600,
       fontSize: '2rem',
     },
     h3: {
-      fontFamily: '"Open Sans", "Helvetica", "Arial", sans-serif',
       fontWeight: 600,
       fontSize: '1.75rem',
     },
     h4: {
-      fontFamily: '"Open Sans", "Helvetica", "Arial", sans-serif',
-      fontWeight: 600,
+      fontWeight: 500, // Medium weight for a friendlier look
       fontSize: '1.5rem',
     },
     h5: {
-      fontFamily: '"Open Sans", "Helvetica", "Arial", sans-serif',
-      fontWeight: 600,
+      fontWeight: 500,
       fontSize: '1.25rem',
     },
     h6: {
-      fontFamily: '"Open Sans", "Helvetica", "Arial", sans-serif',
-      fontWeight: 600,
+      fontWeight: 500,
       fontSize: '1rem',
     },
     subtitle1: {
+      fontSize: '1rem',
       fontWeight: 500,
     },
+    subtitle2: {
+      fontSize: '0.875rem',
+      fontWeight: 500,
+    },
+    body1: {
+      fontSize: '1rem',
+      lineHeight: 1.6, // Increased line height for better readability
+    },
+    body2: {
+      fontSize: '0.875rem',
+      lineHeight: 1.6,
+    },
     button: {
-      fontWeight: 600,
-      textTransform: 'none',
+      textTransform: 'none', // Mercari doesn't use uppercase buttons
+      fontWeight: 500, // Medium weight for a friendlier look
     },
   },
   shape: {
-    borderRadius: 8,
+    borderRadius: 8, // More rounded corners for a friendlier feel
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 20,
-          padding: '8px 16px',
-          boxShadow: 'none',
+          borderRadius: 8,
+          padding: '10px 20px',
+          fontWeight: 500,
+          fontSize: '0.9375rem',
         },
         contained: {
+          boxShadow: 'none',
           '&:hover': {
-            boxShadow: 'none',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
           },
+        },
+        outlined: {
+          borderWidth: 1.5, // Slightly thicker border
         },
       },
-      variants: [
-        {
-          props: { variant: 'contained', color: 'primary' },
-          style: {
-            backgroundColor: zebblyColors.primary.main,
-            color: zebblyColors.primary.contrastText,
-          },
-        },
-        {
-          props: { variant: 'outlined' },
-          style: {
-            borderWidth: 2,
-          },
-        },
-      ],
+      defaultProps: {
+        disableElevation: true,
+      },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          boxShadow: 'none',
-          border: `1px solid ${zebblyColors.brand.lightGray}`,
-          borderRadius: 8,
-          transition: 'transform 0.2s ease-in-out',
-          '&:hover': {
-            transform: 'translateY(-4px)',
-          },
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05)',
+          borderRadius: 12, // More rounded cards
         },
       },
     },
-    MuiChip: {
+    MuiCardContent: {
       styleOverrides: {
         root: {
-          borderRadius: 20,
-          padding: '12px 16px',
-          height: 'auto',
-          '&.MuiChip-outlined': {
-            borderWidth: 1,
-            borderColor: zebblyColors.brand.lightGray,
+          padding: 20,
+          '&:last-child': {
+            paddingBottom: 20,
           },
-        },
-        label: {
-          padding: '8px 4px',
-          fontSize: '1rem',
-          fontWeight: 500,
-        },
-      },
-      variants: [
-        {
-          props: { variant: 'category' },
-          style: {
-            backgroundColor: '#FFFFFF',
-            color: zebblyColors.brand.blue,
-            border: `1px solid ${zebblyColors.brand.blue}20`,
-            '&:hover': {
-              backgroundColor: zebblyColors.brand.blue + '10',
-            },
-          },
-        },
-      ],
-    },
-    MuiTab: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          fontWeight: 500,
-          fontSize: '1rem',
-          minWidth: 'auto',
-          padding: '12px 16px',
-        },
-      },
-    },
-    MuiTabs: {
-      styleOverrides: {
-        indicator: {
-          height: 3,
-          backgroundColor: zebblyColors.brand.coral,
-        },
-      },
-    },
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          boxShadow: 'none',
-          borderBottom: `1px solid ${zebblyColors.brand.lightGray}`,
-          backgroundColor: '#FFFFFF',
-          color: zebblyColors.text.primary,
         },
       },
     },
@@ -224,104 +165,138 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            borderRadius: 20,
+            borderRadius: 8,
           },
         },
       },
     },
-    MuiAvatar: {
+    MuiChip: {
       styleOverrides: {
         root: {
-          backgroundColor: zebblyColors.brand.mint,
-          color: zebblyColors.brand.blue,
+          borderRadius: 16, // Fully rounded chips like Mercari
+          fontWeight: 500,
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0px 1px 5px rgba(0, 0, 0, 0.05)',
+        },
+      },
+      defaultProps: {
+        color: 'default',
+        elevation: 0,
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          fontWeight: 500,
+          minWidth: 'auto',
+          padding: '12px 16px',
+          borderRadius: 0,
+        },
+      },
+    },
+    MuiTabs: {
+      styleOverrides: {
+        indicator: {
+          height: 3,
+          borderRadius: 1.5,
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
-          overflow: 'hidden',
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05)',
+        },
+        elevation1: {
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05)',
+        },
+      },
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          borderColor: colors.divider,
+        },
+      },
+    },
+    MuiListItem: {
+      styleOverrides: {
+        root: {
+          paddingTop: 12,
+          paddingBottom: 12,
+        },
+      },
+    },
+    MuiAvatar: {
+      styleOverrides: {
+        root: {
+          border: `1px solid ${colors.divider}`,
+        },
+      },
+    },
+    MuiBadge: {
+      styleOverrides: {
+        badge: {
+          fontWeight: 500,
+          borderRadius: 12, // Fully rounded badges
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          padding: 10,
+        },
+      },
+    },
+    // Add styles for the search field like Mercari's
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          borderRadius: 20, // Fully rounded search field
+          backgroundColor: '#F0F0F0',
+          '&.Mui-focused': {
+            backgroundColor: '#FFFFFF',
+            boxShadow: '0px 0px 0px 2px rgba(78, 65, 217, 0.2)',
+          },
+        },
+        input: {
+          padding: '12px 16px',
+        },
+      },
+    },
+    // Navigation tabs like Mercari's bottom navigation
+    MuiBottomNavigation: {
+      styleOverrides: {
+        root: {
+          height: 60,
+        },
+      },
+    },
+    MuiBottomNavigationAction: {
+      styleOverrides: {
+        root: {
+          padding: '8px 0',
+          minWidth: 'auto',
+          '&.Mui-selected': {
+            paddingTop: 8,
+          },
+        },
+        label: {
+          fontSize: '0.75rem',
+          '&.Mui-selected': {
+            fontSize: '0.75rem',
+          },
         },
       },
     },
   },
 });
-
-// Custom components for the theme
-theme.components.MuiChip.variants.push(
-  {
-    props: { variant: 'category', color: 'her' },
-    style: {
-      backgroundColor: '#FFFFFF',
-      color: zebblyColors.brand.coral,
-      '&:hover': {
-        backgroundColor: zebblyColors.brand.coral + '10',
-      },
-    },
-  },
-  {
-    props: { variant: 'category', color: 'him' },
-    style: {
-      backgroundColor: '#FFFFFF',
-      color: zebblyColors.brand.blue,
-      '&:hover': {
-        backgroundColor: zebblyColors.brand.blue + '10',
-      },
-    },
-  },
-  {
-    props: { variant: 'category', color: 'teens' },
-    style: {
-      backgroundColor: '#FFFFFF',
-      color: zebblyColors.brand.teal,
-      '&:hover': {
-        backgroundColor: zebblyColors.brand.teal + '10',
-      },
-    },
-  },
-  {
-    props: { variant: 'category', color: 'kids' },
-    style: {
-      backgroundColor: '#FFFFFF',
-      color: zebblyColors.brand.beige,
-      '&:hover': {
-        backgroundColor: zebblyColors.brand.beige + '10',
-      },
-    },
-  },
-  {
-    props: { variant: 'category', color: 'baby' },
-    style: {
-      backgroundColor: '#FFFFFF',
-      color: zebblyColors.brand.pink,
-      '&:hover': {
-        backgroundColor: zebblyColors.brand.pink + '10',
-      },
-    },
-  }
-);
-
-// Add a custom background component for the hero section
-theme.components.MuiBox = {
-  variants: [
-    {
-      props: { variant: 'hero' },
-      style: {
-        background: `linear-gradient(120deg, ${zebblyColors.brand.pink} 0%, ${zebblyColors.brand.mint} 100%)`,
-        borderRadius: 16,
-        padding: '32px',
-        position: 'relative',
-        overflow: 'hidden',
-      },
-    },
-    {
-      props: { variant: 'section' },
-      style: {
-        padding: '32px 0',
-      },
-    },
-  ],
-};
 
 export default theme; 
