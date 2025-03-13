@@ -323,6 +323,19 @@ const AuthenticatedNav = () => {
                 </ListItemIcon>
                 People
               </MenuItem>
+              <MenuItem 
+                component={Link} 
+                to="/communities"
+                onClick={handleBrowseMenuClose}
+                sx={{ 
+                  fontWeight: isActive('/communities') ? 'bold' : 'normal',
+                }}
+              >
+                <ListItemIcon>
+                  <PeopleIcon fontSize="small" color={isActive('/communities') ? 'primary' : 'inherit'} />
+                </ListItemIcon>
+                Communities
+              </MenuItem>
             </Menu>
           </Box>
           

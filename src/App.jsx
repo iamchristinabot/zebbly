@@ -22,6 +22,8 @@ import ShoppingProfilesPage from './pages/ShoppingProfilesPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
 import PeopleYouMightLikePage from './pages/PeopleYouMightLikePage';
+import CommunitiesPage from './pages/CommunitiesPage';
+import CommunityDetailPage from './pages/CommunityDetailPage';
 
 // Wrapper component to handle user profile routes
 const UserProfileWrapper = ({ isAuthenticated }) => {
@@ -63,6 +65,8 @@ function App() {
                 <Route path="/shopping-profiles" element={<ShoppingProfilesPage isAuthenticated={true} />} />
                 <Route path="/settings" element={<SettingsPage isAuthenticated={true} />} />
                 <Route path="/people" element={<PeopleYouMightLikePage isAuthenticated={true} />} />
+                <Route path="/communities" element={<CommunitiesPage isAuthenticated={true} />} />
+                <Route path="/communities/:communityId" element={<CommunityDetailPage isAuthenticated={true} />} />
                 <Route path="/logout" element={<LoginPage onLogin={handleLogin} />} action={handleLogout} />
               </>
             ) : (
