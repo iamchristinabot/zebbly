@@ -252,6 +252,7 @@ const AuthenticatedNav = () => {
           </Box>
           
           <Box sx={{ display: { xs: 'none', md: 'flex' }, ml: 4 }}>
+            <SearchBar />
             <Button 
               color="inherit"
               onClick={handleBrowseMenuOpen}
@@ -342,16 +343,10 @@ const AuthenticatedNav = () => {
           <Box sx={{ flexGrow: 1 }} />
           
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <SearchBar />
-            
-            <IconButton color="inherit" sx={{ ml: 1 }}>
-              <Badge badgeContent={3} color="primary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+          
             
             <Button
-              variant="contained"
+              variant="text"
               color="primary"
               startIcon={<AddIcon />}
               component={Link}
@@ -362,7 +357,7 @@ const AuthenticatedNav = () => {
             </Button>
             
             <Button
-              variant="contained"
+              variant="text"
               color="primary"
               startIcon={<AutoAwesomeIcon />}
               component={Link}
@@ -373,7 +368,7 @@ const AuthenticatedNav = () => {
             </Button>
             
             <Button
-              variant="contained"
+              variant="text"
               color="secondary"
               startIcon={<SmartToyIcon />}
               component={Link}
@@ -384,7 +379,7 @@ const AuthenticatedNav = () => {
             </Button>
             
             <Button
-              variant="outlined"
+              variant="text"
               color="primary"
               startIcon={<StyleIcon />}
               component={Link}
@@ -395,7 +390,7 @@ const AuthenticatedNav = () => {
             </Button>
             
             <Button
-              variant="outlined"
+              variant="text"
               color="primary"
               startIcon={<AccountBoxIcon />}
               component={Link}
@@ -404,6 +399,12 @@ const AuthenticatedNav = () => {
             >
               Profiles
             </Button>
+
+            <IconButton color="inherit" sx={{ ml: 1 }}>
+              <Badge badgeContent={3} color="primary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
             
             <IconButton 
               sx={{ ml: 2 }}
