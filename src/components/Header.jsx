@@ -14,6 +14,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import StyleIcon from '@mui/icons-material/Style';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import LogoutIcon from '@mui/icons-material/Logout';
 import {
   AppBar,
   Avatar,
@@ -110,7 +111,9 @@ const AuthenticatedNav = () => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [browseMenuAnchorEl, setBrowseMenuAnchorEl] = useState(null);
+  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
   const isBrowseMenuOpen = Boolean(browseMenuAnchorEl);
+  const isUserMenuOpen = Boolean(userMenuAnchorEl);
   
   const isActive = (path) => {
     return location.pathname === path;
@@ -126,6 +129,14 @@ const AuthenticatedNav = () => {
   
   const handleBrowseMenuClose = () => {
     setBrowseMenuAnchorEl(null);
+  };
+  
+  const handleUserMenuOpen = (event) => {
+    setUserMenuAnchorEl(event.currentTarget);
+  };
+  
+  const handleUserMenuClose = () => {
+    setUserMenuAnchorEl(null);
   };
   
   const drawer = (
@@ -334,32 +345,7 @@ const AuthenticatedNav = () => {
                 </ListItemIcon>
                 People
               </MenuItem>
-              <MenuItem 
-                component={Link} 
-                to="/shopping-profiles"
-                onClick={handleBrowseMenuClose}
-                sx={{ 
-                  fontWeight: isActive('/shopping-profiles') ? 'bold' : 'normal',
-                }}
-              >
-                <ListItemIcon>
-                  <AccountBoxIcon fontSize="small" color={isActive('/shopping-profiles') ? 'primary' : 'inherit'} />
-                </ListItemIcon>
-                Shopping Profiles
-              </MenuItem>
-              <MenuItem 
-                component={Link} 
-                to="/product-playlists"
-                onClick={handleBrowseMenuClose}
-                sx={{ 
-                  fontWeight: isActive('/product-playlists') ? 'bold' : 'normal',
-                }}
-              >
-                <ListItemIcon>
-                  <DynamicFeedIcon fontSize="small" color={isActive('/product-playlists') ? 'primary' : 'inherit'} />
-                </ListItemIcon>
-                Product Playlists
-              </MenuItem>
+              
               <MenuItem 
                 component={Link} 
                 to="/communities"
@@ -380,18 +366,6 @@ const AuthenticatedNav = () => {
           
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
           
-            
-            <Button
-              variant="text"
-              color="primary"
-              startIcon={<AddIcon />}
-              component={Link}
-              to="/create"
-              sx={{ ml: 2, display: { xs: 'none', sm: 'flex' } }}
-            >
-              Create
-            </Button>
-            
             <Button
               variant="text"
               color="primary"
@@ -444,7 +418,10 @@ const AuthenticatedNav = () => {
             
             <IconButton 
               sx={{ ml: 2 }}
-              onClick={() => navigate('/profile')}
+              onClick={handleUserMenuOpen}
+              aria-controls={isUserMenuOpen ? 'user-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={isUserMenuOpen ? 'true' : undefined}
             >
               <Avatar sx={{ width: 32, height: 32 }} />
             </IconButton>
@@ -468,6 +445,56 @@ const AuthenticatedNav = () => {
           {drawer}
         </Drawer>
       </Box>
+
+      <Menu
+        id="user-menu"
+        anchorEl={userMenuAnchorEl}
+        open={isUserMenuOpen}
+        onClose={handleUserMenuClose}
+        MenuListProps={{
+          'aria-labelledby': 'user-button',
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuItem 
+          component={Link} 
+          to="/profile"
+          onClick={handleUserMenuClose}
+        >
+          <ListItemIcon>
+            <PersonIcon fontSize="small" />
+          </ListItemIcon>
+          Profile
+        </MenuItem>
+        <MenuItem 
+          component={Link} 
+          to="/shopping-profiles"
+          onClick={handleUserMenuClose}
+        >
+          <ListItemIcon>
+            <AccountBoxIcon fontSize="small" />
+          </ListItemIcon>
+          Shopping Profiles
+        </MenuItem>
+        <MenuItem 
+          component={Link} 
+          to="/settings"
+          onClick={handleUserMenuClose}
+        >
+          <ListItemIcon>
+            <SettingsIcon fontSize="small" />
+          </ListItemIcon>
+          Settings
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleUserMenuClose}>
+          <ListItemIcon>
+            <LogoutIcon fontSize="small" />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      </Menu>
     </>
   );
 };
