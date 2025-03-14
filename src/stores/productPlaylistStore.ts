@@ -1,23 +1,19 @@
 import { makeObservable, observable, action, runInAction } from 'mobx';
 import type { RootStore } from './rootStore';
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-  category: string;
-}
+import { samplePlaylists } from '../data/samplePlaylists';
+import { Product } from '../types';
 
 interface Playlist {
   id: string;
+  userId: string;
   name: string;
   description: string;
   products: Product[];
   isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
+  featured?: boolean;
+  popular?: boolean;
 }
 
 export class ProductPlaylistStore {
@@ -30,6 +26,9 @@ export class ProductPlaylistStore {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeObservable(this);
+    
+    // Initialize with sample data
+    this.playlists = samplePlaylists;
   }
 
   async fetchPlaylists(userId: string) {

@@ -68,28 +68,60 @@ export class ShoppingProfileStore {
       // Mock data for development
       const mockProfiles: ShoppingProfile[] = [
         {
-          id: '1',
+          id: 'husband-1',
           userId: '1',
-          name: 'Default Profile',
-          preferences: [],
-          favoriteStores: [],
-          recentSearches: [],
-          stylePreferences: ["Minimalist", "Sustainable", "Modern", "Casual Chic"],
-          interests: ["Sustainable Fashion", "Indoor Plants", "Scandinavian Design"],
-          favoriteCategories: ["Fashion", "Home Decor", "Accessories"],
+          name: 'John (Husband)',
+          avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+          preferences: [
+            {
+              category: 'Tech',
+              minPrice: 100,
+              maxPrice: 1000,
+              brands: ['Apple', 'Samsung', 'Sony'],
+              styles: ['Modern', 'Professional']
+            },
+            {
+              category: 'Sports',
+              minPrice: 30,
+              maxPrice: 200,
+              brands: ['Nike', 'Under Armour', 'Adidas'],
+              styles: ['Athletic', 'Casual']
+            }
+          ],
+          favoriteStores: ['Best Buy', 'REI', 'Nike', 'Amazon'],
+          recentSearches: ['wireless headphones', 'running shoes', 'smart watch'],
+          stylePreferences: ['Athletic', 'Casual', 'Modern', 'Professional'],
+          interests: ['Technology', 'Sports', 'Fitness', 'Outdoor Activities'],
+          favoriteCategories: ['Electronics', 'Sports Equipment', 'Athletic Wear', 'Outdoor Gear'],
           lastUpdated: new Date(),
-          isDefault: true
+          isDefault: false
         },
         {
-          id: '2',
+          id: 'daughter-1',
           userId: '1',
-          name: 'Work Style',
-          preferences: [],
-          favoriteStores: [],
-          recentSearches: [],
-          stylePreferences: ["Professional", "Business Casual", "Classic", "Elegant"],
-          interests: ["Business Fashion", "Office Design", "Professional Development"],
-          favoriteCategories: ["Workwear", "Office Supplies", "Business Accessories"],
+          name: 'Emma (Daughter)',
+          avatar: 'https://randomuser.me/api/portraits/women/67.jpg',
+          preferences: [
+            {
+              category: 'Toys',
+              minPrice: 10,
+              maxPrice: 100,
+              brands: ['LEGO', 'Disney', 'Crayola'],
+              styles: ['Colorful', 'Educational', 'Fun']
+            },
+            {
+              category: 'Clothing',
+              minPrice: 15,
+              maxPrice: 75,
+              brands: ['Gap Kids', 'H&M Kids', 'Zara Kids'],
+              styles: ['Cute', 'Comfortable', 'Playful']
+            }
+          ],
+          favoriteStores: ['Target', 'Disney Store', 'Amazon Kids', 'Gap Kids'],
+          recentSearches: ['art supplies', 'princess dress', 'learning toys'],
+          stylePreferences: ['Colorful', 'Cute', 'Comfortable', 'Playful'],
+          interests: ['Art', 'Reading', 'Dancing', 'Learning'],
+          favoriteCategories: ['Toys', 'Books', 'Art Supplies', 'Kids Clothing'],
           lastUpdated: new Date(),
           isDefault: false
         }

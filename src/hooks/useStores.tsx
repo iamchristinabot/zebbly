@@ -8,11 +8,14 @@ import { ProductPlaylistStore } from '../stores/productPlaylistStore';
 export interface ShoppingProfileStore {
   profiles: ShoppingProfile[];
   styleTwins: StyleTwin[];
+  isLoading: boolean;
+  currentProfile: ShoppingProfile | null;
   loadProfiles: () => Promise<void>;
   loadStyleTwins: (profileId: string) => Promise<void>;
   toggleFollowTwin: (twinId: string) => void;
   deleteProfile: (id: string) => void;
   setDefaultProfile: (id: string) => void;
+  setCurrentProfile: (profile: ShoppingProfile) => void;
 }
 
 export interface RootStore {

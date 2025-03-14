@@ -44,6 +44,7 @@ import Header from "../components/Header";
 import StyleTwinCard from '../components/StyleTwinCard';
 import { SelectChangeEvent } from "@mui/material";
 import type { StyleTwin, ShoppingProfile } from "../stores/shoppingProfileStore";
+import ProfileSelector from '../components/ProfileSelector';
 
 interface StyleTwinsPageProps {
   isAuthenticated: boolean;
@@ -120,11 +121,12 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }: StyleTwinsPageProps
     loadData();
   }, [profileId, shoppingProfileStore, navigate]);
 
-  // Handle profile change
-  const handleProfileChange = (event: SelectChangeEvent<string>) => {
-    const newProfileId = event.target.value;
-    if (shoppingProfileStore?.profiles) {
-      navigate(`/style-twins/${newProfileId}`);
+  // Update the handleProfileChange function
+  const handleProfileChange = (profileId: string) => {
+    const profile = shoppingProfileStore?.profiles.find(p => p.id === profileId);
+    if (profile) {
+      setCurrentProfile(profile);
+      shoppingProfileStore.loadStyleTwins(profile.id);
     }
   };
 
@@ -271,33 +273,11 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }: StyleTwinsPageProps
           </Box>
 
           {/* Profile selector */}
-          <FormControl sx={{ minWidth: 200 }}>
-            <InputLabel id="profile-select-label">Shopping Profile</InputLabel>
-            <Select
-              labelId="profile-select-label"
-              id="profile-select"
-              value={currentProfile?.id || ''}
-              label="Shopping Profile"
-              onChange={handleProfileChange}
-              disabled={loadingProfile || !shoppingProfileStore?.profiles}
-            >
-              {shoppingProfileStore?.profiles?.length > 0 ? (
-                shoppingProfileStore.profiles.map((profile) => (
-                  <MenuItem key={profile.id} value={profile.id}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Avatar 
-                        src={profile.avatar} 
-                        sx={{ width: 24, height: 24, mr: 1 }}
-                      />
-                      {profile.name}
-                    </Box>
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem disabled>No profiles available</MenuItem>
-              )}
-            </Select>
-          </FormControl>
+          <ProfileSelector
+            value={currentProfile?.id}
+            onChange={handleProfileChange}
+            disabled={loadingProfile}
+          />
         </Box>
 
         <Grid container spacing={4}>

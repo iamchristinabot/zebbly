@@ -117,6 +117,21 @@ export class UserStore {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeObservable(this);
+    
+    // Initialize with a default user for development
+    this.currentUser = {
+      id: '1',
+      name: 'Jessica Anderson',
+      username: '@jessicaanderson',
+      bio: 'Home decor enthusiast and DIY lover. Always on the lookout for unique finds!',
+      avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+      followers: 1243,
+      following: 567,
+      interests: ['Home Decor', 'DIY', 'Minimalism', 'Plants'],
+      isVerified: true,
+      productsShared: 87,
+      mutualInterests: ['Home Decor', 'DIY']
+    };
   }
   
   @action getUserById(userId: string): SampleUser | null {

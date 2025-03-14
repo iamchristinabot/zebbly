@@ -42,6 +42,7 @@ import { ShoppingProfileStore } from '../stores/shoppingProfileStore';
 import { AIRecommendationStore } from '../stores/aiRecommendationStore';
 import type { ShoppingProfile } from '../types/index';
 import { useStores } from '../hooks/useStores';
+import ProfileSelector from '../components/ProfileSelector';
 
 // Message types
 const MESSAGE_TYPE = {
@@ -159,30 +160,28 @@ const ShoppingAssistantPage = observer(({
           return;
         }
         
-        // Load profile from store if we have a user
-        if (userStore.currentUser) {
-          await shoppingProfileStore.loadProfile(userStore.currentUser.id);
-        }
+        await shoppingProfileStore.loadProfiles();
         
-        // Set profile if available
-        if (shoppingProfileStore.profile) {
-          setSelectedProfileId(shoppingProfileStore.profile.id);
+        // Set current profile if available
+        const defaultProfile = shoppingProfileStore.profiles[0];
+        if (defaultProfile) {
+          setSelectedProfileId(defaultProfile.id);
           
           // Generate preferences for the profile
           const preferences: ProfilePreferences = {
-            [shoppingProfileStore.profile.id]: generateProfilePreferences(shoppingProfileStore.profile)
+            [defaultProfile.id]: generateProfilePreferences(defaultProfile)
           };
           setProfilePreferences(preferences);
         }
       } catch (error) {
-        console.error('Error loading profile:', error);
+        console.error('Error loading profiles:', error);
       } finally {
         setLoadingProfiles(false);
       }
     };
     
     loadProfile();
-  }, [shoppingProfileStore, userStore.currentUser]);
+  }, [shoppingProfileStore]);
   
   // Generate profile-specific preferences based on profile data
   const generateProfilePreferences = (profile: any): UserPreferences => {
@@ -244,20 +243,14 @@ const ShoppingAssistantPage = observer(({
   };
   
   // Handle profile change
-  const handleProfileChange = (e: SelectChangeEvent<string>) => {
-    const newProfileId = e.target.value;
-    setSelectedProfileId(newProfileId);
-    
-    // Add a message about the profile change
-    if (shoppingProfileStore.profile) {
-      setMessages(prev => [
-        ...prev,
-        {
-          type: MESSAGE_TYPE.ASSISTANT,
-          content: `I've switched to shopping. I'll adjust my recommendations based on your preferences.`,
-          timestamp: new Date()
-        }
-      ]);
+  const handleProfileChange = (profileId: string) => {
+    setSelectedProfileId(profileId);
+    const profile = shoppingProfileStore?.profiles.find(p => p.id === profileId);
+    if (profile) {
+      const preferences: ProfilePreferences = {
+        [profile.id]: generateProfilePreferences(profile)
+      };
+      setProfilePreferences(preferences);
     }
   };
   
@@ -571,32 +564,12 @@ const ShoppingAssistantPage = observer(({
                   <CircularProgress size={24} />
                 </Box>
               ) : (
-                <FormControl fullWidth sx={{ mb: 3 }}>
-                  <InputLabel id="profile-select-label">Shop For</InputLabel>
-                  <Select
-                    labelId="profile-select-label"
-                    id="profile-select"
-                    value={selectedProfileId || ''}
-                    label="Shop For"
-                    onChange={handleProfileChange}
-                    disabled={!shoppingProfileStore || !shoppingProfileStore.profile}
-                  >
-                    {shoppingProfileStore?.profile && (
-                      <MenuItem key={shoppingProfileStore.profile.id} value={shoppingProfileStore.profile.id}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <Avatar 
-                            sx={{ width: 24, height: 24, mr: 1 }}
-                          >
-                            <PersonIcon fontSize="small" />
-                          </Avatar>
-                          <Typography>
-                            {shoppingProfileStore.profile.id}
-                          </Typography>
-                        </Box>
-                      </MenuItem>
-                    )}
-                  </Select>
-                </FormControl>
+                <ProfileSelector
+                  value={selectedProfileId || ''}
+                  onChange={handleProfileChange}
+                  label="Shop For"
+                  disabled={!shoppingProfileStore?.profiles.length}
+                />
               )}
               
               <Divider sx={{ my: 2 }} />

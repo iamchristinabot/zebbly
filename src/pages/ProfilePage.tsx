@@ -1,46 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import BlockIcon from '@mui/icons-material/Block';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import CollectionsIcon from '@mui/icons-material/Collections';
+import CommentIcon from '@mui/icons-material/Comment';
+import EditIcon from '@mui/icons-material/Edit';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import ReportIcon from '@mui/icons-material/Report';
+import ShareIcon from '@mui/icons-material/Share';
+import VerifiedIcon from '@mui/icons-material/Verified';
 import {
-  Box,
-  Container,
-  Typography,
   Avatar,
+  Box,
   Button,
-  Grid,
-  Paper,
-  Tabs,
-  Tab,
-  Divider,
-  CircularProgress,
-  IconButton,
-  Chip,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
   Card,
+  CardActionArea,
   CardContent,
   CardMedia,
-  CardActionArea,
+  Chip,
+  CircularProgress,
+  Container,
+  Grid,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Paper,
+  Tab,
+  Tabs,
+  Typography,
   useTheme
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
-import EditIcon from '@mui/icons-material/Edit';
-import SettingsIcon from '@mui/icons-material/Settings';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import ShareIcon from '@mui/icons-material/Share';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import CollectionsIcon from '@mui/icons-material/Collections';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import CommentIcon from '@mui/icons-material/Comment';
-import ReportIcon from '@mui/icons-material/Report';
-import BlockIcon from '@mui/icons-material/Block';
-import VerifiedIcon from '@mui/icons-material/Verified';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useStores } from '../hooks/useStores';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
+import { useStores } from '../hooks/useStores';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -296,7 +294,7 @@ const ProfilePage = observer(({ isAuthenticated = true, userId }: ProfilePagePro
         image: `https://picsum.photos/seed/${userId || 'me'}-${index + 1}/300/200`,
         price: (19.99 + index * 10).toFixed(2),
         store: ['Amazon', 'Target', 'Walmart', 'Best Buy'][index % 4],
-        user: profileData.name,
+        user: profileData?.name || '',
         likes: Math.floor(Math.random() * 50) + 5,
         comments: Math.floor(Math.random() * 10)
       }));
@@ -488,10 +486,10 @@ const ProfilePage = observer(({ isAuthenticated = true, userId }: ProfilePagePro
               </Typography>
               
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                {profileData.interests.map((interest: Interest, index: number) => (
+                {profileData.interests.map((interest: string, index: number) => (
                   <Chip 
                     key={index} 
-                    label={interest.name} 
+                    label={interest} 
                     size="small"
                     color="primary"
                     variant="outlined"
