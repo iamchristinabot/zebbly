@@ -1,7 +1,44 @@
-import { makeAutoObservable } from 'mobx';
+import { makeObservable, observable, action, computed, runInAction } from 'mobx';
+import type { RootStore } from './rootStore';
+
+export interface SampleUser {
+  id: string;
+  name: string;
+  username: string;
+  bio: string;
+  avatar: string;
+  followers: number;
+  following: number;
+  interests: string[];
+  isVerified: boolean;
+  productsShared: number;
+  mutualInterests: string[];
+}
+
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  username: string;
+  bio?: string;
+  avatar?: string;
+  followers: number;
+  following: number;
+  interests: string[];
+  isVerified: boolean;
+  productsShared: number;
+}
+
+type SampleUsers = {
+  [key: string]: SampleUser;
+};
+
+type FollowingStatus = {
+  [key: string]: boolean;
+};
 
 // Sample user data for hard-coded profiles
-const sampleUsers = {
+const sampleUsers: SampleUsers = {
   '1': {
     id: '1',
     name: 'Jessica Anderson',
@@ -69,85 +106,105 @@ const sampleUsers = {
   }
 };
 
-class UserStore {
-  currentUser = {
-    id: 'me',
-    name: 'Your Name',
-    username: '@username',
-    bio: 'Your bio will appear here',
-    avatar: 'https://randomuser.me/api/portraits/lego/1.jpg',
-    followers: 0,
-    following: 0,
-    interests: ['Add your interests'],
-    isVerified: false,
-    productsShared: 0
-  };
-  
-  users = sampleUsers;
-  followingStatus = {}; // Track which users the current user is following
-  
-  constructor() {
-    makeAutoObservable(this);
+export class UserStore {
+  @observable private rootStore: RootStore;
+  @observable currentUser: SampleUser | null = null;
+  @observable isLoading = false;
+  @observable error: string | null = null;
+  @observable users: SampleUsers = sampleUsers;
+  @observable followingStatus: FollowingStatus = {};
+
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+    makeObservable(this);
   }
   
-  getUserById(userId) {
+  @action getUserById(userId: string): SampleUser | null {
     if (userId === 'me' || !userId) {
       return this.currentUser;
     }
     return this.users[userId] || null;
   }
   
-  getAllUsers() {
+  @action getAllUsers(): SampleUser[] {
     return Object.values(this.users);
   }
   
-  updateCurrentUser(userData) {
+  @action updateCurrentUser(userData: Partial<SampleUser>) {
+    if (!this.currentUser) return;
     this.currentUser = { ...this.currentUser, ...userData };
   }
   
-  isFollowing(userId) {
+  @action isFollowing(userId: string): boolean {
     return !!this.followingStatus[userId];
   }
   
-  toggleFollow(userId) {
+  @action toggleFollow(userId: string) {
+    if (!this.currentUser) return;
+    
     this.followingStatus[userId] = !this.followingStatus[userId];
     
-    // In a real app, this would make an API call to update the follow status
     if (this.followingStatus[userId]) {
-      this.currentUser.following += 1;
+      this.currentUser.followers += 1;
       if (this.users[userId]) {
         this.users[userId].followers += 1;
       }
     } else {
-      this.currentUser.following = Math.max(0, this.currentUser.following - 1);
+      this.currentUser.followers = Math.max(0, this.currentUser.followers - 1);
       if (this.users[userId]) {
         this.users[userId].followers = Math.max(0, this.users[userId].followers - 1);
       }
     }
   }
   
-  // Method to get suggested users (users the current user is not following)
-  getSuggestedUsers(limit = 5) {
+  @action getSuggestedUsers(limit = 5): SampleUser[] {
     return Object.values(this.users)
       .filter(user => !this.followingStatus[user.id])
       .slice(0, limit);
   }
   
-  // Method to get filtered users based on search query and interests
-  getFilteredUsers(searchQuery = '', selectedInterests = []) {
+  @action getFilteredUsers(searchQuery = '', selectedInterests: string[] = []): SampleUser[] {
     return Object.values(this.users).filter(user => {
-      // Filter by search query
       const matchesSearch = searchQuery === '' || 
         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.username.toLowerCase().includes(searchQuery.toLowerCase());
       
-      // Filter by interests
       const matchesInterests = selectedInterests.length === 0 || 
         selectedInterests.some(interest => user.interests.includes(interest));
       
       return matchesSearch && matchesInterests;
     });
   }
-}
 
-export default UserStore; 
+  @action setUser(user: SampleUser | null) {
+    this.currentUser = user;
+  }
+
+  @action async login(email: string, password: string) {
+    try {
+      this.isLoading = true;
+      this.error = null;
+      
+      // Implement your login logic here
+      // const response = await api.login(email, password);
+      
+      runInAction(() => {
+        // this.currentUser = response.user;
+        this.isLoading = false;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.error = error instanceof Error ? error.message : 'An error occurred';
+        this.isLoading = false;
+      });
+    }
+  }
+
+  @action logout() {
+    this.currentUser = null;
+  }
+
+  @computed get isAuthenticated() {
+    return !!this.currentUser;
+  }
+} 

@@ -1,60 +1,68 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { observer } from 'mobx-react-lite';
-import {
-  Box,
-  Container,
-  Typography,
-  Grid,
-  Paper,
-  Chip,
-  Button,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActions,
-  Avatar,
-  TextField,
-  InputAdornment,
-  Slider,
-  FormControl,
-  FormLabel,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
-  Divider,
-  CircularProgress,
-  IconButton,
-  Tooltip,
-  useTheme
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import TuneIcon from '@mui/icons-material/Tune';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
+import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import PersonAddDisabledIcon from '@mui/icons-material/PersonAddDisabled';
-import { Link, useNavigate } from 'react-router-dom';
-import { StoreContext } from '../stores/storeContext';
+import TuneIcon from '@mui/icons-material/Tune';
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Checkbox,
+  Chip,
+  CircularProgress,
+  Container,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Paper,
+  Slider,
+  TextField,
+  Tooltip,
+  Typography,
+  useTheme
+} from '@mui/material';
+import { observer } from 'mobx-react-lite';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
+import { useStores } from '../hooks/useStores';
 import { AuthenticatedProps } from '../types/common';
 
 export interface AIProductDiscoveryPageProps extends AuthenticatedProps {}
 
+// Add interfaces at the top after imports
+interface Recommendation {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  image: string;
+  category: string;
+  matchScore: number;
+  reasons: string[];
+}
+
 const AIProductDiscoveryPage = observer(({ isAuthenticated = true }: AIProductDiscoveryPageProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { userStore, aiRecommendationStore } = useContext(StoreContext);
+  const { userStore, aiRecommendationStore } = useStores();
   
   // State for recommendations and UI
   const [loading, setLoading] = useState(true);
-  const [recommendations, setRecommendations] = useState([]);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [showFilters, setShowFilters] = useState(false);
-  const [priceRange, setPriceRange] = useState([0, 500]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   
   // AI personalization state
@@ -66,18 +74,19 @@ const AIProductDiscoveryPage = observer(({ isAuthenticated = true }: AIProductDi
     // Simulate API call to get AI recommendations
     setLoading(true);
     setTimeout(() => {
-      setRecommendations(aiRecommendationStore.personalizedRecommendations);
+      const recommendations = aiRecommendationStore.sortedRecommendations as unknown as Recommendation[];
+      setRecommendations(recommendations);
       setLoading(false);
     }, 1500);
   }, [aiRecommendationStore]);
   
   // Handle filter changes
-  const handlePriceRangeChange = (event, newValue) => {
-    setPriceRange(newValue);
+  const handlePriceRangeChange = (_event: Event, newValue: number | number[]) => {
+    setPriceRange(newValue as [number, number]);
   };
   
-  const handleCategoryToggle = (category) => {
-    const currentIndex = selectedCategories.indexOf(category);
+  const handleCategoryToggle = (category: string) => {
+    const currentIndex = selectedCategories.findIndex(c => c === category);
     const newSelectedCategories = [...selectedCategories];
     
     if (currentIndex === -1) {
@@ -89,11 +98,11 @@ const AIProductDiscoveryPage = observer(({ isAuthenticated = true }: AIProductDi
     setSelectedCategories(newSelectedCategories);
   };
   
-  const handlePersonalizationChange = (event, newValue) => {
-    setPersonalizationLevel(newValue);
+  const handlePersonalizationChange = (_event: Event, newValue: number | number[]) => {
+    setPersonalizationLevel(newValue as number);
   };
   
-  const handleDiscoveryModeChange = (mode) => {
+  const handleDiscoveryModeChange = (mode: string) => {
     setDiscoveryMode(mode);
   };
   
@@ -102,19 +111,18 @@ const AIProductDiscoveryPage = observer(({ isAuthenticated = true }: AIProductDi
     // In a real app, this would call an API with the new parameters
     setTimeout(() => {
       // Simulate getting new recommendations
-      const newRecommendations = [...aiRecommendationStore.personalizedRecommendations];
+      const newRecommendations = [...aiRecommendationStore.sortedRecommendations];
       // Shuffle the array to simulate new recommendations
       for (let i = newRecommendations.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [newRecommendations[i], newRecommendations[j]] = [newRecommendations[j], newRecommendations[i]];
       }
-      setRecommendations(newRecommendations);
+      setRecommendations(newRecommendations as any); // Type assertion added
       setLoading(false);
     }, 1500);
   };
-  
   // Filter recommendations based on user selections
-  const filteredRecommendations = recommendations.filter(rec => {
+  const filteredRecommendations = recommendations.filter((rec: any) => {
     const matchesSearch = searchQuery === '' || 
       rec.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesPrice = rec.price >= priceRange[0] && rec.price <= priceRange[1];
@@ -321,18 +329,18 @@ const AIProductDiscoveryPage = observer(({ isAuthenticated = true }: AIProductDi
 });
 
 // Product recommendation card component
-const ProductRecommendationCard = ({ recommendation }) => {
+const ProductRecommendationCard = ({ recommendation }: { recommendation: Recommendation }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   
-  const handleLike = (e) => {
+  const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
     setLiked(!liked);
   };
   
-  const handleSave = (e) => {
+  const handleSave = (e: React.MouseEvent) => {
     e.stopPropagation();
     setSaved(!saved);
   };
@@ -398,7 +406,7 @@ const ProductRecommendationCard = ({ recommendation }) => {
             Why we recommend this:
           </Typography>
           <Box component="ul" sx={{ pl: 2, mt: 0 }}>
-            {recommendation.reasons.map((reason, index) => (
+            {recommendation.reasons.map((reason: string, index: number) => (
               <Typography component="li" variant="body2" key={index} sx={{ mb: 0.5 }}>
                 {reason}
               </Typography>

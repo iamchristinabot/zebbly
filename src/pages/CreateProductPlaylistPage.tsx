@@ -1,53 +1,71 @@
-import React, { useState, useContext } from 'react';
-import { observer } from 'mobx-react-lite';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
   Box,
-  Container,
-  Typography,
-  TextField,
   Button,
-  Paper,
-  FormControlLabel,
-  Switch,
-  Divider,
-  IconButton,
-  Grid,
   CircularProgress,
+  Container,
+  Divider,
+  FormControlLabel,
+  Grid,
+  Paper,
+  Switch,
+  TextField,
+  Typography,
   useTheme
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import { observer } from 'mobx-react-lite';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
+import { ProductPlaylistStore } from '../stores/productPlaylistStore';
 import { AuthenticatedProps } from '../types/common';
 
-export interface CreateProductPlaylistPageProps extends AuthenticatedProps {}
+interface FormErrors {
+  title?: string;
+  description?: string;
+  submit?: string;
+}
 
-const CreateProductPlaylistPage = observer(({ isAuthenticated = true }: CreateProductPlaylistPageProps) => {
+export interface CreateProductPlaylistPageProps extends AuthenticatedProps {
+  productPlaylistStore: ProductPlaylistStore;
+}
+
+interface CreatePlaylistData {
+  userId: string;
+  name: string;
+  description: string;
+  products: any[];
+  isPublic: boolean;
+}
+
+const CreateProductPlaylistPage = observer(({ 
+  isAuthenticated = true,
+  productPlaylistStore 
+}: CreateProductPlaylistPageProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { productPlaylistStore } = useContext(StoreContext);
   
   // Form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isPublic, setIsPublic] = useState(true);
-  const [coverImage, setCoverImage] = useState(null);
-  const [coverImagePreview, setCoverImagePreview] = useState(null);
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
   
   // Handle cover image selection
-  const handleImageChange = (event) => {
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       setCoverImage(file);
       
       // Create a preview URL
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setCoverImagePreview(e.target.result);
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (!e.target) return;
+        setCoverImagePreview(e.target.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -55,7 +73,7 @@ const CreateProductPlaylistPage = observer(({ isAuthenticated = true }: CreatePr
   
   // Validate form
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: FormErrors = {};
     
     if (!title.trim()) {
       newErrors.title = 'Title is required';
@@ -70,7 +88,7 @@ const CreateProductPlaylistPage = observer(({ isAuthenticated = true }: CreatePr
   };
   
   // Handle form submission
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     
     if (!validateForm()) {
@@ -80,28 +98,27 @@ const CreateProductPlaylistPage = observer(({ isAuthenticated = true }: CreatePr
     setLoading(true);
     
     try {
-      // In a real app, you would upload the cover image to a server
-      // and get back a URL to use for the playlist cover
-      
-      // For now, we'll use a placeholder image if none was selected
-      const coverImageUrl = coverImagePreview || `https://picsum.photos/seed/${Date.now()}/300/300`;
-      
-      // Create the playlist
-      const newPlaylist = await productPlaylistStore.createPlaylist({
-        title,
+      const playlistData: CreatePlaylistData = {
+        userId: 'me', // This should come from your auth system
+        name: title,
         description,
-        coverImage: coverImageUrl,
+        products: [],
         isPublic
-      });
+      };
       
-      // Navigate to the new playlist
-      navigate(`/product-playlists/${newPlaylist.id}`);
+      await productPlaylistStore.createPlaylist(playlistData);
+      navigate('/product-playlists');
     } catch (error) {
       console.error('Error creating playlist:', error);
       setErrors({ submit: 'Failed to create playlist. Please try again.' });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleImageClick = () => {
+    const input = document.getElementById('cover-image-input') as HTMLInputElement | null;
+    input?.click();
   };
   
   return (
@@ -157,7 +174,7 @@ const CreateProductPlaylistPage = observer(({ isAuthenticated = true }: CreatePr
                       opacity: 0.9
                     }
                   }}
-                  onClick={() => document.getElementById('cover-image-input').click()}
+                  onClick={handleImageClick}
                 >
                   {coverImagePreview ? (
                     <Box 

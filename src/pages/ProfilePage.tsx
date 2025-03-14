@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -38,10 +38,51 @@ import ReportIcon from '@mui/icons-material/Report';
 import BlockIcon from '@mui/icons-material/Block';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import { Link, useNavigate } from 'react-router-dom';
-import { StoreContext } from '../stores/storeContext';
+import { useStores } from '../hooks/useStores';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
-function TabPanel(props) {
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  value: number;
+  index: number;
+}
+
+interface List {
+  id: string;
+  name: string;
+  itemCount: number;
+  previewImages: string[];
+}
+
+interface Activity {
+  id: string;
+  type: 'like' | 'comment' | 'save';
+  timestamp: string;
+  targetUser: string;
+  targetTitle: string;
+  targetImage: string;
+  time?: string;
+}
+
+interface Post {
+  id: string;
+  type: string;
+  title: string;
+  image: string;
+  price: string;
+  store: string;
+  user: string;
+  likes: number;
+  comments: number;
+}
+
+interface Interest {
+  name: string;
+  id: string;
+}
+
+function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
   return (
@@ -62,7 +103,7 @@ function TabPanel(props) {
 }
 
 // List Card Component
-const ListCard = ({ list }) => {
+const ListCard = ({ list }: { list: List }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   
@@ -116,10 +157,10 @@ const ListCard = ({ list }) => {
 };
 
 // Activity Item Component
-const ActivityItem = ({ activity }) => {
+const ActivityItem = ({ activity }: { activity: Activity }) => {
   const theme = useTheme();
   
-  const getActivityIcon = (type) => {
+  const getActivityIcon = (type: Activity['type']) => {
     switch (type) {
       case 'like':
         return <FavoriteIcon color="error" fontSize="small" />;
@@ -132,7 +173,7 @@ const ActivityItem = ({ activity }) => {
     }
   };
   
-  const getActivityText = (activity) => {
+  const getActivityText = (activity: Activity) => {
     switch (activity.type) {
       case 'like':
         return `You liked ${activity.targetUser}'s post: "${activity.targetTitle}"`;
@@ -191,14 +232,14 @@ export interface ProfilePageProps {
 const ProfilePage = observer(({ isAuthenticated = true, userId }: ProfilePageProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { userStore } = useContext(StoreContext);
+  const { userStore } = useStores();
   const [tabValue, setTabValue] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [userPosts, setUserPosts] = useState([]);
-  const [savedItems, setSavedItems] = useState([]);
-  const [userLists, setUserLists] = useState([]);
-  const [userActivity, setUserActivity] = useState([]);
-  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+  const [userPosts, setUserPosts] = useState<Post[]>([]);
+  const [savedItems, setSavedItems] = useState<Post[]>([]);
+  const [userLists, setUserLists] = useState<List[]>([]);
+  const [userActivity, setUserActivity] = useState<Activity[]>([]);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   
   // Determine if this is the current user's profile
   const isOwnProfile = userId === 'me' || !userId;
@@ -209,11 +250,11 @@ const ProfilePage = observer(({ isAuthenticated = true, userId }: ProfilePagePro
   // Check if the current user is following this profile
   const following = !isOwnProfile && userStore.isFollowing(userId);
   
-  const handleTabChange = (event, newValue) => {
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
   
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMenuAnchorEl(event.currentTarget);
   };
   
@@ -240,11 +281,15 @@ const ProfilePage = observer(({ isAuthenticated = true, userId }: ProfilePagePro
     handleMenuClose();
   };
   
+  const handleUserClick = (userId: string) => {
+    navigate(`/profile/${userId}`);
+  };
+  
   useEffect(() => {
     // Simulate API call to fetch user data
     setTimeout(() => {
       // Generate sample posts based on user ID
-      const samplePosts = Array(4).fill().map((_, index) => ({
+      const samplePosts = Array(4).fill(null).map((_, index) => ({
         id: `${userId || 'me'}-post-${index + 1}`,
         type: 'product',
         title: `Sample Product ${index + 1}`,
@@ -443,10 +488,10 @@ const ProfilePage = observer(({ isAuthenticated = true, userId }: ProfilePagePro
               </Typography>
               
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                {profileData.interests.map((interest, index) => (
+                {profileData.interests.map((interest: Interest, index: number) => (
                   <Chip 
                     key={index} 
-                    label={interest} 
+                    label={interest.name} 
                     size="small"
                     color="primary"
                     variant="outlined"
@@ -508,7 +553,7 @@ const ProfilePage = observer(({ isAuthenticated = true, userId }: ProfilePagePro
               {userPosts.length > 0 ? (
                 userPosts.map(post => (
                   <Grid item xs={12} sm={6} md={4} lg={3} key={post.id}>
-                    <ProductCard product={post} />
+                    <ProductCard product={post} onUserClick={handleUserClick} />
                   </Grid>
                 ))
               ) : (
@@ -548,7 +593,7 @@ const ProfilePage = observer(({ isAuthenticated = true, userId }: ProfilePagePro
               {savedItems.length > 0 ? (
                 savedItems.map(item => (
                   <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
-                    <ProductCard product={item} />
+                    <ProductCard product={item} onUserClick={handleUserClick} />
                   </Grid>
                 ))
               ) : (

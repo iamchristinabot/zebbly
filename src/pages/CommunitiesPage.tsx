@@ -15,7 +15,7 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
-import { StoreContext } from '../stores/storeContext';
+import { useStores } from '../hooks/useStores';
 import Header from '../components/Header';
 import CommunityCard from '../components/communities/CommunityCard';
 import FeaturedCommunities from '../components/communities/FeaturedCommunities';
@@ -23,13 +23,24 @@ import RecommendedCommunities from '../components/communities/RecommendedCommuni
 import CommunityCategories from '../components/communities/CommunityCategories';
 import { AuthenticatedProps } from '../types/common';
 
+interface Community {
+  id: string;
+  name: string;
+  description: string;
+  memberCount: number;
+  postCount: number;
+  category: string;
+  tags: string[];
+  image: string;
+  isJoined: boolean;
+}
+
 export interface CommunitiesPageProps extends AuthenticatedProps {}
 
 const CommunitiesPage = observer(({ isAuthenticated = true }: CommunitiesPageProps) => {
-  const { communityStore } = useContext(StoreContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [tabValue, setTabValue] = useState(0);
-  const [communities, setCommunities] = useState([]);
+  const [communities, setCommunities] = useState<Community[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -111,18 +122,18 @@ const CommunitiesPage = observer(({ isAuthenticated = true }: CommunitiesPagePro
     }, 1000);
   }, []);
 
-  const handleTabChange = (event, newValue) => {
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
 
-  const filteredCommunities = communities.filter(community => 
+  const filteredCommunities = communities.filter((community: any) => 
     community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     community.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    community.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+    community.tags.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   return (
@@ -185,8 +196,8 @@ const CommunitiesPage = observer(({ isAuthenticated = true }: CommunitiesPagePro
             
             <Grid container spacing={3}>
               {filteredCommunities
-                .filter(community => tabValue !== 1 || community.isJoined)
-                .map(community => (
+                .filter((community: any) => tabValue !== 1 || community.isJoined)
+                .map((community: any) => (
                   <Grid item xs={12} sm={6} md={4} key={community.id}>
                     <CommunityCard community={community} />
                   </Grid>

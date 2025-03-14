@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import {
   Box,
@@ -39,23 +39,28 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { StoreContext } from "../stores/storeContext";
+import { useStores } from "../hooks/useStores";
 import Header from "../components/Header";
 import StyleTwinCard from '../components/StyleTwinCard';
+import { SelectChangeEvent } from "@mui/material";
+import type { StyleTwin, ShoppingProfile } from "../stores/shoppingProfileStore";
 
-const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
+interface StyleTwinsPageProps {
+  isAuthenticated: boolean;
+}
+
+const StyleTwinsPage = observer(({ isAuthenticated = true }: StyleTwinsPageProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { profileId } = useParams(); // Get profile ID from URL
-  const { userStore, aiRecommendationStore, shoppingProfileStore } = useContext(StoreContext);
+  const { profileId } = useParams();
+  const { userStore, aiRecommendationStore, shoppingProfileStore } = useStores();
 
-  // State for style twins and UI
+  // State for UI
   const [loading, setLoading] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
-  const [styleTwins, setStyleTwins] = useState([]);
-  const [selectedTwin, setSelectedTwin] = useState(null);
+  const [selectedTwin, setSelectedTwin] = useState<StyleTwin | null>(null);
   const [comparisonDialogOpen, setComparisonDialogOpen] = useState(false);
-  const [currentProfile, setCurrentProfile] = useState(null);
+  const [currentProfile, setCurrentProfile] = useState<ShoppingProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
 
   // Load profiles and style twins on component mount
@@ -65,25 +70,27 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
       setLoadingProfile(true);
       
       try {
-        if (!shoppingProfileStore) {
+        if (!shoppingProfileStore?.profiles) {
           console.error("Shopping profile store is not available");
           setLoading(false);
           setLoadingProfile(false);
           return;
         }
         
-        // Load profiles from store
-        await shoppingProfileStore.loadProfiles();
+        // Load profiles from store if not already loaded
+        if (!shoppingProfileStore.profiles.length) {
+          await shoppingProfileStore.loadProfiles();
+        }
         
         // Find the profile by ID or use default
-        let profile;
-        if (profileId) {
-          profile = shoppingProfileStore.profiles.find(p => p.id === profileId);
+        let profile: ShoppingProfile | undefined;
+        if (profileId && shoppingProfileStore.profiles) {
+          profile = shoppingProfileStore.profiles.find((p: ShoppingProfile) => p.id === profileId);
         }
         
         if (!profile && shoppingProfileStore.profiles.length > 0) {
           // Use default profile or first available
-          profile = shoppingProfileStore.profiles.find(p => p.isDefault) || 
+          profile = shoppingProfileStore.profiles.find((p: ShoppingProfile) => p.isDefault) || 
                     shoppingProfileStore.profiles[0];
                     
           // Update URL to match selected profile
@@ -96,13 +103,9 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
           setCurrentProfile(profile);
           setLoadingProfile(false);
           
-          // Generate mock style twins based on profile preferences
-          // In a real app, this would be an API call using the profile data
-          setTimeout(() => {
-            const mockTwins = generateStyleTwins(profile);
-            setStyleTwins(mockTwins);
-            setLoading(false);
-          }, 1500);
+          // Load style twins for the profile
+          await shoppingProfileStore.loadStyleTwins(profile.id);
+          setLoading(false);
         } else {
           setLoadingProfile(false);
           setLoading(false);
@@ -117,168 +120,12 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
     loadData();
   }, [profileId, shoppingProfileStore, navigate]);
 
-  // Generate mock style twins based on profile
-  const generateStyleTwins = (profile) => {
-    // This would be replaced by an actual API call in a real app
-    return [
-      {
-        id: "user1",
-        name: "Emma Thompson",
-        avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-        matchScore: 0.92,
-        bio: "Fashion enthusiast with a love for minimalist design and sustainable brands.",
-        location: "New York, NY",
-        followers: 1243,
-        following: 567,
-        styleTraits: profile.stylePreferences || ["Minimalist", "Sustainable", "Modern", "Casual Chic"],
-        favoriteCategories: profile.favoriteCategories || ["Fashion", "Home Decor", "Accessories"],
-        favoriteBrands: ["Everlane", "Reformation", "Muji", "IKEA"],
-        recentProducts: [
-          {
-            id: "p1",
-            title: "Linen Shirt Dress",
-            image: "https://picsum.photos/seed/product1/300/200",
-            price: 89.99,
-          },
-          {
-            id: "p2",
-            title: "Ceramic Planter",
-            image: "https://picsum.photos/seed/product2/300/200",
-            price: 34.99,
-          },
-          {
-            id: "p3",
-            title: "Minimalist Watch",
-            image: "https://picsum.photos/seed/product3/300/200",
-            price: 129.99,
-          },
-        ],
-        commonInterests: profile.interests || [
-          "Sustainable Fashion",
-          "Indoor Plants",
-          "Scandinavian Design",
-        ],
-      },
-      {
-        id: "user2",
-        name: "Michael Chen",
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-        matchScore: 0.87,
-        bio: "Tech enthusiast and design lover. Always looking for smart home gadgets and sleek accessories.",
-        location: "San Francisco, CA",
-        followers: 892,
-        following: 345,
-        styleTraits: ["Modern", "Tech-Forward", "Minimalist", "Urban"],
-        favoriteCategories: ["Electronics", "Smart Home", "Accessories"],
-        favoriteBrands: ["Apple", "Samsung", "Bose", "Philips Hue"],
-        recentProducts: [
-          {
-            id: "p4",
-            title: "Wireless Earbuds",
-            image: "https://picsum.photos/seed/product4/300/200",
-            price: 149.99,
-          },
-          {
-            id: "p5",
-            title: "Smart Desk Lamp",
-            image: "https://picsum.photos/seed/product5/300/200",
-            price: 79.99,
-          },
-          {
-            id: "p6",
-            title: "Minimalist Backpack",
-            image: "https://picsum.photos/seed/product6/300/200",
-            price: 89.99,
-          },
-        ],
-        commonInterests: [
-          "Smart Home Tech",
-          "Minimalist Design",
-          "Productivity Gadgets",
-        ],
-      },
-      {
-        id: "user3",
-        name: "Sophia Rodriguez",
-        avatar: "https://randomuser.me/api/portraits/women/29.jpg",
-        matchScore: 0.84,
-        bio: "Fitness enthusiast and wellness advocate. Love discovering new workout gear and healthy living products.",
-        location: "Los Angeles, CA",
-        followers: 1567,
-        following: 432,
-        styleTraits: ["Athletic", "Casual", "Functional", "Eco-friendly"],
-        favoriteCategories: ["Fitness", "Wellness", "Activewear"],
-        favoriteBrands: ["Nike", "Lululemon", "Hydroflask", "Manduka"],
-        recentProducts: [
-          {
-            id: "p7",
-            title: "Yoga Mat",
-            image: "https://picsum.photos/seed/product7/300/200",
-            price: 68.99,
-          },
-          {
-            id: "p8",
-            title: "Fitness Tracker",
-            image: "https://picsum.photos/seed/product8/300/200",
-            price: 129.99,
-          },
-          {
-            id: "p9",
-            title: "Reusable Water Bottle",
-            image: "https://picsum.photos/seed/product9/300/200",
-            price: 34.99,
-          },
-        ],
-        commonInterests: [
-          "Fitness Tech",
-          "Sustainable Products",
-          "Outdoor Activities",
-        ],
-      },
-      {
-        id: "user4",
-        name: "David Johnson",
-        avatar: "https://randomuser.me/api/portraits/men/86.jpg",
-        matchScore: 0.79,
-        bio: "Home chef and kitchen gadget collector. Always looking for the next tool to elevate my cooking game.",
-        location: "Chicago, IL",
-        followers: 723,
-        following: 291,
-        styleTraits: [
-          "Practical",
-          "Quality-focused",
-          "Traditional",
-          "Functional",
-        ],
-        favoriteCategories: ["Kitchen", "Cooking", "Home"],
-        favoriteBrands: ["KitchenAid", "Le Creuset", "OXO", "Cuisinart"],
-        recentProducts: [
-          {
-            id: "p10",
-            title: "Cast Iron Dutch Oven",
-            image: "https://picsum.photos/seed/product10/300/200",
-            price: 249.99,
-          },
-          {
-            id: "p11",
-            title: "Chef's Knife",
-            image: "https://picsum.photos/seed/product11/300/200",
-            price: 89.99,
-          },
-          {
-            id: "p12",
-            title: "Smart Kitchen Scale",
-            image: "https://picsum.photos/seed/product12/300/200",
-            price: 59.99,
-          },
-        ],
-        commonInterests: [
-          "Cooking Gadgets",
-          "Quality Kitchenware",
-          "Smart Home",
-        ],
-      },
-    ];
+  // Handle profile change
+  const handleProfileChange = (event: SelectChangeEvent<string>) => {
+    const newProfileId = event.target.value;
+    if (shoppingProfileStore?.profiles) {
+      navigate(`/style-twins/${newProfileId}`);
+    }
   };
 
   const handleLoadMoreTwins = () => {
@@ -365,12 +212,12 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
       ];
       
       // Add the new twins to the existing ones
-      setStyleTwins([...styleTwins, ...additionalTwins]);
+      shoppingProfileStore.styleTwins = [...shoppingProfileStore.styleTwins, ...additionalTwins];
       setAnalyzing(false);
     }, 2000);
   };
 
-  const handleOpenComparison = (twin) => {
+  const handleOpenComparison = (twin: StyleTwin) => {
     setSelectedTwin(twin);
     setComparisonDialogOpen(true);
   };
@@ -379,20 +226,19 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
     setComparisonDialogOpen(false);
   };
 
-  const handleFollowTwin = (twinId, event) => {
+  const handleFollowTwin = (twinId: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    // Toggle follow status
-    setStyleTwins((prevTwins) =>
-      prevTwins.map((twin) =>
-        twin.id === twinId ? { ...twin, isFollowing: !twin.isFollowing } : twin
-      )
-    );
+    shoppingProfileStore.toggleFollowTwin(twinId);
   };
 
-  // Handle profile change
-  const handleProfileChange = (event) => {
-    const newProfileId = event.target.value;
-    navigate(`/style-twins/${newProfileId}`);
+  // Handle comparison dialog close
+  const handleCloseComparisonFromDialog = () => {
+    setComparisonDialogOpen(false);
+  };
+
+  // Handle follow twin with synthetic event
+  const handleFollowTwinFromDialog = (twinId: string) => {
+    shoppingProfileStore.toggleFollowTwin(twinId);
   };
 
   return (
@@ -433,19 +279,23 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
               value={currentProfile?.id || ''}
               label="Shopping Profile"
               onChange={handleProfileChange}
-              disabled={loadingProfile || !shoppingProfileStore || shoppingProfileStore.profiles.length === 0}
+              disabled={loadingProfile || !shoppingProfileStore?.profiles}
             >
-              {shoppingProfileStore?.profiles.map((profile) => (
-                <MenuItem key={profile.id} value={profile.id}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar 
-                      src={profile.avatar} 
-                      sx={{ width: 24, height: 24, mr: 1 }}
-                    />
-                    {profile.name}
-                  </Box>
-                </MenuItem>
-              ))}
+              {shoppingProfileStore?.profiles?.length > 0 ? (
+                shoppingProfileStore.profiles.map((profile) => (
+                  <MenuItem key={profile.id} value={profile.id}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Avatar 
+                        src={profile.avatar} 
+                        sx={{ width: 24, height: 24, mr: 1 }}
+                      />
+                      {profile.name}
+                    </Box>
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled>No profiles available</MenuItem>
+              )}
             </Select>
           </FormControl>
         </Box>
@@ -457,14 +307,14 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
               <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
                 <CircularProgress />
               </Box>
-            ) : styleTwins.length > 0 ? (
+            ) : shoppingProfileStore.styleTwins.length > 0 ? (
               <Grid container spacing={3}>
-                {styleTwins.map((twin) => (
+                {shoppingProfileStore.styleTwins.map((twin) => (
                   <Grid item xs={12} sm={6} md={4} key={twin.id}>
                     <StyleTwinCard
                       twin={twin}
                       onCompare={() => handleOpenComparison(twin)}
-                      onFollow={(e) => handleFollowTwin(twin.id, e)}
+                      onFollow={(e: React.MouseEvent) => handleFollowTwin(twin.id, e)}
                     />
                   </Grid>
                 ))}
@@ -490,7 +340,7 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
         </Grid>
         
         {/* Refresh button moved to bottom */}
-        {styleTwins.length > 0 && (
+        {shoppingProfileStore.styleTwins.length > 0 && (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6, mb: 2 }}>
             <Button
               variant="contained"
@@ -510,7 +360,7 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
       {selectedTwin && (
         <Dialog
           open={comparisonDialogOpen}
-          onClose={handleCloseComparison}
+          onClose={handleCloseComparisonFromDialog}
           maxWidth="md"
           fullWidth
         >
@@ -518,7 +368,7 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
             Style Comparison
             <IconButton
               aria-label="close"
-              onClick={handleCloseComparison}
+              onClick={handleCloseComparisonFromDialog}
               sx={{
                 position: "absolute",
                 right: 8,
@@ -541,7 +391,7 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
                 >
                   <Box sx={{ textAlign: "center", px: 2 }}>
                     <Avatar
-                      src={userStore.getUserById("me").avatar}
+                      src={userStore.getUserById("me")?.avatar || ""}
                       sx={{ width: 60, height: 60, mx: "auto", mb: 1 }}
                     />
                     <Typography variant="subtitle1" fontWeight="bold">
@@ -670,7 +520,7 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button variant="outlined" onClick={handleCloseComparison}>
+            <Button variant="outlined" onClick={handleCloseComparisonFromDialog}>
               Close
             </Button>
             <Button
@@ -678,10 +528,8 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }) => {
               color="primary"
               startIcon={<PersonAddIcon />}
               onClick={() => {
-                handleFollowTwin(selectedTwin.id, {
-                  stopPropagation: () => {},
-                });
-                handleCloseComparison();
+                handleFollowTwinFromDialog(selectedTwin.id);
+                handleCloseComparisonFromDialog();
               }}
             >
               {selectedTwin.isFollowing ? "Unfollow" : "Follow"}

@@ -11,14 +11,19 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link, useNavigate } from 'react-router-dom';
-import { StoreContext } from '../../stores/storeContext';
 import Header from '../../components/Header';
 import ProfileForm from '../../components/shopping-profiles/ProfileForm';
 import ProfilePreview from '../../components/shopping-profiles/ProfilePreview';
 
-const AddProfilePage = observer(({ isAuthenticated = true }) => {
+import { useStores } from '../../hooks/useStores';
+
+interface AddProfilePageProps {
+  isAuthenticated: boolean;
+}
+
+const AddProfilePage = observer(({ isAuthenticated = true }: AddProfilePageProps) => {
   const navigate = useNavigate();
-  const { shoppingProfileStore } = useContext(StoreContext);
+  const { shoppingProfileStore } = useStores();
   
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
@@ -37,7 +42,7 @@ const AddProfilePage = observer(({ isAuthenticated = true }) => {
   });
   
   // Handle form input change
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,

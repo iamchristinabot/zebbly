@@ -1,14 +1,30 @@
-import { createContext } from 'react';
-import UserStore from './userStore';
-import AIRecommendationStore from './aiRecommendationStore';
+import { makeAutoObservable } from 'mobx';
+import { UserStore } from './userStore';
+import { AIRecommendationStore } from './aiRecommendationStore';
+import { ShoppingProfileStore } from './shoppingProfileStore';
+import { ProductPlaylistStore } from './productPlaylistStore';
 
-class RootStore {
+export class RootStore {
+  userStore: UserStore;
+  aiRecommendationStore: AIRecommendationStore;
+  shoppingProfileStore: ShoppingProfileStore;
+  productPlaylistStore: ProductPlaylistStore;
+
   constructor() {
-    this.userStore = new UserStore();
-    this.aiRecommendationStore = new AIRecommendationStore();
-    // Add other stores here as needed
+    this.userStore = new UserStore(this);
+    this.aiRecommendationStore = new AIRecommendationStore(this);
+    this.shoppingProfileStore = new ShoppingProfileStore(this);
+    this.productPlaylistStore = new ProductPlaylistStore(this);
+    
+    makeAutoObservable(this);
   }
 }
 
+// Create a single instance of the root store
 const rootStore = new RootStore();
-export default rootStore; 
+
+// Export the store instance as default
+export default rootStore;
+
+// Export the store type
+export type TRootStore = typeof rootStore; 

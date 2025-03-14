@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Box,
@@ -22,7 +22,8 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel
+  InputLabel,
+  SelectChangeEvent
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
@@ -34,25 +35,86 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PersonIcon from '@mui/icons-material/Person';
 import { Link, useNavigate } from 'react-router-dom';
-import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
 import { AuthenticatedProps } from '../types/common';
+import { UserStore } from '../stores/userStore';
+import { ShoppingProfileStore } from '../stores/shoppingProfileStore';
+import { AIRecommendationStore } from '../stores/aiRecommendationStore';
+import type { ShoppingProfile } from '../types/index';
+import { useStores } from '../hooks/useStores';
+
 // Message types
 const MESSAGE_TYPE = {
   USER: 'user',
   ASSISTANT: 'assistant',
   PRODUCT: 'product'
-};
+} as const;
+
+type MessageType = typeof MESSAGE_TYPE[keyof typeof MESSAGE_TYPE];
 
 export interface ShoppingAssistantPageProps extends AuthenticatedProps {}
 
-const ShoppingAssistantPage = observer(({ isAuthenticated = true }: ShoppingAssistantPageProps) => {
+interface PriceRange {
+  min: number;
+  max: number;
+}
+
+interface UserPreferences {
+  interests: string[];
+  priceRanges: {
+    [category: string]: PriceRange;
+  };
+  styles: string[];
+  colors: string[];
+  brands: string[];
+}
+
+interface ProfilePreferences {
+  [key: string]: UserPreferences;
+}
+
+interface Product {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  image: string;
+  store: string;
+  rating: number;
+  reviews: number;
+  liked?: boolean;
+  saved?: boolean;
+}
+
+interface Message {
+  type: MessageType;
+  content: string;
+  timestamp: Date;
+  products?: Product[];
+}
+
+interface RenderMessageProps {
+  message: Message;
+  index: number;
+  handleLikeProduct: (productId: string) => void;
+  handleSaveProduct: (productId: string) => void;
+  handleBuyProduct: (productId: string) => void;
+}
+
+const ShoppingAssistantPage = observer(({ 
+  isAuthenticated = true
+}: ShoppingAssistantPageProps) => {
+  const { userStore, shoppingProfileStore, aiRecommendationStore } = useStores();
   const theme = useTheme();
   const navigate = useNavigate();
-  const { userStore, shoppingProfileStore, aiRecommendationStore } = useContext(StoreContext);
   
-  // Create a fallback for aiRecommendationStore if it's undefined
-  const defaultUserPreferences = {
+  // Selected profile state
+  const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null);
+  const [profilePreferences, setProfilePreferences] = useState<ProfilePreferences>({});
+  const [loadingProfiles, setLoadingProfiles] = useState(true);
+  
+  // Create a fallback for preferences if it's undefined
+  const defaultUserPreferences: UserPreferences = {
     interests: ['Tech', 'Home Decor', 'Fitness'],
     priceRanges: {
       'Tech': { min: 50, max: 500 },
@@ -64,32 +126,30 @@ const ShoppingAssistantPage = observer(({ isAuthenticated = true }: ShoppingAssi
     brands: ['Apple', 'Samsung', 'Nike', 'Adidas', 'IKEA']
   };
   
-  // Selected profile for shopping
-  const [selectedProfileId, setSelectedProfileId] = useState(null);
-  const [profilePreferences, setProfilePreferences] = useState({});
-  const [loadingProfiles, setLoadingProfiles] = useState(true);
-  
   // Use either the store's userPreferences or the profile-specific preferences
-  const userPreferences = profilePreferences[selectedProfileId] || defaultUserPreferences;
+  const userPreferences = selectedProfileId && profilePreferences[selectedProfileId] 
+    ? profilePreferences[selectedProfileId] 
+    : defaultUserPreferences;
   
   // Chat state
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
       type: MESSAGE_TYPE.ASSISTANT,
       content: "Hi there! I'm your AI shopping assistant. How can I help you find products today?",
       timestamp: new Date()
     }
   ]);
+  
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Product recommendations
-  const [recommendedProducts, setRecommendedProducts] = useState([]);
+  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
   
-  // Load profiles from store
+  // Load profile from store
   useEffect(() => {
-    const loadProfiles = async () => {
+    const loadProfile = async () => {
       setLoadingProfiles(true);
       
       try {
@@ -99,49 +159,46 @@ const ShoppingAssistantPage = observer(({ isAuthenticated = true }: ShoppingAssi
           return;
         }
         
-        // Load profiles from store
-        await shoppingProfileStore.loadProfiles();
-        
-        // Set default profile if available
-        const defaultProfile = shoppingProfileStore.profiles.find(p => p.isDefault);
-        if (defaultProfile) {
-          setSelectedProfileId(defaultProfile.id);
-        } else if (shoppingProfileStore.profiles.length > 0) {
-          // Fallback to first profile if no default is set
-          setSelectedProfileId(shoppingProfileStore.profiles[0].id);
+        // Load profile from store if we have a user
+        if (userStore.currentUser) {
+          await shoppingProfileStore.loadProfile(userStore.currentUser.id);
         }
         
-        // Generate preferences for each profile
-        const preferences = {};
-        shoppingProfileStore.profiles.forEach(profile => {
-          preferences[profile.id] = generateProfilePreferences(profile);
-        });
-        setProfilePreferences(preferences);
+        // Set profile if available
+        if (shoppingProfileStore.profile) {
+          setSelectedProfileId(shoppingProfileStore.profile.id);
+          
+          // Generate preferences for the profile
+          const preferences: ProfilePreferences = {
+            [shoppingProfileStore.profile.id]: generateProfilePreferences(shoppingProfileStore.profile)
+          };
+          setProfilePreferences(preferences);
+        }
       } catch (error) {
-        console.error('Error loading profiles:', error);
+        console.error('Error loading profile:', error);
       } finally {
         setLoadingProfiles(false);
       }
     };
     
-    loadProfiles();
-  }, [shoppingProfileStore]);
+    loadProfile();
+  }, [shoppingProfileStore, userStore.currentUser]);
   
   // Generate profile-specific preferences based on profile data
-  const generateProfilePreferences = (profile) => {
+  const generateProfilePreferences = (profile: any): UserPreferences => {
     // If profile has specific preferences, use those
     if (profile.interests && profile.stylePreferences && profile.favoriteColors) {
       return {
-        interests: profile.interests || ['Fashion', 'Home Decor', 'Tech'],
+        interests: profile.interests.split(',') || ['Fashion', 'Home Decor', 'Tech'],
         priceRanges: {
           'Tech': { min: 50, max: 500 },
           'Home Decor': { min: 20, max: 200 },
           'Fashion': { min: 30, max: 300 },
           'Fitness': { min: 30, max: 150 }
         },
-        styles: profile.stylePreferences || ['Modern', 'Minimalist'],
-        colors: profile.favoriteColors || ['Black', 'White', 'Gray', 'Blue'],
-        brands: profile.favoriteStores || ['Apple', 'Samsung', 'Nike', 'Adidas', 'IKEA']
+        styles: profile.stylePreferences.split(',') || ['Modern', 'Minimalist'],
+        colors: profile.favoriteColors.split(',') || ['Black', 'White', 'Gray', 'Blue'],
+        brands: profile.favoriteStores?.split(',') || ['Apple', 'Samsung', 'Nike', 'Adidas', 'IKEA']
       };
     }
     
@@ -172,17 +229,7 @@ const ShoppingAssistantPage = observer(({ isAuthenticated = true }: ShoppingAssi
       };
     } else {
       // Default for self or other
-      return {
-        interests: ['Fashion', 'Home Decor', 'Beauty'],
-        priceRanges: {
-          'Fashion': { min: 30, max: 300 },
-          'Home Decor': { min: 20, max: 200 },
-          'Beauty': { min: 15, max: 100 }
-        },
-        styles: ['Modern', 'Minimalist', 'Elegant'],
-        colors: ['Black', 'White', 'Beige', 'Pink'],
-        brands: ['Zara', 'H&M', 'Sephora', 'IKEA', 'West Elm']
-      };
+      return defaultUserPreferences;
     }
   };
   
@@ -192,23 +239,22 @@ const ShoppingAssistantPage = observer(({ isAuthenticated = true }: ShoppingAssi
   }, [messages]);
   
   // Handle input change
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
   
   // Handle profile change
-  const handleProfileChange = (e) => {
+  const handleProfileChange = (e: SelectChangeEvent<string>) => {
     const newProfileId = e.target.value;
     setSelectedProfileId(newProfileId);
     
     // Add a message about the profile change
-    const selectedProfile = shoppingProfileStore.profiles.find(p => p.id === newProfileId);
-    if (selectedProfile) {
+    if (shoppingProfileStore.profile) {
       setMessages(prev => [
         ...prev,
         {
           type: MESSAGE_TYPE.ASSISTANT,
-          content: `I've switched to shopping for ${selectedProfile.name}. I'll adjust my recommendations based on their preferences.`,
+          content: `I've switched to shopping. I'll adjust my recommendations based on your preferences.`,
           timestamp: new Date()
         }
       ]);
@@ -220,7 +266,7 @@ const ShoppingAssistantPage = observer(({ isAuthenticated = true }: ShoppingAssi
     if (!inputValue.trim()) return;
     
     // Add user message
-    const userMessage = {
+    const userMessage: Message = {
       type: MESSAGE_TYPE.USER,
       content: inputValue,
       timestamp: new Date()
@@ -246,7 +292,7 @@ const ShoppingAssistantPage = observer(({ isAuthenticated = true }: ShoppingAssi
   };
   
   // Generate AI response based on user input
-  const generateAIResponse = (userInput) => {
+  const generateAIResponse = (userInput: string): Message => {
     const userInputLower = userInput.toLowerCase();
     let responseContent = '';
     
@@ -330,7 +376,7 @@ const ShoppingAssistantPage = observer(({ isAuthenticated = true }: ShoppingAssi
   };
   
   // Handle key press (Enter to send)
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
@@ -338,27 +384,27 @@ const ShoppingAssistantPage = observer(({ isAuthenticated = true }: ShoppingAssi
   };
   
   // Handle product like
-  const handleLikeProduct = (productId) => {
+  const handleLikeProduct = (productId: string) => {
     setRecommendedProducts(prev => 
       prev.map(p => p.id === productId ? { ...p, liked: !p.liked } : p)
     );
   };
   
   // Handle product save
-  const handleSaveProduct = (productId) => {
+  const handleSaveProduct = (productId: string) => {
     setRecommendedProducts(prev => 
       prev.map(p => p.id === productId ? { ...p, saved: !p.saved } : p)
     );
   };
   
   // Handle product buy
-  const handleBuyProduct = (productId) => {
+  const handleBuyProduct = (productId: string) => {
     // In a real app, this would navigate to the product page or add to cart
     console.log(`Buy product: ${productId}`);
   };
   
   // Render message based on type
-  const renderMessage = (message, index) => {
+  const renderMessage = ({ message, index, handleLikeProduct, handleSaveProduct, handleBuyProduct }: RenderMessageProps) => {
     switch (message.type) {
       case MESSAGE_TYPE.USER:
         return (
@@ -452,51 +498,53 @@ const ShoppingAssistantPage = observer(({ isAuthenticated = true }: ShoppingAssi
               </Paper>
             </Box>
             
-            <Grid container spacing={2} sx={{ ml: 5 }}>
-              {message.products.map((product) => (
-                <Grid item xs={12} sm={6} md={4} key={product.id}>
-                  <Card>
-                    <CardMedia
-                      component="img"
-                      height="140"
-                      image={product.image}
-                      alt={product.title}
-                    />
-                    <CardContent>
-                      <Typography variant="h6" component="div" noWrap>
-                        {product.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                        {product.description}
-                      </Typography>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="h6" component="div">
-                          ${product.price}
+            {message.products && message.products.length > 0 && (
+              <Grid container spacing={2} sx={{ ml: 5 }}>
+                {message.products.map((product) => (
+                  <Grid item xs={12} sm={6} md={4} key={product.id}>
+                    <Card>
+                      <CardMedia
+                        component="img"
+                        height="140"
+                        image={product.image}
+                        alt={product.title}
+                      />
+                      <CardContent>
+                        <Typography variant="h6" component="div" noWrap>
+                          {product.title}
                         </Typography>
-                        <Chip label={product.store} size="small" />
-                      </Box>
-                    </CardContent>
-                    <CardActions>
-                      <IconButton onClick={() => handleLikeProduct(product.id)}>
-                        {product.liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
-                      </IconButton>
-                      <IconButton onClick={() => handleSaveProduct(product.id)}>
-                        {product.saved ? <BookmarkIcon color="primary" /> : <BookmarkBorderIcon />}
-                      </IconButton>
-                      <Button 
-                        variant="contained" 
-                        size="small" 
-                        startIcon={<ShoppingCartIcon />}
-                        onClick={() => handleBuyProduct(product.id)}
-                        sx={{ ml: 'auto' }}
-                      >
-                        Buy
-                      </Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                          {product.description}
+                        </Typography>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Typography variant="h6" component="div">
+                            ${product.price}
+                          </Typography>
+                          <Chip label={product.store} size="small" />
+                        </Box>
+                      </CardContent>
+                      <CardActions>
+                        <IconButton onClick={() => handleLikeProduct(product.id)}>
+                          {product.liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
+                        </IconButton>
+                        <IconButton onClick={() => handleSaveProduct(product.id)}>
+                          {product.saved ? <BookmarkIcon color="primary" /> : <BookmarkBorderIcon />}
+                        </IconButton>
+                        <Button 
+                          variant="contained" 
+                          size="small" 
+                          startIcon={<ShoppingCartIcon />}
+                          onClick={() => handleBuyProduct(product.id)}
+                          sx={{ ml: 'auto' }}
+                        >
+                          Buy
+                        </Button>
+                      </CardActions>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            )}
           </Box>
         );
         
@@ -531,23 +579,22 @@ const ShoppingAssistantPage = observer(({ isAuthenticated = true }: ShoppingAssi
                     value={selectedProfileId || ''}
                     label="Shop For"
                     onChange={handleProfileChange}
-                    disabled={!shoppingProfileStore || shoppingProfileStore.profiles.length === 0}
+                    disabled={!shoppingProfileStore || !shoppingProfileStore.profile}
                   >
-                    {shoppingProfileStore?.profiles.map((profile) => (
-                      <MenuItem key={profile.id} value={profile.id}>
+                    {shoppingProfileStore?.profile && (
+                      <MenuItem key={shoppingProfileStore.profile.id} value={shoppingProfileStore.profile.id}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                           <Avatar 
-                            src={profile.avatar} 
                             sx={{ width: 24, height: 24, mr: 1 }}
                           >
-                            {!profile.avatar && <PersonIcon fontSize="small" />}
+                            <PersonIcon fontSize="small" />
                           </Avatar>
                           <Typography>
-                            {profile.name}
+                            {shoppingProfileStore.profile.id}
                           </Typography>
                         </Box>
                       </MenuItem>
-                    ))}
+                    )}
                   </Select>
                 </FormControl>
               )}
@@ -601,7 +648,7 @@ const ShoppingAssistantPage = observer(({ isAuthenticated = true }: ShoppingAssi
             <Paper sx={{ p: 2, height: '70vh', display: 'flex', flexDirection: 'column' }}>
               {/* Chat messages */}
               <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
-                {messages.map((message, index) => renderMessage(message, index))}
+                {messages.map((message, index) => renderMessage({ message, index, handleLikeProduct, handleSaveProduct, handleBuyProduct }))}
                 
                 {isTyping && (
                   <Box

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Box,
@@ -19,50 +19,101 @@ import ShareIcon from '@mui/icons-material/Share';
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
 import PlaylistItemCard from '../components/playlists/PlaylistItemCard';
 import { AuthenticatedProps } from '../types/common';
+import { ProductPlaylistStore } from '../stores/productPlaylistStore';
+import type { Playlist, Product, PlaylistCreator } from '../types/index';
 
-export interface ProductPlaylistDetailPageProps extends AuthenticatedProps {}
+export interface ProductPlaylistDetailPageProps extends AuthenticatedProps {
+  productPlaylistStore: ProductPlaylistStore;
+}
 
-const ProductPlaylistDetailPage = observer(({ isAuthenticated = true }: ProductPlaylistDetailPageProps) => {
+// Store types
+interface StoreProduct {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+  category: string;
+}
+
+interface StorePlaylist {
+  id: string;
+  userId: string;
+  name: string;
+  description: string;
+  products: StoreProduct[];
+  isPublic: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const convertStoreProductToUIProduct = (storeProduct: StoreProduct): Product => ({
+  id: storeProduct.id,
+  title: storeProduct.name,
+  description: storeProduct.description,
+  price: storeProduct.price,
+  image: storeProduct.imageUrl,
+  store: '', // Add default or get from store
+  link: '', // Add default or get from store
+  category: storeProduct.category
+});
+
+const ProductPlaylistDetailPage = observer(({ 
+  isAuthenticated = true,
+  productPlaylistStore
+}: ProductPlaylistDetailPageProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { playlistId } = useParams();
-  const { productPlaylistStore } = useContext(StoreContext);
   
   // State for playlist and UI
   const [loading, setLoading] = useState(true);
-  const [playlist, setPlaylist] = useState(null);
-  const [playlistItems, setPlaylistItems] = useState([]);
+  const [playlist, setPlaylist] = useState<Playlist | null>(null);
+  const [playlistItems, setPlaylistItems] = useState<Product[]>([]);
   const [liked, setLiked] = useState(false);
   
   // Load playlist data on component mount
   useEffect(() => {
     const fetchPlaylistData = async () => {
+      if (!playlistId) return;
+      
       setLoading(true);
       
-      // Get playlist details
-      const playlistData = productPlaylistStore.getPlaylistById(playlistId);
-      
-      if (playlistData) {
-        setPlaylist(playlistData);
+      try {
+        // Get playlist details
+        const foundPlaylist = productPlaylistStore.playlists.find(p => p.id === playlistId) as StorePlaylist | undefined;
         
-        // Get playlist items
-        try {
-          const items = await productPlaylistStore.getPlaylistItems(playlistId);
-          setPlaylistItems(items);
-        } catch (error) {
-          console.error("Error fetching playlist items:", error);
-          setPlaylistItems([]);
+        if (foundPlaylist) {
+          // Convert store playlist to UI playlist type
+          const uiPlaylist: Playlist = {
+            id: foundPlaylist.id,
+            title: foundPlaylist.name,
+            description: foundPlaylist.description,
+            coverImage: '', // Add default or get from store
+            creator: {
+              id: foundPlaylist.userId,
+              name: 'User', // Add default or get from store
+              avatar: '' // Add default or get from store
+            },
+            itemCount: foundPlaylist.products.length,
+            likes: 0, // Add default or get from store
+            isPublic: foundPlaylist.isPublic,
+            items: foundPlaylist.products.map(convertStoreProductToUIProduct)
+          };
+          
+          setPlaylist(uiPlaylist);
+          setPlaylistItems(foundPlaylist.products.map(convertStoreProductToUIProduct));
+        } else {
+          console.error("Playlist not found");
         }
-      } else {
-        // Handle playlist not found
-        console.error("Playlist not found");
+      } catch (error) {
+        console.error("Error fetching playlist:", error);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
     
     fetchPlaylistData();

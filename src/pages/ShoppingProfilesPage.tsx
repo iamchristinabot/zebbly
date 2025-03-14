@@ -43,26 +43,41 @@ import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import StyleIcon from "@mui/icons-material/Style";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import { Link, useNavigate } from "react-router-dom";
-import { StoreContext } from "../stores/storeContext";
 import Header from "../components/Header";
 import { AuthenticatedProps } from "../types/common";
+import { useStores } from "../hooks/useStores";
+
+export interface ShoppingProfile {
+  id: string;
+  name: string;
+  relationship: 'self' | 'spouse' | 'child' | 'parent' | 'other';
+  age: number;
+  gender: string;
+  bio: string;
+  interests: string[];
+  stylePreferences: string[];
+  favoriteColors: string[];
+  favoriteCategories: string[];
+  avatar: string;
+  isDefault: boolean;
+}
 
 export interface ShoppingProfilesPageProps extends AuthenticatedProps {}
 
 const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfilesPageProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { userStore, shoppingProfileStore } = useContext(StoreContext);
+  const { shoppingProfileStore } = useStores();
 
   // State for UI
   const [aiDialogOpen, setAiDialogOpen] = useState(false);
-  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
-  const [selectedProfileId, setSelectedProfileId] = useState(null);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
+  const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null);
   const [aiGenerating, setAiGenerating] = useState(false);
   const [loading, setLoading] = useState(true);
   
   // Local state for profiles if store is undefined
-  const [localProfiles, setLocalProfiles] = useState([]);
+  const [localProfiles, setLocalProfiles] = useState<ShoppingProfile[]>([]);
 
   // AI prompt state
   const [aiPrompt, setAiPrompt] = useState("");
@@ -76,7 +91,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
       console.log("shoppingProfileStore is undefined, using mock data");
       // Mock data for when store is undefined
       setTimeout(() => {
-        setLocalProfiles([
+        const mockProfiles: ShoppingProfile[] = [
           {
             id: 'profile1',
             name: 'My Style',
@@ -119,7 +134,8 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
             avatar: 'https://randomuser.me/api/portraits/women/67.jpg',
             isDefault: false
           }
-        ]);
+        ];
+        setLocalProfiles(mockProfiles);
         setLoading(false);
       }, 1000);
     }
@@ -129,7 +145,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
   const profiles = shoppingProfileStore?.profiles || localProfiles;
 
   // Handle menu open
-  const handleMenuOpen = (event, profileId) => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, profileId: string) => {
     setMenuAnchorEl(event.currentTarget);
     setSelectedProfileId(profileId);
   };
@@ -148,7 +164,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
 
   // Handle delete profile
   const handleDeleteProfile = () => {
-    if (shoppingProfileStore) {
+    if (shoppingProfileStore && selectedProfileId) {
       shoppingProfileStore.deleteProfile(selectedProfileId);
     } else {
       setLocalProfiles(localProfiles.filter(p => p.id !== selectedProfileId));
@@ -158,7 +174,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
 
   // Handle set as default profile
   const handleSetAsDefault = () => {
-    if (shoppingProfileStore) {
+    if (shoppingProfileStore && selectedProfileId) {
       shoppingProfileStore.setDefaultProfile(selectedProfileId);
     } else {
       setLocalProfiles(localProfiles.map(p => ({
@@ -176,7 +192,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
   };
 
   // Handle AI prompt change
-  const handleAiPromptChange = (e) => {
+  const handleAiPromptChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAiPrompt(e.target.value);
   };
 
@@ -263,7 +279,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
   };
 
   // Get relationship icon
-  const getRelationshipIcon = (relationship) => {
+  const getRelationshipIcon = (relationship: ShoppingProfile['relationship']) => {
     switch (relationship) {
       case "self":
         return <PersonIcon />;
@@ -277,7 +293,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
   };
 
   // Navigate to style twins for a specific profile
-  const navigateToStyleTwins = (profileId) => {
+  const navigateToStyleTwins = (profileId: string) => {
     navigate(`/style-twins/${profileId}`);
   };
 
@@ -331,7 +347,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
           </Box>
         ) : (
           <Grid container spacing={3} sx={{ mt: 2 }}>
-            {profiles.map((profile) => (
+            {profiles.map((profile: ShoppingProfile) => (
               <Grid item xs={12} sm={6} md={3} key={profile.id}>
                 <Card
                   sx={{
@@ -407,7 +423,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
                         mb: 1,
                       }}
                     >
-                      {profile.interests.slice(0, 3).map((interest, index) => (
+                      {profile.interests.slice(0, 3).map((interest: string, index: number) => (
                         <Chip key={index} label={interest} size="small" />
                       ))}
                       {profile.interests.length > 3 && (
@@ -423,16 +439,14 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
                       Style Preferences
                     </Typography>
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                      {profile.stylePreferences
-                        .slice(0, 3)
-                        .map((style, index) => (
-                          <Chip
-                            key={index}
-                            label={style}
-                            size="small"
-                            variant="outlined"
-                          />
-                        ))}
+                      {profile.stylePreferences.slice(0, 3).map((style: string, index: number) => (
+                        <Chip
+                          key={index}
+                          label={style}
+                          size="small"
+                          variant="outlined"
+                        />
+                      ))}
                       {profile.stylePreferences.length > 3 && (
                         <Chip
                           label={`+${profile.stylePreferences.length - 3}`}
@@ -486,7 +500,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
           </MenuItem>
 
           {selectedProfileId &&
-            !profiles.find((p) => p.id === selectedProfileId)?.isDefault && (
+            !profiles.find((p: ShoppingProfile) => p.id === selectedProfileId)?.isDefault && (
               <MenuItem onClick={handleSetAsDefault}>
                 <ListItemIcon>
                   <PersonIcon fontSize="small" />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Box,
@@ -13,20 +13,56 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { StoreContext } from '../../stores/storeContext';
+import { useStores } from '../../hooks/useStores';
 import Header from '../../components/Header';
 import ProfileForm from '../../components/shopping-profiles/ProfileForm';
 import ProfilePreview from '../../components/shopping-profiles/ProfilePreview';
 
-const EditProfilePage = observer(({ isAuthenticated = true }) => {
+interface ShoppingProfile {
+  id: string;
+  name: string;
+  relationship: string;
+  age: number;
+  gender: string;
+  bio: string;
+  interests: string[];
+  stylePreferences: string[];
+  favoriteColors: string[];
+  favoriteCategories: string[];
+  favoriteStores: string[];
+  sizingInfo: string;
+  avatar: string;
+  isDefault: boolean;
+}
+
+interface FormData {
+  name: string;
+  relationship: string;
+  age: string;
+  gender: string;
+  bio: string;
+  interests: string;
+  stylePreferences: string;
+  favoriteColors: string;
+  favoriteCategories: string;
+  favoriteStores: string;
+  sizingInfo: string;
+  avatar: string | null;
+}
+
+interface EditProfilePageProps {
+  isAuthenticated?: boolean;
+}
+
+const EditProfilePage = observer(({ isAuthenticated = true }: EditProfilePageProps) => {
   const navigate = useNavigate();
   const { profileId } = useParams();
-  const { shoppingProfileStore } = useContext(StoreContext);
+  const { shoppingProfileStore } = useStores();
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [profile, setProfile] = useState(null);
-  const [formData, setFormData] = useState({
+  const [profile, setProfile] = useState<ShoppingProfile | null>(null);
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     relationship: 'self',
     age: '',
@@ -49,7 +85,7 @@ const EditProfilePage = observer(({ isAuthenticated = true }) => {
       try {
         // In a real app, this would fetch from an API
         // For now, simulate a delay and use mock data
-        const mockProfiles = [
+        const mockProfiles: ShoppingProfile[] = [
           {
             id: 'profile1',
             name: 'My Style',
@@ -110,7 +146,7 @@ const EditProfilePage = observer(({ isAuthenticated = true }) => {
           setFormData({
             name: foundProfile.name,
             relationship: foundProfile.relationship,
-            age: foundProfile.age,
+            age: foundProfile.age.toString(),
             gender: foundProfile.gender,
             bio: foundProfile.bio || '',
             interests: foundProfile.interests.join(', '),
@@ -124,7 +160,6 @@ const EditProfilePage = observer(({ isAuthenticated = true }) => {
         } else {
           // Handle profile not found - don't redirect immediately
           console.error(`Profile with ID ${profileId} not found`);
-          // We'll show an error message instead of redirecting
         }
       } catch (error) {
         console.error("Error loading profile:", error);
@@ -148,7 +183,7 @@ const EditProfilePage = observer(({ isAuthenticated = true }) => {
   }, [loading, profile, profileId, navigate]);
   
   // Handle form input change
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,

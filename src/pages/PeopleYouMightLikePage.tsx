@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -21,19 +21,31 @@ import { observer } from 'mobx-react-lite';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { useNavigate } from 'react-router-dom';
-import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
 import { AuthenticatedProps } from '../types/common';
+import { useStores } from '../hooks/useStores';
 
-export interface PeopleYouMightLikePageProps extends AuthenticatedProps {}
+interface Person {
+  id: string;
+  name: string;
+  avatar: string;
+  productsShared: number;
+  interests: string[];
+  mutualInterests: string[];
+}
 
-const PeopleCard = observer(({ person, onFollow }: { person: any, onFollow: (userId: string, isFollowing: boolean) => void }) => {
+interface PeopleCardProps {
+  person: Person;
+  onFollow: (userId: string, isFollowing: boolean) => void;
+}
+
+const PeopleCard = observer(({ person, onFollow }: PeopleCardProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { userStore } = useContext(StoreContext);
+  const { userStore } = useStores();
   const following = userStore.isFollowing(person.id);
   
-  const handleFollow = (e) => {
+  const handleFollow = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent navigation when clicking follow button
     userStore.toggleFollow(person.id);
     if (onFollow) {
@@ -82,7 +94,7 @@ const PeopleCard = observer(({ person, onFollow }: { person: any, onFollow: (use
           Interests
         </Typography>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
-          {person.interests.map((interest, index) => (
+          {person.interests.map((interest: string, index: number) => (
             <Chip 
               key={index} 
               label={interest} 
@@ -96,7 +108,7 @@ const PeopleCard = observer(({ person, onFollow }: { person: any, onFollow: (use
           Common Interests
         </Typography>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-          {person.mutualInterests.map((interest, index) => (
+          {person.mutualInterests.map((interest: string, index: number) => (
             <Chip 
               key={index} 
               label={interest} 
@@ -129,24 +141,24 @@ export interface PeopleYouMightLikePageProps extends AuthenticatedProps {}
 
 const PeopleYouMightLikePage = observer(({ isAuthenticated = true }: PeopleYouMightLikePageProps) => {
   const theme = useTheme();
-  const { userStore } = useContext(StoreContext);
+  const { userStore } = useStores();
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedInterests, setSelectedInterests] = useState([]);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   
   // Get all available interests from all users
   const availableInterests = [...new Set(
-    userStore.getAllUsers().flatMap(user => user.interests)
+    userStore.getAllUsers().flatMap((user: Person) => user.interests)
   )];
   
   // Get filtered people based on search and interests
   const filteredPeople = userStore.getFilteredUsers(searchQuery, selectedInterests);
   
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
   
-  const handleInterestToggle = (interest) => {
+  const handleInterestToggle = (interest: string) => {
     if (selectedInterests.includes(interest)) {
       setSelectedInterests(selectedInterests.filter(i => i !== interest));
     } else {
@@ -154,7 +166,7 @@ const PeopleYouMightLikePage = observer(({ isAuthenticated = true }: PeopleYouMi
     }
   };
   
-  const handleFollowToggle = (userId, isFollowing) => {
+  const handleFollowToggle = (userId: string, isFollowing: boolean) => {
     // This is now handled by the userStore
     console.log(`User ${userId} is now ${isFollowing ? 'followed' : 'unfollowed'}`);
   };
@@ -168,7 +180,7 @@ const PeopleYouMightLikePage = observer(({ isAuthenticated = true }: PeopleYouMi
   
   return (
     <>
-      <Header />
+      <Header isAuthenticated={isAuthenticated} />
       
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
@@ -215,7 +227,7 @@ const PeopleYouMightLikePage = observer(({ isAuthenticated = true }: PeopleYouMi
                 Filter by Interests
               </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-                {availableInterests.map((interest, index) => (
+                {availableInterests.map((interest: string, index: number) => (
                   <Chip 
                     key={index} 
                     label={interest} 
@@ -248,7 +260,7 @@ const PeopleYouMightLikePage = observer(({ isAuthenticated = true }: PeopleYouMi
                 </Box>
                 
                 <Grid container spacing={3}>
-                  {filteredPeople.map(person => (
+                  {filteredPeople.map((person: Person) => (
                     <Grid item xs={12} sm={6} md={4} key={person.id}>
                       <PeopleCard 
                         person={person} 

@@ -1,76 +1,52 @@
 import React from 'react';
-import {
-  Box,
-  Avatar,
-  Typography,
-  Button,
-  useTheme
-} from '@mui/material';
+import { observer } from 'mobx-react-lite';
+import { Box, Typography, Button, Avatar } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { User } from '../types/store';
-import { Theme } from '../types/theme';
+import rootStore from '../stores/rootStore';
+import type { SampleUser } from '../stores/userStore';
 
 interface UserSuggestionCardProps {
-  user: User;
+  user: SampleUser;
 }
 
-const UserSuggestionCard: React.FC<UserSuggestionCardProps> = ({ user }) => {
-  const theme = useTheme<Theme>();
-  
+const UserSuggestionCard = observer(({ user }: UserSuggestionCardProps) => {
+  const { userStore } = rootStore;
+  const isFollowing = userStore.isFollowing(user.id);
+
+  const handleFollowClick = () => {
+    userStore.toggleFollow(user.id);
+  };
+
   return (
-    <Box 
-      sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between',
-        mb: 2 
-      }}
-    >
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar 
-          src={user.avatar} 
-          alt={user.name}
-          sx={{ width: 40, height: 40, mr: 2 }}
-        />
-        <Box>
-          <Typography 
-            variant="subtitle2" 
-            component={Link} 
-            to={`/profile/${user.id}`}
-            sx={{ 
-              textDecoration: 'none', 
-              color: 'inherit',
-              '&:hover': {
-                color: theme.palette.primary.main
-              }
-            }}
-          >
-            {user.name}
-          </Typography>
-          {user.bio && (
-            <Typography variant="body2" color="text.secondary" noWrap>
-              {user.bio}
-            </Typography>
-          )}
-        </Box>
+    <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+      <Avatar
+        component={Link}
+        to={`/profile/${user.id}`}
+        src={user.avatar}
+        sx={{ width: 48, height: 48 }}
+      />
+      <Box sx={{ flex: 1 }}>
+        <Typography
+          component={Link}
+          to={`/profile/${user.id}`}
+          variant="subtitle2"
+          sx={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          {user.name}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {user.mutualInterests.join(', ')}
+        </Typography>
       </Box>
-      <Button 
-        variant="outlined" 
+      <Button
+        variant={isFollowing ? "outlined" : "contained"}
         size="small"
-        sx={{ 
-          minWidth: 'auto',
-          borderColor: theme.palette.brand.lightGray,
-          color: theme.palette.text.primary,
-          '&:hover': {
-            borderColor: theme.palette.primary.main,
-            bgcolor: 'transparent'
-          }
-        }}
+        onClick={handleFollowClick}
       >
-        Follow
+        {isFollowing ? 'Following' : 'Follow'}
       </Button>
     </Box>
   );
-};
+});
 
 export default UserSuggestionCard; 

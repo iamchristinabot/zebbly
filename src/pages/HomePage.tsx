@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Box,
@@ -12,19 +12,32 @@ import {
   useTheme
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import UserSuggestionCard from '../components/UserSuggestionCard';
 import { AuthenticatedProps } from '../types/common';
+import rootStore from '../stores/rootStore';
+
+interface Product {
+  id: string;
+  type: string;
+  title: string;
+  image: string;
+  price: string;
+  store: string;
+  user: string;
+  userId: string;
+  likes: number;
+  comments: number;
+}
 
 const HomePage = observer(({ isAuthenticated }: AuthenticatedProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { userStore } = useContext(StoreContext);
+  const { userStore } = rootStore;
   const [loading, setLoading] = useState(true);
-  const [trendingProducts, setTrendingProducts] = useState([]);
-  const [recentlyViewed, setRecentlyViewed] = useState([]);
+  const [trendingProducts, setTrendingProducts] = useState<Product[]>([]);
+  const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([]);
   
   // Get current user data
   const currentUser = userStore.getUserById('me');
@@ -36,7 +49,7 @@ const HomePage = observer(({ isAuthenticated }: AuthenticatedProps) => {
     // Simulate API call to fetch data
     setTimeout(() => {
       // Generate sample trending products
-      const sampleTrending = Array(8).fill().map((_, index) => ({
+      const sampleTrending: Product[] = Array(8).fill(null).map((_, index) => ({
         id: `trending-${index + 1}`,
         type: 'product',
         title: `Trending Product ${index + 1}`,
@@ -50,7 +63,7 @@ const HomePage = observer(({ isAuthenticated }: AuthenticatedProps) => {
       }));
       
       // Generate sample recently viewed products
-      const sampleRecent = Array(4).fill().map((_, index) => ({
+      const sampleRecent: Product[] = Array(4).fill(null).map((_, index) => ({
         id: `recent-${index + 1}`,
         type: 'product',
         title: `Recently Viewed ${index + 1}`,
@@ -80,7 +93,7 @@ const HomePage = observer(({ isAuthenticated }: AuthenticatedProps) => {
             <Box sx={{ mb: 4 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                 <Typography variant="h5" component="h2">
-                  Welcome back, {currentUser.name.split(' ')[0]}
+                  Welcome back, {currentUser?.name?.split(' ')[0] ?? 'User'}
                 </Typography>
                 <Button 
                   variant="outlined" 
@@ -198,8 +211,11 @@ const HomePage = observer(({ isAuthenticated }: AuthenticatedProps) => {
                 </Box>
               ) : (
                 <>
-                  {suggestedUsers.map(user => (
-                    <UserSuggestionCard key={user.id} user={user} />
+                  {suggestedUsers.map((user) => (
+                    <UserSuggestionCard 
+                      key={user.id}
+                      user={user}
+                    />
                   ))}
                   
                   <Button 
