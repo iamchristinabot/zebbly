@@ -23,6 +23,8 @@ import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import PlaylistCard from '../components/playlists/PlaylistCard';
+import CategoryTiles from '../components/playlists/CategoryTiles';
+import { playlistCategories } from '../config/categories';
 import { AuthenticatedProps } from '../types/common';
 import { ProductPlaylistStore } from '../stores/productPlaylistStore';
 import type { Playlist, Product, PlaylistItem, User } from '../types';
@@ -100,7 +102,16 @@ const ProductPlaylistsPage = observer(({
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null);
   
   // Convert store playlists to UI playlists
-  const convertedPlaylists = (productPlaylistStore.playlists as unknown as StorePlaylist[]).map(convertStorePlaylistToUIPlaylist);
+  const convertedPlaylists = (productPlaylistStore.filteredPlaylists as unknown as StorePlaylist[]).map(convertStorePlaylistToUIPlaylist);
+  
+  // Handle category selection
+  const handleCategorySelect = (categoryId: string) => {
+    if (productPlaylistStore.selectedCategory === categoryId) {
+      productPlaylistStore.setSelectedCategory(null);
+    } else {
+      productPlaylistStore.setSelectedCategory(categoryId);
+    }
+  };
   
   // Handle menu open
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, playlistId: string) => {
@@ -189,22 +200,29 @@ const ProductPlaylistsPage = observer(({
           <Typography variant="body1" color="text.secondary" paragraph>
             Discover curated collections of products, from specific recommendations to themed lists. Create your own playlists to share with others.
           </Typography>
-          
-          <TextField
-            fullWidth
-            placeholder="Search playlists..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            sx={{ mb: 4 }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
         </Box>
+
+        {/* Category tiles */}
+        <CategoryTiles
+          categories={playlistCategories}
+          selectedCategory={productPlaylistStore.selectedCategory}
+          onCategorySelect={handleCategorySelect}
+        />
+        
+        <TextField
+          fullWidth
+          placeholder="Search playlists..."
+          value={searchQuery}
+          onChange={handleSearchChange}
+          sx={{ mb: 4 }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
         
         {productPlaylistStore.isLoading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>

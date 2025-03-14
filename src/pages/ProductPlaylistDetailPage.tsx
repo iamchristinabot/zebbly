@@ -18,6 +18,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ShareIcon from '@mui/icons-material/Share';
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import PlaylistItemCard from '../components/playlists/PlaylistItemCard';
@@ -123,13 +124,11 @@ const ProductPlaylistDetailPage = observer(({
   // Handle like button click
   const handleLike = () => {
     setLiked(!liked);
-    // In a real app, this would call an API to update the like count
   };
   
   // Handle share button click
   const handleShare = () => {
-    // In a real app, this would open a share dialog
-    alert(`Sharing playlist: ${playlist?.title}`);
+    // TODO: Implement share functionality
   };
   
   // Check if the playlist belongs to the current user
@@ -146,15 +145,48 @@ const ProductPlaylistDetailPage = observer(({
           </Box>
         ) : playlist ? (
           <>
-            {/* Back button */}
-            <Button
-              startIcon={<ArrowBackIcon />}
-              component={Link}
-              to="/product-playlists"
-              sx={{ mb: 2 }}
-            >
-              Back to Playlists
-            </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton 
+                  component={Link} 
+                  to="/product-playlists"
+                  sx={{ mr: 2 }}
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+                
+                <Typography variant="h4" component="h1">
+                  {playlist?.title}
+                </Typography>
+              </Box>
+              
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <Button
+                  variant="outlined"
+                  startIcon={<PlaylistAddIcon />}
+                  component={Link}
+                  to={`/product-playlists/${playlistId}/add`}
+                >
+                  Add Items
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<ShareIcon />}
+                  onClick={handleShare}
+                >
+                  Share
+                </Button>
+                {playlist?.liked ? (
+                  <IconButton color="primary" onClick={handleLike}>
+                    <FavoriteIcon />
+                  </IconButton>
+                ) : (
+                  <IconButton onClick={handleLike}>
+                    <FavoriteBorderIcon />
+                  </IconButton>
+                )}
+              </Box>
+            </Box>
             
             {/* Playlist header */}
             <Box 
@@ -224,38 +256,6 @@ const ProductPlaylistDetailPage = observer(({
                 <Typography variant="body2" color="text.secondary" gutterBottom>
                   {playlist.itemCount} items • {playlist.likes} likes
                 </Typography>
-                
-                <Box sx={{ display: 'flex', mt: 2 }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                    onClick={handleLike}
-                    sx={{ mr: 1 }}
-                  >
-                    {liked ? 'Liked' : 'Like'}
-                  </Button>
-                  
-                  <Button
-                    variant="outlined"
-                    startIcon={<ShareIcon />}
-                    onClick={handleShare}
-                    sx={{ mr: 1 }}
-                  >
-                    Share
-                  </Button>
-                  
-                  {isUserPlaylist && (
-                    <Button
-                      variant="outlined"
-                      startIcon={<EditIcon />}
-                      component={Link}
-                      to={`/product-playlists/edit/${playlist.id}`}
-                    >
-                      Edit
-                    </Button>
-                  )}
-                </Box>
               </Box>
             </Box>
             

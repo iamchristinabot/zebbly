@@ -29,6 +29,7 @@ import ShoppingAssistantPage from './pages/ShoppingAssistantPage';
 import ProductPlaylistsPage from './pages/ProductPlaylistsPage';
 import ProductPlaylistDetailPage from './pages/ProductPlaylistDetailPage';
 import CreateProductPlaylistPage from './pages/CreateProductPlaylistPage';
+import AddToPlaylistPage from './pages/AddToPlaylistPage';
 
 // Wrapper component to handle user profile routes
 const UserProfileWrapper = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
@@ -90,6 +91,12 @@ function App() {
                 } />
                 <Route path="/product-playlists/create" element={
                   <CreateProductPlaylistPage 
+                    isAuthenticated={isAuthenticated} 
+                    productPlaylistStore={rootStore.productPlaylistStore} 
+                  />
+                } />
+                <Route path="/product-playlists/:playlistId/add" element={
+                  <AddToPlaylistPage 
                     isAuthenticated={isAuthenticated} 
                     productPlaylistStore={rootStore.productPlaylistStore} 
                   />
