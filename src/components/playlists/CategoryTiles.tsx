@@ -7,6 +7,7 @@ import {
   alpha,
   useTheme
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { PlaylistCategory } from '../../config/categories';
 
 interface CategoryTilesProps {
@@ -21,13 +22,19 @@ const CategoryTiles: React.FC<CategoryTilesProps> = ({
   onCategorySelect
 }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (categoryId: string) => {
+    onCategorySelect(categoryId);
+    navigate(`/categories/${categoryId}`);
+  };
 
   return (
     <Grid container spacing={2} sx={{ mb: 4 }}>
       {categories.map((category) => (
         <Grid item xs={6} sm={4} md={3} key={category.id}>
           <Paper
-            onClick={() => onCategorySelect(category.id)}
+            onClick={() => handleCategoryClick(category.id)}
             sx={{
               p: 2,
               cursor: 'pointer',

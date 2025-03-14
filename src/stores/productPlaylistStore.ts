@@ -41,7 +41,9 @@ export class ProductPlaylistStore {
       return this.playlists;
     }
     return this.playlists.filter(playlist => 
-      playlist.products.some(product => product.category.toLowerCase() === this.selectedCategory)
+      playlist.products.some(product => 
+        product.category.toLowerCase() === this.selectedCategory?.toLowerCase()
+      )
     );
   }
 

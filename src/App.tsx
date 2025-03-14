@@ -30,6 +30,7 @@ import ProductPlaylistsPage from './pages/ProductPlaylistsPage';
 import ProductPlaylistDetailPage from './pages/ProductPlaylistDetailPage';
 import CreateProductPlaylistPage from './pages/CreateProductPlaylistPage';
 import AddToPlaylistPage from './pages/AddToPlaylistPage';
+import CategoryPlaylistsPage from './pages/CategoryPlaylistsPage';
 
 // Wrapper component to handle user profile routes
 const UserProfileWrapper = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
@@ -101,6 +102,15 @@ function App() {
                     productPlaylistStore={rootStore.productPlaylistStore} 
                   />
                 } />
+                <Route 
+                  path="/categories/:categoryId" 
+                  element={
+                    <CategoryPlaylistsPage 
+                      productPlaylistStore={rootStore.productPlaylistStore}
+                      isAuthenticated={true}
+                    />
+                  } 
+                />
               </>
             ) : (
               <>
