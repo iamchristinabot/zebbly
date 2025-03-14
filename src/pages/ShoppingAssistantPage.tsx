@@ -246,11 +246,25 @@ const ShoppingAssistantPage = observer(({
   const handleProfileChange = (profileId: string) => {
     setSelectedProfileId(profileId);
     const profile = shoppingProfileStore?.profiles.find(p => p.id === profileId);
+    
     if (profile) {
+      // Update preferences using actual profile data
       const preferences: ProfilePreferences = {
-        [profile.id]: generateProfilePreferences(profile)
+        [profile.id]: {
+          interests: profile.interests,
+          priceRanges: profile.preferences.reduce((acc: { [key: string]: PriceRange }, pref) => ({
+            ...acc,
+            [pref.category]: { min: pref.minPrice, max: pref.maxPrice }
+          }), {}),
+          styles: profile.stylePreferences,
+          colors: profile.stylePreferences.filter(style => style.toLowerCase().includes('color')),
+          brands: profile.favoriteStores
+        }
       };
       setProfilePreferences(preferences);
+      
+      // Also update the current profile in the store
+      shoppingProfileStore.setCurrentProfile(profile);
     }
   };
   
