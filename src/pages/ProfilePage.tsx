@@ -41,7 +41,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
-
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -184,7 +183,12 @@ const ActivityItem = ({ activity }) => {
   );
 };
 
-const ProfilePage = observer(({ isAuthenticated = true, userId }) => {
+export interface ProfilePageProps {
+  isAuthenticated: boolean;
+  userId: string;
+}
+
+const ProfilePage = observer(({ isAuthenticated = true, userId }: ProfilePageProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { userStore } = useContext(StoreContext);

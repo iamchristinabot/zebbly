@@ -65,7 +65,17 @@ const colors = {
 
 // Create the theme
 const theme = createTheme({
-  palette: colors,
+  palette: {
+    ...colors,
+    brand: {
+      lightGray: colors.brand.lightGray,
+      mediumGray: colors.text.secondary,
+      darkGray: colors.text.primary,
+      lightTeal: colors.brand.softTeal,
+      primary: colors.brand.softPurple,
+      secondary: colors.brand.black
+    }
+  },
   typography: {
     fontFamily: [
       'Montserrat',
@@ -253,10 +263,10 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 16, // More rounded chips
-          backgroundColor: colors.brand.cream,
+          backgroundColor: colors.brand.lightGray,
           color: colors.text.primary,
           '&.MuiChip-clickable:hover': {
-            backgroundColor: colors.brand.sand,
+            backgroundColor: colors.brand.lightGray,
           },
         },
         outlined: {
@@ -405,7 +415,7 @@ const theme = createTheme({
           padding: 8,
         },
         track: {
-          backgroundColor: colors.brand.clay,
+          backgroundColor: colors.brand.lightGray,
           opacity: 0.5,
         },
         thumb: {

@@ -16,8 +16,9 @@ import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import UserSuggestionCard from '../components/UserSuggestionCard';
+import { AuthenticatedProps } from '../types/common';
 
-const HomePage = observer(({ isAuthenticated }) => {
+const HomePage = observer(({ isAuthenticated }: AuthenticatedProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { userStore } = useContext(StoreContext);

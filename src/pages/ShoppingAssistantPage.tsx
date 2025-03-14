@@ -36,7 +36,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import { Link, useNavigate } from 'react-router-dom';
 import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
-
+import { AuthenticatedProps } from '../types/common';
 // Message types
 const MESSAGE_TYPE = {
   USER: 'user',
@@ -44,7 +44,9 @@ const MESSAGE_TYPE = {
   PRODUCT: 'product'
 };
 
-const ShoppingAssistantPage = observer(({ isAuthenticated = true }) => {
+export interface ShoppingAssistantPageProps extends AuthenticatedProps {}
+
+const ShoppingAssistantPage = observer(({ isAuthenticated = true }: ShoppingAssistantPageProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { userStore, shoppingProfileStore, aiRecommendationStore } = useContext(StoreContext);

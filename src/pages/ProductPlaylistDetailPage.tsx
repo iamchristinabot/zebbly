@@ -22,8 +22,11 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
 import PlaylistItemCard from '../components/playlists/PlaylistItemCard';
+import { AuthenticatedProps } from '../types/common';
 
-const ProductPlaylistDetailPage = observer(({ isAuthenticated = true }) => {
+export interface ProductPlaylistDetailPageProps extends AuthenticatedProps {}
+
+const ProductPlaylistDetailPage = observer(({ isAuthenticated = true }: ProductPlaylistDetailPageProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { playlistId } = useParams();

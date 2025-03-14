@@ -23,8 +23,11 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { useNavigate } from 'react-router-dom';
 import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
+import { AuthenticatedProps } from '../types/common';
 
-const PeopleCard = observer(({ person, onFollow }) => {
+export interface PeopleYouMightLikePageProps extends AuthenticatedProps {}
+
+const PeopleCard = observer(({ person, onFollow }: { person: any, onFollow: (userId: string, isFollowing: boolean) => void }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { userStore } = useContext(StoreContext);
@@ -122,7 +125,9 @@ const PeopleCard = observer(({ person, onFollow }) => {
   );
 });
 
-const PeopleYouMightLikePage = observer(() => {
+export interface PeopleYouMightLikePageProps extends AuthenticatedProps {}
+
+const PeopleYouMightLikePage = observer(({ isAuthenticated = true }: PeopleYouMightLikePageProps) => {
   const theme = useTheme();
   const { userStore } = useContext(StoreContext);
   const [loading, setLoading] = useState(true);

@@ -40,8 +40,11 @@ import PersonAddDisabledIcon from '@mui/icons-material/PersonAddDisabled';
 import { Link, useNavigate } from 'react-router-dom';
 import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
+import { AuthenticatedProps } from '../types/common';
 
-const AIProductDiscoveryPage = observer(({ isAuthenticated = true }) => {
+export interface AIProductDiscoveryPageProps extends AuthenticatedProps {}
+
+const AIProductDiscoveryPage = observer(({ isAuthenticated = true }: AIProductDiscoveryPageProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { userStore, aiRecommendationStore } = useContext(StoreContext);

@@ -45,8 +45,11 @@ import SmartToyIcon from "@mui/icons-material/SmartToy";
 import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../stores/storeContext";
 import Header from "../components/Header";
+import { AuthenticatedProps } from "../types/common";
 
-const ShoppingProfilesPage = observer(({ isAuthenticated = true }) => {
+export interface ShoppingProfilesPageProps extends AuthenticatedProps {}
+
+const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfilesPageProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { userStore, shoppingProfileStore } = useContext(StoreContext);

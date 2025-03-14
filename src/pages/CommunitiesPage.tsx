@@ -21,8 +21,11 @@ import CommunityCard from '../components/communities/CommunityCard';
 import FeaturedCommunities from '../components/communities/FeaturedCommunities';
 import RecommendedCommunities from '../components/communities/RecommendedCommunities';
 import CommunityCategories from '../components/communities/CommunityCategories';
+import { AuthenticatedProps } from '../types/common';
 
-const CommunitiesPage = observer(({ isAuthenticated = true }) => {
+export interface CommunitiesPageProps extends AuthenticatedProps {}
+
+const CommunitiesPage = observer(({ isAuthenticated = true }: CommunitiesPageProps) => {
   const { communityStore } = useContext(StoreContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [tabValue, setTabValue] = useState(0);

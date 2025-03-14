@@ -24,8 +24,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
 import PlaylistCard from '../components/playlists/PlaylistCard';
+import { AuthenticatedProps } from '../types/common';
 
-const ProductPlaylistsPage = observer(({ isAuthenticated = true }) => {
+export interface ProductPlaylistsPageProps extends AuthenticatedProps {}
+
+const ProductPlaylistsPage = observer(({ isAuthenticated = true }: ProductPlaylistsPageProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { productPlaylistStore } = useContext(StoreContext);

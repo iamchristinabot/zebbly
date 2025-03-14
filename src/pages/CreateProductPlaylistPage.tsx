@@ -20,8 +20,11 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { Link, useNavigate } from 'react-router-dom';
 import { StoreContext } from '../stores/storeContext';
 import Header from '../components/Header';
+import { AuthenticatedProps } from '../types/common';
 
-const CreateProductPlaylistPage = observer(({ isAuthenticated = true }) => {
+export interface CreateProductPlaylistPageProps extends AuthenticatedProps {}
+
+const CreateProductPlaylistPage = observer(({ isAuthenticated = true }: CreateProductPlaylistPageProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { productPlaylistStore } = useContext(StoreContext);

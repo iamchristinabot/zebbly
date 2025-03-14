@@ -30,8 +30,9 @@ import ProductPlaylistDetailPage from './pages/ProductPlaylistDetailPage';
 import CreateProductPlaylistPage from './pages/CreateProductPlaylistPage';
 
 // Wrapper component to handle user profile routes
-const UserProfileWrapper = ({ isAuthenticated }) => {
+const UserProfileWrapper = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
   const { userId } = useParams();
+  if (!userId) return null;
   return <ProfilePage isAuthenticated={isAuthenticated} userId={userId} />;
 };
 
