@@ -22,56 +22,56 @@ export const playlistCategories: PlaylistCategory[] = [
     id: 'tech',
     name: 'Tech & Gadgets',
     icon: TechIcon,
-    color: '#4CAF50',
+    color: '#6C5CE7', // Primary purple
     description: 'Electronics, gadgets, and smart devices'
   },
   {
     id: 'fitness',
     name: 'Fitness & Sports',
     icon: FitnessIcon,
-    color: '#F44336',
+    color: '#5D4ED6', // Deeper purple
     description: 'Workout gear, equipment, and activewear'
   },
   {
     id: 'home',
     name: 'Home & Living',
     icon: HomeIcon,
-    color: '#2196F3',
+    color: '#8B7CF4', // Lighter purple
     description: 'Furniture, decor, and home essentials'
   },
   {
     id: 'fashion',
     name: 'Fashion',
     icon: FashionIcon,
-    color: '#9C27B0',
+    color: '#4B3DBF', // Dark purple
     description: 'Clothing, shoes, and style essentials'
   },
   {
     id: 'accessories',
     name: 'Accessories',
     icon: AccessoriesIcon,
-    color: '#FF9800',
+    color: '#A594FF', // Soft purple
     description: 'Bags, jewelry, and personal accessories'
   },
   {
     id: 'food',
     name: 'Food & Drink',
     icon: FoodIcon,
-    color: '#795548',
+    color: '#453894', // Deep indigo-purple
     description: 'Kitchen gadgets and gourmet items'
   },
   {
     id: 'beauty',
     name: 'Beauty',
     icon: BeautyIcon,
-    color: '#E91E63',
+    color: '#7E6EF2', // Medium purple
     description: 'Skincare, makeup, and beauty tools'
   },
   {
     id: 'kids',
     name: 'Kids & Baby',
     icon: KidsIcon,
-    color: '#00BCD4',
+    color: '#9985FF', // Light vibrant purple
     description: 'Toys, clothing, and baby essentials'
   }
 ]; 

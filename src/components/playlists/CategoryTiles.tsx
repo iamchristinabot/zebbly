@@ -36,67 +36,62 @@ const CategoryTiles: React.FC<CategoryTilesProps> = ({
           <Paper
             onClick={() => handleCategoryClick(category.id)}
             sx={{
-              p: 2,
+              p: 2.5,
               cursor: 'pointer',
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
-              textAlign: 'center',
+              gap: 2,
               height: '100%',
-              transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+              transition: 'all 0.2s ease-in-out',
               backgroundColor: selectedCategory === category.id 
-                ? alpha(category.color, 0.1)
+                ? alpha(category.color, 0.12)
                 : 'background.paper',
+              borderRadius: 2,
+              border: 1,
               borderColor: selectedCategory === category.id 
                 ? category.color 
                 : theme.palette.divider,
-              borderWidth: 1,
-              borderStyle: 'solid',
               '&:hover': {
-                transform: 'translateY(-4px)',
-                boxShadow: theme.shadows[4],
-                borderColor: category.color,
+                backgroundColor: alpha(category.color, 0.08),
+                transform: 'translateY(-2px)',
+                boxShadow: `0 4px 12px ${alpha(category.color, 0.12)}`,
+                borderColor: alpha(category.color, 0.4),
+                '& .category-icon': {
+                  transform: 'scale(1.1)',
+                  color: category.color,
+                }
               }
             }}
           >
             <Box
+              className="category-icon"
               sx={{
-                width: 48,
-                height: 48,
-                borderRadius: '50%',
+                width: 44,
+                height: 44,
+                borderRadius: 2,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: alpha(category.color, 0.1),
-                color: category.color,
-                mb: 1
+                backgroundColor: alpha(category.color, 0.12),
+                color: alpha(category.color, 0.8),
+                transition: 'all 0.2s ease-in-out',
+                '& > svg': {
+                  fontSize: 24
+                }
               }}
             >
               <category.icon />
             </Box>
+
             <Typography
               variant="subtitle1"
-              component="h3"
-              gutterBottom
               sx={{
-                fontWeight: selectedCategory === category.id ? 600 : 400,
-                color: selectedCategory === category.id ? category.color : 'text.primary'
+                fontWeight: 500,
+                color: 'text.primary',
+                flex: 1,
               }}
             >
               {category.name}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-                flex: 1
-              }}
-            >
-              {category.description}
             </Typography>
           </Paper>
         </Grid>
