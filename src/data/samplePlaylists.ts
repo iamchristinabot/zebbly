@@ -56,7 +56,8 @@ export const samplePlaylists = [
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-01-15'),
     featured: true,
-    popular: true
+    popular: true,
+    coverImage: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800&auto=format&fit=crop&q=60'
   },
   {
     id: 'playlist-2',
@@ -68,7 +69,8 @@ export const samplePlaylists = [
     createdAt: new Date('2024-01-20'),
     updatedAt: new Date('2024-01-22'),
     featured: true,
-    popular: true
+    popular: true,
+    coverImage: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=800&auto=format&fit=crop&q=60'
   },
   {
     id: 'playlist-3',
@@ -79,6 +81,7 @@ export const samplePlaylists = [
     isPublic: true,
     createdAt: new Date('2024-02-01'),
     updatedAt: new Date('2024-02-05'),
-    popular: true
+    popular: true,
+    coverImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=60'
   }
 ]; 

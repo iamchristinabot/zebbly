@@ -48,6 +48,7 @@ interface StorePlaylist {
   isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
+  coverImage?: string;
 }
 
 const convertStoreProductToUIProduct = (storeProduct: StoreProduct): Product => ({
@@ -92,14 +93,14 @@ const ProductPlaylistDetailPage = observer(({
             id: foundPlaylist.id,
             title: foundPlaylist.name,
             description: foundPlaylist.description,
-            coverImage: '', // Add default or get from store
+            coverImage: foundPlaylist.coverImage || foundPlaylist.products[0]?.imageUrl || 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&auto=format&fit=crop&q=60',
             creator: {
               id: foundPlaylist.userId,
-              name: 'User', // Add default or get from store
-              avatar: '' // Add default or get from store
+              name: 'User',
+              avatar: 'https://i.pravatar.cc/150?u=' + foundPlaylist.userId
             },
             itemCount: foundPlaylist.products.length,
-            likes: 0, // Add default or get from store
+            likes: 0,
             isPublic: foundPlaylist.isPublic,
             items: foundPlaylist.products.map(convertStoreProductToUIProduct)
           };

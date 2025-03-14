@@ -48,6 +48,7 @@ interface StorePlaylist {
   updatedAt: Date;
   featured?: boolean;
   popular?: boolean;
+  coverImage?: string;
 }
 
 const convertStoreProductToUIProduct = (storeProduct: StoreProduct): Product => ({
@@ -70,14 +71,14 @@ const convertStorePlaylistToUIPlaylist = (storePlaylist: StorePlaylist): Playlis
   id: storePlaylist.id,
   title: storePlaylist.name,
   description: storePlaylist.description,
-  coverImage: '', // Add default or get from store
+  coverImage: storePlaylist.coverImage || storePlaylist.products[0]?.imageUrl || 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&auto=format&fit=crop&q=60',
   creator: {
     id: storePlaylist.userId,
-    name: 'User', // Add default or get from store
-    avatar: '' // Add default or get from store
+    name: 'User',
+    avatar: 'https://i.pravatar.cc/150?u=' + storePlaylist.userId
   } as User,
   itemCount: storePlaylist.products.length,
-  likes: 0, // Add default or get from store
+  likes: 0,
   isPublic: storePlaylist.isPublic,
   items: storePlaylist.products.map(convertStoreProductToPlaylistItem)
 });
@@ -99,7 +100,7 @@ const ProductPlaylistsPage = observer(({
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null);
   
   // Convert store playlists to UI playlists
-  const convertedPlaylists = productPlaylistStore.playlists.map(convertStorePlaylistToUIPlaylist);
+  const convertedPlaylists = (productPlaylistStore.playlists as unknown as StorePlaylist[]).map(convertStorePlaylistToUIPlaylist);
   
   // Handle menu open
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, playlistId: string) => {
@@ -148,11 +149,17 @@ const ProductPlaylistsPage = observer(({
 
   // Get featured and popular playlists
   const featuredPlaylists = convertedPlaylists.filter(
-    playlist => (productPlaylistStore.playlists.find(p => p.id === playlist.id) as StorePlaylist).featured
+    playlist => {
+      const storePlaylist = productPlaylistStore.playlists.find(p => p.id === playlist.id) as unknown as StorePlaylist;
+      return storePlaylist?.featured || false;
+    }
   );
   
   const popularPlaylists = convertedPlaylists.filter(
-    playlist => (productPlaylistStore.playlists.find(p => p.id === playlist.id) as StorePlaylist).popular
+    playlist => {
+      const storePlaylist = productPlaylistStore.playlists.find(p => p.id === playlist.id) as unknown as StorePlaylist;
+      return storePlaylist?.popular || false;
+    }
   );
   
   return (
