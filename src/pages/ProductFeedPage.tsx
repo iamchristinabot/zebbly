@@ -15,38 +15,43 @@ import {
   Divider,
   CircularProgress,
   Pagination,
-  useTheme
+  useTheme,
+  SelectChangeEvent
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import TuneIcon from '@mui/icons-material/Tune';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import CategoryChips from '../components/CategoryChips';
+import { Product } from '../types/product';
 
-const ProductFeedPage = ({ isAuthenticated = true }) => {
+interface ProductFeedPageProps {
+  isAuthenticated?: boolean;
+}
+
+const ProductFeedPage = ({ isAuthenticated = true }: ProductFeedPageProps) => {
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [sortBy, setSortBy] = useState('recommended');
   const [priceRange, setPriceRange] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
   
-  const handleSortChange = (event) => {
+  const handleSortChange = (event: SelectChangeEvent) => {
     setSortBy(event.target.value);
   };
   
-  const handlePriceRangeChange = (event) => {
+  const handlePriceRangeChange = (event: SelectChangeEvent) => {
     setPriceRange(event.target.value);
   };
   
-  const handleSearchChange = (event) => {
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
   
-  const handlePageChange = (event, value) => {
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
-    // In a real app, this would trigger a new API call with pagination
   };
   
   useEffect(() => {
@@ -230,7 +235,7 @@ const ProductFeedPage = ({ isAuthenticated = true }) => {
                 <Grid container spacing={3}>
                   {products.map(product => (
                     <Grid item xs={12} sm={6} md={4} key={product.id}>
-                      <ProductCard product={product} />
+                      <ProductCard product={product} onUserClick={() => {}} />
                     </Grid>
                   ))}
                 </Grid>
