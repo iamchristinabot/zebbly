@@ -1,51 +1,46 @@
-import React, { useState, useEffect, useContext } from "react";
-import { observer } from "mobx-react-lite";
-import {
-  Box,
-  Container,
-  Typography,
-  Grid,
-  Paper,
-  Button,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActions,
-  Avatar,
-  TextField,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  IconButton,
-  Chip,
-  Divider,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  ListItemSecondaryAction,
-  Menu,
-  MenuItem,
-  Tooltip,
-  CircularProgress,
-  useTheme,
-  ListItemIcon,
-} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import ChildCareIcon from "@mui/icons-material/ChildCare";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PersonIcon from "@mui/icons-material/Person";
-import ChildCareIcon from "@mui/icons-material/ChildCare";
-import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import StyleIcon from "@mui/icons-material/Style";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
-import { Link, useNavigate } from "react-router-dom";
+import StyleIcon from "@mui/icons-material/Style";
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Chip,
+  CircularProgress,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  TextField,
+  Typography,
+  useTheme
+} from "@mui/material";
+import { observer } from "mobx-react-lite";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import { AuthenticatedProps } from "../types/common";
 import { useStores } from "../hooks/useStores";
+import { AuthenticatedProps } from "../types/common";
 
 export interface ShoppingProfile {
   id: string;
@@ -310,7 +305,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
             mb: 4,
           }}
         >
-          <Typography variant="h4" component="h1" gutterBottom>
+          <Typography variant="h2" component="h1" sx={{ fontWeight: 700 }} gutterBottom>
             Shopping Profiles
           </Typography>
 

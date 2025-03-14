@@ -180,7 +180,7 @@ const ProductPlaylistsPage = observer(({
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h4" component="h1" gutterBottom>
+            <Typography variant="h2" component="h1" sx={{ fontWeight: 700 }}>
               Product Playlists
             </Typography>
             

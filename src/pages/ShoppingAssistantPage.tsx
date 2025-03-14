@@ -565,15 +565,21 @@ const ShoppingAssistantPage = observer(({
       <Header isAuthenticated={isAuthenticated} />
       
       <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h2" component="h1" sx={{ fontWeight: 700 }} gutterBottom>
+            AI Shopping Assistant
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+            Get personalized product recommendations powered by AI. Start by selecting a shopping profile on the left, then chat with your assistant to discover perfect gifts and products tailored to your preferences.
+          </Typography>
+        </Box>
+
         <Grid container spacing={3}>
           {/* Sidebar */}
           <Grid item xs={12} md={3}>
             <Paper sx={{ p: 2, height: '100%' }}>
               <Typography variant="h6" gutterBottom>
-                Shopping Profile
-              </Typography>
-              <Typography variant='body2'>
-                Select the person you would like to shop for:
+                Select Profile
               </Typography>
               
               {loadingProfiles ? (
