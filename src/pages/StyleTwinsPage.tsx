@@ -248,36 +248,108 @@ const StyleTwinsPage = observer(({ isAuthenticated = true }: StyleTwinsPageProps
       <Header isAuthenticated={isAuthenticated} />
 
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Box
-          sx={{
-            mb: 4,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+        {/* Hero Section */}
+        <Box 
+          sx={{ 
+            mb: 6,
+            background: `linear-gradient(135deg, 
+              white 0%,
+              rgba(103, 58, 183, 0.03) 60%,
+              rgba(103, 58, 183, 0.06) 100%
+            )`,
+            borderRadius: 3,
+            p: 4,
+            position: 'relative',
+            overflow: 'hidden',
+            border: `1px solid ${theme.palette.grey[100]}`,
+            boxShadow: `0 4px 20px rgba(103, 58, 183, 0.03)`
           }}
         >
-          <Box>
-            <Typography variant="h4" component="h1" gutterBottom>
-              <AutoAwesomeIcon sx={{ mr: 1, verticalAlign: "middle" }} />
-              Find Your Style Twins
-            </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
-              Discover people who share your taste and style preferences,
-              powered by AI analysis of your product interactions.
-            </Typography>
-            {!loadingProfile && currentProfile && (
-              <Typography variant="subtitle1" color="primary">
-                Currently showing matches for: {currentProfile.name}
-              </Typography>
-            )}
+          {/* Background Pattern */}
+          <Box 
+            sx={{
+              position: 'absolute',
+              right: -50,
+              top: -50,
+              opacity: 0.06,
+              transform: 'rotate(30deg)',
+              color: theme.palette.primary.main
+            }}
+          >
+            <AutoAwesomeIcon sx={{ fontSize: 200 }} />
           </Box>
 
-          {/* Profile selector */}
-          <ProfileSelector
-            value={currentProfile?.id}
-            onChange={handleProfileChange}
-            disabled={loadingProfile}
-          />
+          <Grid container spacing={3} alignItems="center">
+            <Grid item xs={12} md={8}>
+              <Box sx={{ mb: 2 }}>
+                <Typography 
+                  variant="h3" 
+                  component="h1" 
+                  sx={{ 
+                    mb: 2, 
+                    fontWeight: 700,
+                    background: `linear-gradient(135deg, ${theme.palette.text.primary} 0%, ${theme.palette.primary.main} 100%)`,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  Style Twins
+                </Typography>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    fontWeight: 400,
+                    color: theme.palette.text.secondary
+                  }}
+                >
+                  Discover people who share your taste and style preferences,
+                  powered by AI analysis of your product interactions.
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              {!loadingProfile && currentProfile && (
+                <Box 
+                  sx={{ 
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    backdropFilter: 'blur(8px)',
+                    borderRadius: 2,
+                    p: 2,
+                    border: `1px solid ${theme.palette.grey[100]}`,
+                  }}
+                >
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Typography 
+                      variant="subtitle2" 
+                      sx={{ 
+                        color: theme.palette.text.secondary,
+                        fontWeight: 500,
+                        textTransform: 'uppercase',
+                        fontSize: '0.75rem',
+                        letterSpacing: '0.1em'
+                      }}
+                    >
+                      Select Profile
+                    </Typography>
+                    <ProfileSelector
+                      value={currentProfile?.id}
+                      onChange={handleProfileChange}
+                      disabled={loadingProfile}
+                      showLabel={false}
+                      sx={{ 
+                        '& .MuiOutlinedInput-root': {
+                          backgroundColor: 'white',
+                        },
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: theme.palette.grey[200]
+                        }
+                      }}
+                    />
+                  </Box>
+                </Box>
+              )}
+            </Grid>
+          </Grid>
         </Box>
 
         <Grid container spacing={4}>

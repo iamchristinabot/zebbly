@@ -6,7 +6,9 @@ import {
     InputLabel,
     MenuItem,
     Select,
-    SelectChangeEvent
+    SelectChangeEvent,
+    SxProps,
+    Theme
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../hooks/useStores';
@@ -21,6 +23,8 @@ interface ProfileSelectorProps {
   error?: boolean;
   required?: boolean;
   minWidth?: number | string;
+  showLabel?: boolean;
+  sx?: SxProps<Theme>;
 }
 
 const ProfileSelector = observer(({
@@ -31,7 +35,9 @@ const ProfileSelector = observer(({
   disabled = false,
   error = false,
   required = false,
-  minWidth = 200
+  minWidth = 200,
+  showLabel = true,
+  sx = {}
 }: ProfileSelectorProps) => {
   const { shoppingProfileStore } = useStores();
   const profiles = shoppingProfileStore?.profiles || [];
@@ -43,17 +49,17 @@ const ProfileSelector = observer(({
 
   return (
     <FormControl 
-      sx={{ minWidth }} 
+      sx={{ minWidth, ...sx }} 
       error={error}
       required={required}
       disabled={disabled || loading}
     >
-      <InputLabel id="profile-select-label">{label}</InputLabel>
+      {showLabel && <InputLabel id="profile-select-label">{label}</InputLabel>}
       <Select
         labelId="profile-select-label"
         id="profile-select"
         value={value || ''}
-        label={label}
+        label={showLabel ? label : undefined}
         onChange={handleChange}
       >
         {profiles.length > 0 ? (

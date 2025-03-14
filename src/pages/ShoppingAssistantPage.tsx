@@ -570,7 +570,10 @@ const ShoppingAssistantPage = observer(({
           <Grid item xs={12} md={3}>
             <Paper sx={{ p: 2, height: '100%' }}>
               <Typography variant="h6" gutterBottom>
-                Shopping Profiles
+                Shopping Profile
+              </Typography>
+              <Typography variant='body2'>
+                Select the person you would like to shop for:
               </Typography>
               
               {loadingProfiles ? (
@@ -581,7 +584,7 @@ const ShoppingAssistantPage = observer(({
                 <ProfileSelector
                   value={selectedProfileId || ''}
                   onChange={handleProfileChange}
-                  label="Shop For"
+                  showLabel={false}
                   disabled={!shoppingProfileStore?.profiles.length}
                 />
               )}
