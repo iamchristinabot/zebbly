@@ -25,6 +25,8 @@ import EditShoppingProfilePage from './pages/EditShoppingProfilePage';
 import AddProfilePage from './pages/shopping-profiles/AddProfilePage';
 import EditProfilePage from './pages/shopping-profiles/EditProfilePage';
 import ShoppingAssistantPage from './pages/ShoppingAssistantPage';
+import ProductPlaylistsPage from './pages/ProductPlaylistsPage';
+import ProductPlaylistDetailPage from './pages/ProductPlaylistDetailPage';
 
 // Wrapper component to handle user profile routes
 const UserProfileWrapper = ({ isAuthenticated }) => {
@@ -71,6 +73,8 @@ function App() {
                 <Route path="/communities/:communityId" element={<CommunityDetailPage isAuthenticated={true} />} />
                 <Route path="/logout" element={<LoginPage onLogin={handleLogin} />} action={handleLogout} />
                 <Route path="/shopping-assistant" element={<ShoppingAssistantPage isAuthenticated={true} />} />
+                <Route path="/product-playlists" element={<ProductPlaylistsPage isAuthenticated={isAuthenticated} />} />
+                <Route path="/product-playlists/:playlistId" element={<ProductPlaylistDetailPage isAuthenticated={isAuthenticated} />} />
               </>
             ) : (
               <>

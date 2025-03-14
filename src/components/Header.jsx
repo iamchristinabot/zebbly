@@ -13,6 +13,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import StyleIcon from '@mui/icons-material/Style';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import {
   AppBar,
   Avatar,
@@ -201,6 +202,15 @@ const AuthenticatedNav = () => {
         
         <NavButton 
           component={Link}
+          to="/product-playlists"
+          active={isActive('/product-playlists') ? 1 : 0}
+          startIcon={<DynamicFeedIcon />}
+        >
+          Product Playlists
+        </NavButton>
+        
+        <NavButton 
+          component={Link}
           to="/shopping-profiles"
           active={isActive('/shopping-profiles') ? 1 : 0}
           startIcon={<AccountBoxIcon />}
@@ -326,6 +336,32 @@ const AuthenticatedNav = () => {
               </MenuItem>
               <MenuItem 
                 component={Link} 
+                to="/shopping-profiles"
+                onClick={handleBrowseMenuClose}
+                sx={{ 
+                  fontWeight: isActive('/shopping-profiles') ? 'bold' : 'normal',
+                }}
+              >
+                <ListItemIcon>
+                  <AccountBoxIcon fontSize="small" color={isActive('/shopping-profiles') ? 'primary' : 'inherit'} />
+                </ListItemIcon>
+                Shopping Profiles
+              </MenuItem>
+              <MenuItem 
+                component={Link} 
+                to="/product-playlists"
+                onClick={handleBrowseMenuClose}
+                sx={{ 
+                  fontWeight: isActive('/product-playlists') ? 'bold' : 'normal',
+                }}
+              >
+                <ListItemIcon>
+                  <DynamicFeedIcon fontSize="small" color={isActive('/product-playlists') ? 'primary' : 'inherit'} />
+                </ListItemIcon>
+                Product Playlists
+              </MenuItem>
+              <MenuItem 
+                component={Link} 
                 to="/communities"
                 onClick={handleBrowseMenuClose}
                 sx={{ 
@@ -381,12 +417,23 @@ const AuthenticatedNav = () => {
             <Button
               variant="text"
               color="primary"
-              startIcon={<AccountBoxIcon />}
+              startIcon={<PeopleIcon />}
               component={Link}
-              to="/shopping-profiles"
+              to="/communities"
               sx={{ ml: 1, display: { xs: 'none', sm: 'flex' } }}
             >
-              Profiles
+              Communities
+            </Button>
+
+            <Button
+              variant="text"
+              color="primary"
+              startIcon={<PlaylistAddIcon />}
+              component={Link}
+              to="/product-playlists"
+              sx={{ ml: 1, display: { xs: 'none', sm: 'flex' } }}
+            >
+              Product Playlists
             </Button>
 
             <IconButton color="inherit" sx={{ ml: 1 }}>

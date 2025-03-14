@@ -1,32 +1,34 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import UserStore from './userStore';
 import ShoppingProfileStore from './shoppingProfileStore';
+import AIRecommendationStore from './aiRecommendationStore';
+import ProductPlaylistStore from './productPlaylistStore';
 // Import other stores as needed
 
-// Create store instances
-const userStore = new UserStore();
-const shoppingProfileStore = new ShoppingProfileStore();
-// Create other store instances as needed
+// Create the context
+export const StoreContext = createContext(null);
 
-// Create the context with the stores
-export const StoreContext = React.createContext({
-  userStore,
-  shoppingProfileStore,
-  // Add other stores here
-});
-
-// Optional: Create a provider component for easier usage
-export const StoreProvider = function(props) {
+// Create a provider component
+export const StoreProvider = ({ children }) => {
+  // Initialize stores
+  const userStore = new UserStore();
+  const shoppingProfileStore = new ShoppingProfileStore();
+  const aiRecommendationStore = new AIRecommendationStore();
+  const productPlaylistStore = new ProductPlaylistStore();
+  
+  // Create the store object
+  const store = {
+    userStore,
+    shoppingProfileStore,
+    aiRecommendationStore,
+    productPlaylistStore
+  };
+  
+  // Provide the store to children components using React.createElement instead of JSX
   return React.createElement(
     StoreContext.Provider,
-    { 
-      value: { 
-        userStore, 
-        shoppingProfileStore,
-        // Add other stores here 
-      } 
-    },
-    props.children
+    { value: store },
+    children
   );
 };
 
