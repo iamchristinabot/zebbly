@@ -40,7 +40,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useStores } from "../hooks/useStores";
-import Header from "../components/Header";
+import Header from "../components/header/Header";
 import StyleTwinCard from '../components/StyleTwinCard';
 import { SelectChangeEvent } from "@mui/material";
 import type { StyleTwin, ShoppingProfile } from "../stores/shoppingProfileStore";

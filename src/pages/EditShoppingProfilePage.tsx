@@ -23,7 +23,7 @@ import {
 import { observer } from 'mobx-react-lite';
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import { StoreContext } from '../stores/storeContext';
 
 const EditShoppingProfilePage = observer(({ isAuthenticated = true }) => {

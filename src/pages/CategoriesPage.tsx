@@ -26,7 +26,7 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import SpaIcon from '@mui/icons-material/Spa';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import ProductCard from '../components/ProductCard';
 
 const categories = [

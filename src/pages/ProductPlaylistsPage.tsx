@@ -21,7 +21,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { Link, useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import PlaylistCard from '../components/playlists/PlaylistCard';
 import CategoryTiles from '../components/playlists/CategoryTiles';
 import { playlistCategories } from '../config/categories';

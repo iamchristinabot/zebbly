@@ -19,7 +19,7 @@ import {
   useTheme
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import ProductCard from '../components/ProductCard';
 
 const SearchPage = ({ isAuthenticated = true }) => {

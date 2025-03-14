@@ -4,6 +4,7 @@ import type { ShoppingProfile, StyleTwin } from '../stores/shoppingProfileStore'
 import { UserStore } from '../stores/userStore';
 import { AIRecommendationStore } from '../stores/aiRecommendationStore';
 import { ProductPlaylistStore } from '../stores/productPlaylistStore';
+import { SocialFeedStore } from '../stores/socialFeedStore';
 
 export interface ShoppingProfileStore {
   profiles: ShoppingProfile[];
@@ -23,6 +24,7 @@ export interface RootStore {
   shoppingProfileStore: ShoppingProfileStore;
   aiRecommendationStore: AIRecommendationStore;
   productPlaylistStore: ProductPlaylistStore;
+  socialFeedStore: SocialFeedStore;
 }
 
 const StoresContext = createContext<RootStore | null>(null);

@@ -21,7 +21,7 @@ import { observer } from 'mobx-react-lite';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import { AuthenticatedProps } from '../types/common';
 import { useStores } from '../hooks/useStores';
 

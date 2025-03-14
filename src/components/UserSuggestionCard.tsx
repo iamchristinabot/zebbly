@@ -1,8 +1,7 @@
-import React from 'react';
+import { Avatar, Box, Button, Typography } from '@mui/material';
 import { observer } from 'mobx-react-lite';
-import { Box, Typography, Button, Avatar } from '@mui/material';
 import { Link } from 'react-router-dom';
-import rootStore from '../stores/rootStore';
+import { rootStore } from '../stores/rootStore';
 import type { SampleUser } from '../stores/userStore';
 
 interface UserSuggestionCardProps {

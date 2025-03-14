@@ -15,7 +15,7 @@ import {
 import PeopleIcon from '@mui/icons-material/People';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import CommunityPosts from '../components/communities/CommunityPosts';
 import CommunityMembers from '../components/communities/CommunityMembers';
 import CommunityAbout from '../components/communities/CommunityAbout';

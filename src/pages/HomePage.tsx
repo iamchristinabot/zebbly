@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { observer } from 'mobx-react-lite';
 import {
   Box,
+  Button,
+  CircularProgress,
   Container,
-  Typography,
+  Divider,
   Grid,
   Paper,
-  Button,
-  Divider,
-  CircularProgress,
+  Typography,
   useTheme
 } from '@mui/material';
+import { observer } from 'mobx-react-lite';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import ProductCard from '../components/ProductCard';
 import UserSuggestionCard from '../components/UserSuggestionCard';
+import { rootStore } from '../stores/rootStore';
 import { AuthenticatedProps } from '../types/common';
-import rootStore from '../stores/rootStore';
 
 interface Product {
   id: string;

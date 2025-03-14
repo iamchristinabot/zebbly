@@ -10,7 +10,7 @@ import {
   useTheme
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 
 const LoginPage = ({ onLogin }) => {
   const theme = useTheme();

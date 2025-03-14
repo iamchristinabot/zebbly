@@ -1,36 +1,35 @@
-import React, { useState } from 'react';
-import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
-import theme from './theme';
-import rootStore from './stores/rootStore';
+import { ThemeProvider } from '@mui/material/styles';
+import { useState } from 'react';
+import { Navigate, Route, BrowserRouter as Router, Routes, useParams } from 'react-router-dom';
 import { StoresProvider } from './hooks/useStores';
+import { rootStore } from './stores/rootStore';
+import theme from './theme';
 
 // Pages
-import HomePage from './pages/HomePage';
-import ProfilePage from './pages/ProfilePage';
-import ProductFeedPage from './pages/ProductFeedPage';
-import CategoriesPage from './pages/CategoriesPage';
-import MarketingPage from './pages/MarketingPage';
-import SearchPage from './pages/SearchPage';
-import PostCreationPage from './pages/PostCreationPage';
+import AddToPlaylistPage from './pages/AddToPlaylistPage';
 import AIProductDiscoveryPage from './pages/AIProductDiscoveryPage';
-import StyleTwinsPage from './pages/StyleTwinsPage';
-import ShoppingProfilesPage from './pages/ShoppingProfilesPage';
-import SettingsPage from './pages/SettingsPage';
-import LoginPage from './pages/LoginPage';
-import PeopleYouMightLikePage from './pages/PeopleYouMightLikePage';
+import CategoriesPage from './pages/CategoriesPage';
+import CategoryPlaylistsPage from './pages/CategoryPlaylistsPage';
 import CommunitiesPage from './pages/CommunitiesPage';
 import CommunityDetailPage from './pages/CommunityDetailPage';
-import EditShoppingProfilePage from './pages/EditShoppingProfilePage';
+import CreateProductPlaylistPage from './pages/CreateProductPlaylistPage';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import MarketingPage from './pages/MarketingPage';
+import PeopleYouMightLikePage from './pages/PeopleYouMightLikePage';
+import PostCreationPage from './pages/PostCreationPage';
+import ProductFeedPage from './pages/ProductFeedPage';
+import ProductPlaylistDetailPage from './pages/ProductPlaylistDetailPage';
+import ProductPlaylistsPage from './pages/ProductPlaylistsPage';
+import ProfilePage from './pages/ProfilePage';
+import SearchPage from './pages/SearchPage';
+import SettingsPage from './pages/SettingsPage';
 import AddProfilePage from './pages/shopping-profiles/AddProfilePage';
 import EditProfilePage from './pages/shopping-profiles/EditProfilePage';
 import ShoppingAssistantPage from './pages/ShoppingAssistantPage';
-import ProductPlaylistsPage from './pages/ProductPlaylistsPage';
-import ProductPlaylistDetailPage from './pages/ProductPlaylistDetailPage';
-import CreateProductPlaylistPage from './pages/CreateProductPlaylistPage';
-import AddToPlaylistPage from './pages/AddToPlaylistPage';
-import CategoryPlaylistsPage from './pages/CategoryPlaylistsPage';
+import ShoppingProfilesPage from './pages/ShoppingProfilesPage';
+import StyleTwinsPage from './pages/StyleTwinsPage';
 
 // Wrapper component to handle user profile routes
 const UserProfileWrapper = ({ isAuthenticated }: { isAuthenticated: boolean }) => {

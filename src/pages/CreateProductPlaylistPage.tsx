@@ -17,7 +17,7 @@ import {
 import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import { ProductPlaylistStore } from '../stores/productPlaylistStore';
 import { AuthenticatedProps } from '../types/common';
 

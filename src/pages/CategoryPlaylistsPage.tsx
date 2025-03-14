@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { Link, useParams } from 'react-router-dom';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import PlaylistCard from '../components/playlists/PlaylistCard';
 import { playlistCategories } from '../config/categories';
 import { AuthenticatedProps } from '../types/common';

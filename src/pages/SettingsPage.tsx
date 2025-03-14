@@ -19,7 +19,7 @@ import {
   MenuItem,
   useTheme
 } from '@mui/material';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;

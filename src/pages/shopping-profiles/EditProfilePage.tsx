@@ -14,7 +14,7 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useStores } from '../../hooks/useStores';
-import Header from '../../components/Header';
+import Header from '../../components/header/Header';
 import ProfileForm from '../../components/shopping-profiles/ProfileForm';
 import ProfilePreview from '../../components/shopping-profiles/ProfilePreview';
 

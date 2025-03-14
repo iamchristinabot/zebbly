@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import CloseIcon from '@mui/icons-material/Close';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 
 const PostCreationPage = ({ isAuthenticated = true }) => {
   const theme = useTheme();

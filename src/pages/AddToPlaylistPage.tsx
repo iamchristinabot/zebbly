@@ -10,7 +10,7 @@ import {
   Paper
 } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import ProductSearch from '../components/playlists/ProductSearch';
 import { AuthenticatedProps } from '../types/common';
 import { ProductPlaylistStore } from '../stores/productPlaylistStore';

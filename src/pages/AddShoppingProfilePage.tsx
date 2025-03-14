@@ -25,7 +25,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import PersonIcon from '@mui/icons-material/Person';
 import { Link, useNavigate } from 'react-router-dom';
 import { StoreContext } from '../stores/storeContext';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 
 const AddShoppingProfilePage = observer(({ isAuthenticated = true }) => {
   const theme = useTheme();

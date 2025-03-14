@@ -15,7 +15,7 @@ import {
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Header from "../components/Header";
+import Header from "../components/header/Header";
 import CommunityCard from "../components/communities/CommunityCard";
 import CommunityCategories from "../components/communities/CommunityCategories";
 import FeaturedCommunities from "../components/communities/FeaturedCommunities";

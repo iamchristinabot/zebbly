@@ -8,7 +8,7 @@ import {
   Paper,
   useTheme
 } from '@mui/material';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 
 const MarketingPage = () => {
   const theme = useTheme();

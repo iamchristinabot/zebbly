@@ -1,48 +1,36 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react-lite';
-import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  TextField,
-  Button,
-  Grid,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActions,
-  Avatar,
-  Chip,
-  IconButton,
-  CircularProgress,
-  Divider,
-  Tooltip,
-  useTheme,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  SelectChangeEvent
-} from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
+import SendIcon from '@mui/icons-material/Send';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
-import PersonIcon from '@mui/icons-material/Person';
-import { Link, useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import { AuthenticatedProps } from '../types/common';
-import { UserStore } from '../stores/userStore';
-import { ShoppingProfileStore } from '../stores/shoppingProfileStore';
-import { AIRecommendationStore } from '../stores/aiRecommendationStore';
-import type { ShoppingProfile } from '../types/index';
-import { useStores } from '../hooks/useStores';
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Chip,
+  CircularProgress,
+  Container,
+  Divider,
+  Grid,
+  IconButton,
+  Paper,
+  TextField,
+  Typography,
+  useTheme
+} from '@mui/material';
+import { observer } from 'mobx-react-lite';
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Header from '../components/header/Header';
 import ProfileSelector from '../components/ProfileSelector';
+import { useStores } from '../hooks/useStores';
+import { AuthenticatedProps } from '../types/common';
 
 // Message types
 const MESSAGE_TYPE = {

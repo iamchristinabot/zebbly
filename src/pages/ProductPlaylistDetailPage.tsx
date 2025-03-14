@@ -20,7 +20,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import PlaylistItemCard from '../components/playlists/PlaylistItemCard';
 import { AuthenticatedProps } from '../types/common';
 import { ProductPlaylistStore } from '../stores/productPlaylistStore';
