@@ -655,7 +655,7 @@ const ShoppingAssistantPage = observer(
 
         <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
           <Box sx={{ mb: 4 }}>
-            <PageTitle title="AI Shopping Assistant" gutterBottom />
+            <PageTitle title="Shopping Assistant" gutterBottom />
 
             <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
               Get personalized product recommendations powered by AI. Start by
