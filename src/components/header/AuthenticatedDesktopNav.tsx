@@ -96,6 +96,17 @@ const AuthenticatedDesktopNav: React.FC<AuthenticatedDesktopNavProps> = () => {
           >
             Shopping Assistant
           </Button>
+
+          <Button
+            variant="text"
+            color={isActive('/communities') ? 'primary' : 'inherit'}
+            startIcon={<PeopleIcon />}
+            component={Link}
+            to="/communities"
+            sx={{ ml: 1, display: { xs: 'none', sm: 'flex' } }}
+          >
+            Communities
+          </Button>
           
           <Button
             variant="text"
@@ -107,27 +118,16 @@ const AuthenticatedDesktopNav: React.FC<AuthenticatedDesktopNavProps> = () => {
           >
             Style Twins
           </Button>
-          
-          <Button
-            variant="text"
-            color={isActive('/communities') ? 'primary' : 'inherit'}
-            startIcon={<PeopleIcon />}
-            component={Link}
-            to="/communities"
-            sx={{ ml: 1, display: { xs: 'none', sm: 'flex' } }}
-          >
-            Communities
-          </Button>
 
           <Button
             variant="text"
-            color={isActive('/product-playlists') ? 'primary' : 'inherit'}
+            color={isActive('/style-playlists') ? 'primary' : 'inherit'}
             startIcon={<PlaylistAddIcon />}
             component={Link}
-            to="/product-playlists"
+            to="/style-playlists"
             sx={{ ml: 1, display: { xs: 'none', sm: 'flex' } }}
           >
-            Product Playlists
+            Style Playlists
           </Button>
 
           <IconButton color="inherit" sx={{ ml: 1 }}>

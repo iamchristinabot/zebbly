@@ -149,7 +149,7 @@ const ProductPlaylistDetailPage = observer(({
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <IconButton 
                   component={Link} 
-                  to="/product-playlists"
+                  to="/style-playlists"
                   sx={{ mr: 2 }}
                 >
                   <ArrowBackIcon />
@@ -165,7 +165,7 @@ const ProductPlaylistDetailPage = observer(({
                   variant="outlined"
                   startIcon={<PlaylistAddIcon />}
                   component={Link}
-                  to={`/product-playlists/${playlistId}/add`}
+                  to={`/style-playlists/${playlistId}/add`}
                 >
                   Add Items
                 </Button>
@@ -288,7 +288,7 @@ const ProductPlaylistDetailPage = observer(({
             <Button
               variant="contained"
               component={Link}
-              to="/product-playlists"
+              to="/style-playlists"
               sx={{ mt: 2 }}
             >
               Back to Playlists

@@ -75,25 +75,25 @@ function App() {
                 <Route path="/communities/:communityId" element={<CommunityDetailPage isAuthenticated={true} />} />
                 <Route path="/logout" element={<LoginPage onLogin={handleLogin} />} action={handleLogout} />
                 <Route path="/shopping-assistant" element={<ShoppingAssistantPage isAuthenticated={true} />} />
-                <Route path="/product-playlists" element={
+                <Route path="/style-playlists" element={
                   <ProductPlaylistsPage 
                     isAuthenticated={isAuthenticated} 
                     productPlaylistStore={rootStore.productPlaylistStore}
                   />
                 } />
-                <Route path="/product-playlists/:playlistId" element={
+                <Route path="/style-playlists/:playlistId" element={
                   <ProductPlaylistDetailPage 
                     isAuthenticated={isAuthenticated}
                     productPlaylistStore={rootStore.productPlaylistStore}
                   />
                 } />
-                <Route path="/product-playlists/create" element={
+                <Route path="/style-playlists/create" element={
                   <CreateProductPlaylistPage 
                     isAuthenticated={isAuthenticated} 
                     productPlaylistStore={rootStore.productPlaylistStore} 
                   />
                 } />
-                <Route path="/product-playlists/:playlistId/add" element={
+                <Route path="/style-playlists/:playlistId/add" element={
                   <AddToPlaylistPage 
                     isAuthenticated={isAuthenticated} 
                     productPlaylistStore={rootStore.productPlaylistStore} 

@@ -1,6 +1,12 @@
-import { makeObservable, observable, action, runInAction, computed } from "mobx";
-import type { RootStore } from './rootStore';
-import type { ShoppingProfile } from "../types/index";
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+} from "mobx";
+import type { ShoppingProfile, StyleTwin } from "../types/index";
+import type { RootStore } from "./rootStore";
 
 interface ShoppingPreference {
   category: string;
@@ -8,28 +14,6 @@ interface ShoppingPreference {
   maxPrice: number;
   brands: string[];
   styles: string[];
-}
-
-export interface StyleTwin {
-  id: string;
-  name: string;
-  avatar: string;
-  matchScore: number;
-  bio: string;
-  location: string;
-  followers: number;
-  following: number;
-  styleTraits: string[];
-  favoriteCategories: string[];
-  favoriteBrands: string[];
-  recentProducts: {
-    id: string;
-    title: string;
-    image: string;
-    price: number;
-  }[];
-  commonInterests: string[];
-  isFollowing?: boolean;
 }
 
 export class ShoppingProfileStore {
@@ -50,82 +34,97 @@ export class ShoppingProfileStore {
     try {
       this.isLoading = true;
       this.error = null;
-      
+
       // Mock data for development
       const mockProfiles: ShoppingProfile[] = [
         {
-          id: 'husband-1',
-          userId: '1',
-          name: 'John (Husband)',
-          avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+          id: "husband-1",
+          userId: "1",
+          name: "John (Husband)",
+          avatar: "https://randomuser.me/api/portraits/men/32.jpg",
           preferences: [
             {
-              category: 'Tech',
+              category: "Tech",
               minPrice: 100,
               maxPrice: 1000,
-              brands: ['Apple', 'Samsung', 'Sony'],
-              styles: ['Modern', 'Professional']
+              brands: ["Apple", "Samsung", "Sony"],
+              styles: ["Modern", "Professional"],
             },
             {
-              category: 'Sports',
+              category: "Sports",
               minPrice: 30,
               maxPrice: 200,
-              brands: ['Nike', 'Under Armour', 'Adidas'],
-              styles: ['Athletic', 'Casual']
-            }
+              brands: ["Nike", "Under Armour", "Adidas"],
+              styles: ["Athletic", "Casual"],
+            },
           ],
-          favoriteStores: ['Best Buy', 'REI', 'Nike', 'Amazon'],
-          recentSearches: ['wireless headphones', 'running shoes', 'smart watch'],
-          stylePreferences: ['Athletic', 'Casual', 'Modern', 'Professional'],
-          interests: ['Technology', 'Sports', 'Fitness', 'Outdoor Activities'],
-          favoriteCategories: ['Electronics', 'Sports Equipment', 'Athletic Wear', 'Outdoor Gear'],
+          favoriteStores: ["Best Buy", "REI", "Nike", "Amazon"],
+          recentSearches: [
+            "wireless headphones",
+            "running shoes",
+            "smart watch",
+          ],
+          stylePreferences: ["Athletic", "Casual", "Modern", "Professional"],
+          interests: ["Technology", "Sports", "Fitness", "Outdoor Activities"],
+          favoriteCategories: [
+            "Electronics",
+            "Sports Equipment",
+            "Athletic Wear",
+            "Outdoor Gear",
+          ],
           lastUpdated: new Date(),
           isDefault: false,
           relationship: "self",
           gender: "",
-          favoriteColors: []
+          favoriteColors: [],
         },
         {
-          id: 'daughter-1',
-          userId: '1',
-          name: 'Emma (Daughter)',
-          avatar: 'https://randomuser.me/api/portraits/women/67.jpg',
+          id: "daughter-1",
+          userId: "1",
+          name: "Emma (Daughter)",
+          avatar: "https://randomuser.me/api/portraits/women/67.jpg",
           preferences: [
             {
-              category: 'Toys',
+              category: "Toys",
               minPrice: 10,
               maxPrice: 100,
-              brands: ['LEGO', 'Disney', 'Crayola'],
-              styles: ['Colorful', 'Educational', 'Fun']
+              brands: ["LEGO", "Disney", "Crayola"],
+              styles: ["Colorful", "Educational", "Fun"],
             },
             {
-              category: 'Clothing',
+              category: "Clothing",
               minPrice: 15,
               maxPrice: 75,
-              brands: ['Gap Kids', 'H&M Kids', 'Zara Kids'],
-              styles: ['Cute', 'Comfortable', 'Playful']
-            }
+              brands: ["Gap Kids", "H&M Kids", "Zara Kids"],
+              styles: ["Cute", "Comfortable", "Playful"],
+            },
           ],
-          favoriteStores: ['Target', 'Disney Store', 'Amazon Kids', 'Gap Kids'],
-          recentSearches: ['art supplies', 'princess dress', 'learning toys'],
-          stylePreferences: ['Colorful', 'Cute', 'Comfortable', 'Playful'],
-          interests: ['Art', 'Reading', 'Dancing', 'Learning'],
-          favoriteCategories: ['Toys', 'Books', 'Art Supplies', 'Kids Clothing'],
+          favoriteStores: ["Target", "Disney Store", "Amazon Kids", "Gap Kids"],
+          recentSearches: ["art supplies", "princess dress", "learning toys"],
+          stylePreferences: ["Colorful", "Cute", "Comfortable", "Playful"],
+          interests: ["Art", "Reading", "Dancing", "Learning"],
+          favoriteCategories: [
+            "Toys",
+            "Books",
+            "Art Supplies",
+            "Kids Clothing",
+          ],
           lastUpdated: new Date(),
           isDefault: false,
           relationship: "self",
           gender: "",
-          favoriteColors: []
-        }
+          favoriteColors: [],
+        },
       ];
-      
+
       runInAction(() => {
         this.profiles = mockProfiles;
         this.isLoading = false;
       });
     } catch (error) {
       runInAction(() => {
-        this.error = error instanceof Error ? error.message : 'An error occurred';
+        this.error =
+          error instanceof Error ? error.message : "An error occurred";
         this.isLoading = false;
       });
     }
@@ -135,10 +134,10 @@ export class ShoppingProfileStore {
   async loadStyleTwins(profileId: string) {
     try {
       this.isLoading = true;
-      const profile = this.profiles.find(p => p.id === profileId);
-      
+      const profile = this.profiles.find((p) => p.id === profileId);
+
       if (!profile) {
-        throw new Error('Profile not found');
+        throw new Error("Profile not found");
       }
 
       // Mock style twins data
@@ -152,8 +151,17 @@ export class ShoppingProfileStore {
           location: "New York, NY",
           followers: 1243,
           following: 567,
-          styleTraits: profile.stylePreferences || ["Minimalist", "Sustainable", "Modern", "Casual Chic"],
-          favoriteCategories: profile.favoriteCategories || ["Fashion", "Home Decor", "Accessories"],
+          styleTraits: profile.stylePreferences || [
+            "Minimalist",
+            "Sustainable",
+            "Modern",
+            "Casual Chic",
+          ],
+          favoriteCategories: profile.favoriteCategories || [
+            "Fashion",
+            "Home Decor",
+            "Accessories",
+          ],
           favoriteBrands: ["Everlane", "Reformation", "Muji", "IKEA"],
           recentProducts: [
             {
@@ -175,7 +183,11 @@ export class ShoppingProfileStore {
               price: 129.99,
             },
           ],
-          commonInterests: profile.interests || ["Sustainable Fashion", "Indoor Plants", "Scandinavian Design"],
+          commonInterests: profile.interests || [
+            "Sustainable Fashion",
+            "Indoor Plants",
+            "Scandinavian Design",
+          ],
         },
         {
           id: "user2",
@@ -209,8 +221,12 @@ export class ShoppingProfileStore {
               price: 89.99,
             },
           ],
-          commonInterests: ["Smart Home Tech", "Minimalist Design", "Productivity Gadgets"],
-        }
+          commonInterests: [
+            "Smart Home Tech",
+            "Minimalist Design",
+            "Productivity Gadgets",
+          ],
+        },
       ];
 
       runInAction(() => {
@@ -219,7 +235,8 @@ export class ShoppingProfileStore {
       });
     } catch (error) {
       runInAction(() => {
-        this.error = error instanceof Error ? error.message : 'An error occurred';
+        this.error =
+          error instanceof Error ? error.message : "An error occurred";
         this.isLoading = false;
       });
     }
@@ -227,7 +244,7 @@ export class ShoppingProfileStore {
 
   @action
   toggleFollowTwin(twinId: string) {
-    this.styleTwins = this.styleTwins.map(twin =>
+    this.styleTwins = this.styleTwins.map((twin) =>
       twin.id === twinId ? { ...twin, isFollowing: !twin.isFollowing } : twin
     );
   }
@@ -244,19 +261,25 @@ export class ShoppingProfileStore {
   }
 
   @action
-  updatePreference(profileId: string, categoryId: string, preference: Partial<ShoppingPreference>) {
-    const profile = this.profiles.find(p => p.id === profileId);
+  updatePreference(
+    profileId: string,
+    categoryId: string,
+    preference: Partial<ShoppingPreference>
+  ) {
+    const profile = this.profiles.find((p) => p.id === profileId);
     if (!profile) return;
 
     if (!profile.preferences) {
       profile.preferences = [];
     }
 
-    const index = profile.preferences.findIndex(p => p.category === categoryId);
+    const index = profile.preferences.findIndex(
+      (p) => p.category === categoryId
+    );
     if (index !== -1) {
       profile.preferences[index] = {
         ...profile.preferences[index],
-        ...preference
+        ...preference,
       };
     } else {
       profile.preferences.push({
@@ -265,23 +288,23 @@ export class ShoppingProfileStore {
         maxPrice: 1000,
         brands: [],
         styles: [],
-        ...preference
+        ...preference,
       });
     }
   }
 
   @action
   addRecentSearch(profileId: string, search: string) {
-    const profile = this.profiles.find(p => p.id === profileId);
+    const profile = this.profiles.find((p) => p.id === profileId);
     if (!profile) return;
-    
-    const searches = new Set([search, ...profile.recentSearches || []]);
+
+    const searches = new Set([search, ...(profile.recentSearches || [])]);
     profile.recentSearches = Array.from(searches).slice(0, 10);
   }
 
   @action
   clearRecentSearches(profileId: string) {
-    const profile = this.profiles.find(p => p.id === profileId);
+    const profile = this.profiles.find((p) => p.id === profileId);
     if (profile) {
       profile.recentSearches = [];
     }
@@ -289,15 +312,15 @@ export class ShoppingProfileStore {
 
   @action
   setDefaultProfile(profileId: string) {
-    this.profiles = this.profiles.map(profile => ({
+    this.profiles = this.profiles.map((profile) => ({
       ...profile,
-      isDefault: profile.id === profileId
+      isDefault: profile.id === profileId,
     }));
   }
 
   @action
   deleteProfile(profileId: string) {
-    this.profiles = this.profiles.filter(profile => profile.id !== profileId);
+    this.profiles = this.profiles.filter((profile) => profile.id !== profileId);
   }
 
   @computed
@@ -307,6 +330,6 @@ export class ShoppingProfileStore {
 
   @computed
   get defaultProfile() {
-    return this.profiles.find(p => p.isDefault) || this.profiles[0] || null;
+    return this.profiles.find((p) => p.isDefault) || this.profiles[0] || null;
   }
-} 
+}

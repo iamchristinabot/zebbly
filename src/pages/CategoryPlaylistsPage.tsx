@@ -69,7 +69,7 @@ const CategoryPlaylistsPage = observer(({
         >
           <MuiLink
             component={Link}
-            to="/product-playlists"
+            to="/style-playlists"
             color="inherit"
             sx={{
               textDecoration: 'none',

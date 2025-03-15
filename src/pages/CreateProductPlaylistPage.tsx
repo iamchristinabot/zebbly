@@ -108,7 +108,7 @@ const CreateProductPlaylistPage = observer(({
       };
       
       await productPlaylistStore.createPlaylist(playlistData);
-      navigate('/product-playlists');
+      navigate('/style-playlists');
     } catch (error) {
       console.error('Error creating playlist:', error);
       setErrors({ submit: 'Failed to create playlist. Please try again.' });
@@ -131,7 +131,7 @@ const CreateProductPlaylistPage = observer(({
           <Button
             startIcon={<ArrowBackIcon />}
             component={Link}
-            to="/product-playlists"
+            to="/style-playlists"
             sx={{ mb: 2 }}
           >
             Back to Playlists
@@ -140,7 +140,7 @@ const CreateProductPlaylistPage = observer(({
           <PageTitle title="Create New Playlist" gutterBottom />
           
           <Typography variant="body1" color="text.secondary" paragraph>
-            Create a new product playlist to organize and share your favorite items.
+            Create a new style playlist to organize and share your favorite items.
           </Typography>
         </Box>
         
@@ -254,7 +254,7 @@ const CreateProductPlaylistPage = observer(({
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button
                 component={Link}
-                to="/product-playlists"
+                to="/style-playlists"
                 sx={{ mr: 2 }}
               >
                 Cancel

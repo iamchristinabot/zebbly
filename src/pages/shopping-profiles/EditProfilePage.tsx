@@ -17,23 +17,7 @@ import { useStores } from '../../hooks/useStores';
 import Header from '../../components/header/Header';
 import ProfileForm from '../../components/shopping-profiles/ProfileForm';
 import ProfilePreview from '../../components/shopping-profiles/ProfilePreview';
-
-interface ShoppingProfile {
-  id: string;
-  name: string;
-  relationship: string;
-  age: number;
-  gender: string;
-  bio: string;
-  interests: string[];
-  stylePreferences: string[];
-  favoriteColors: string[];
-  favoriteCategories: string[];
-  favoriteStores: string[];
-  sizingInfo: string;
-  avatar: string;
-  isDefault: boolean;
-}
+import { ShoppingProfile } from '../../types/index';
 
 interface FormData {
   name: string;
@@ -146,7 +130,7 @@ const EditProfilePage = observer(({ isAuthenticated = true }: EditProfilePagePro
           setFormData({
             name: foundProfile.name,
             relationship: foundProfile.relationship,
-            age: foundProfile.age.toString(),
+            age: foundProfile?.age?.toString() || '',
             gender: foundProfile.gender,
             bio: foundProfile.bio || '',
             interests: foundProfile.interests.join(', '),
@@ -155,7 +139,7 @@ const EditProfilePage = observer(({ isAuthenticated = true }: EditProfilePagePro
             favoriteCategories: foundProfile.favoriteCategories.join(', '),
             favoriteStores: foundProfile.favoriteStores?.join(', ') || '',
             sizingInfo: foundProfile.sizingInfo || '',
-            avatar: foundProfile.avatar
+            avatar: foundProfile.avatar || null
           });
         } else {
           // Handle profile not found - don't redirect immediately

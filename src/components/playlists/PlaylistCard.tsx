@@ -58,7 +58,7 @@ const PlaylistCard = ({
     >
       <CardActionArea
         component={Link}
-        to={`/product-playlists/${playlist.id}`}
+        to={`/style-playlists/${playlist.id}`}
         sx={{
           flexGrow: 1,
           display: "flex",

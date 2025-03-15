@@ -131,7 +131,7 @@ const ProductPlaylistsPage = observer(({
   // Handle edit playlist
   const handleEditPlaylist = () => {
     if (selectedPlaylistId) {
-      navigate(`/product-playlists/edit/${selectedPlaylistId}`);
+      navigate(`/style-playlists/edit/${selectedPlaylistId}`);
       handleMenuClose();
     }
   };
@@ -182,7 +182,7 @@ const ProductPlaylistsPage = observer(({
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <PageTitle title="Product Playlists" />
+            <PageTitle title="Style Playlists" />
             
             <Box>
               <Button
@@ -190,7 +190,7 @@ const ProductPlaylistsPage = observer(({
                 color="primary"
                 startIcon={<AddIcon />}
                 component={Link}
-                to="/product-playlists/create"
+                to="/style-playlists/create"
               >
                 Create Playlist
               </Button>
@@ -239,7 +239,7 @@ const ProductPlaylistsPage = observer(({
                 <Button 
                   variant="text" 
                   component={Link} 
-                  to="/product-playlists/user/me"
+                  to="/style-playlists/user/me"
                 >
                   See All
                 </Button>
@@ -272,14 +272,14 @@ const ProductPlaylistsPage = observer(({
                     No playlists yet
                   </Typography>
                   <Typography variant="body2" color="text.secondary" paragraph>
-                    Create your first product playlist to organize and share your favorite items.
+                    Create your first style playlist to organize and share your favorite items.
                   </Typography>
                   <Button 
                     variant="contained" 
                     color="primary"
                     startIcon={<AddIcon />}
                     component={Link}
-                    to="/product-playlists/create"
+                    to="/style-playlists/create"
                   >
                     Create Playlist
                   </Button>

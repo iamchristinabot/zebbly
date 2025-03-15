@@ -57,7 +57,7 @@ const SuggestedPlaylists: React.FC<SuggestedPlaylistsProps> = ({ playlists }) =>
             </Typography>
             <Button
               component={Link}
-              to={`/product-playlists/${playlist.id}`}
+              to={`/style-playlists/${playlist.id}`}
               size="small"
               sx={{ mt: 1 }}
             >
@@ -69,7 +69,7 @@ const SuggestedPlaylists: React.FC<SuggestedPlaylistsProps> = ({ playlists }) =>
       
       <Button
         component={Link}
-        to="/product-playlists"
+        to="/style-playlists"
         variant="outlined"
         fullWidth
         sx={{ mt: 2 }}

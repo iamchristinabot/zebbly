@@ -80,3 +80,25 @@ export interface AIRecommendation {
   products: Product[];
   timestamp: Date;
 } 
+
+export interface StyleTwin {
+  id: string;
+  name: string;
+  avatar: string;
+  matchScore: number;
+  bio: string;
+  location: string;
+  followers: number;
+  following: number;
+  styleTraits: string[];
+  favoriteCategories: string[];
+  favoriteBrands: string[];
+  recentProducts: {
+    id: string;
+    title: string;
+    image: string;
+    price: number;
+  }[];
+  commonInterests: string[];
+  isFollowing?: boolean;
+}
