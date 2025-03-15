@@ -1,22 +1,21 @@
-import { Button, ButtonProps, useTheme, Box, AppBar, Toolbar, IconButton, Badge, Avatar, Menu, MenuItem, ListItemIcon, Divider } from '@mui/material';
-import React, { useState } from 'react';
-import { Link, LinkProps } from 'react-router-dom';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import HomeIcon from '@mui/icons-material/Home';
-import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import CategoryIcon from '@mui/icons-material/Category';
+import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
+import HomeIcon from '@mui/icons-material/Home';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import LogoutIcon from '@mui/icons-material/Logout';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import PeopleIcon from '@mui/icons-material/People';
+import PersonIcon from '@mui/icons-material/Person';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import SettingsIcon from '@mui/icons-material/Settings';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import StyleIcon from '@mui/icons-material/Style';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import PersonIcon from '@mui/icons-material/Person';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LogoutIcon from '@mui/icons-material/Logout';
+import { AppBar, Avatar, Badge, Box, Button, Divider, IconButton, ListItemIcon, Menu, MenuItem, Toolbar, useTheme } from '@mui/material';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import ZebblyLogo from '../ZebblyLogo';
-import SearchBar from './SearchBar';
-import { useLocation } from 'react-router-dom';
-import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import SearchBar from '../header/SearchBar';
 
 interface AuthenticatedDesktopNavProps {}
 
@@ -169,19 +168,6 @@ const AuthenticatedDesktopNav: React.FC<AuthenticatedDesktopNavProps> = () => {
             <HomeIcon fontSize="small" color={isActive('/') ? 'primary' : 'inherit'} />
           </ListItemIcon>
           Home
-        </MenuItem>
-        <MenuItem 
-          component={Link} 
-          to="/feed"
-          onClick={handleBrowseMenuClose}
-          sx={{ 
-            fontWeight: isActive('/feed') ? 'bold' : 'normal',
-          }}
-        >
-          <ListItemIcon>
-            <DynamicFeedIcon fontSize="small" color={isActive('/feed') ? 'primary' : 'inherit'} />
-          </ListItemIcon>
-          Feed
         </MenuItem>
         <MenuItem 
           component={Link} 

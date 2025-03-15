@@ -1,5 +1,6 @@
 import { makeObservable, observable, action, runInAction, computed } from "mobx";
 import type { RootStore } from './rootStore';
+import type { ShoppingProfile } from "../types/index";
 
 interface ShoppingPreference {
   category: string;
@@ -29,21 +30,6 @@ export interface StyleTwin {
   }[];
   commonInterests: string[];
   isFollowing?: boolean;
-}
-
-export interface ShoppingProfile {
-  id: string;
-  userId: string;
-  name: string;
-  avatar?: string;
-  preferences: ShoppingPreference[];
-  favoriteStores: string[];
-  recentSearches: string[];
-  stylePreferences: string[];
-  interests: string[];
-  favoriteCategories: string[];
-  lastUpdated: Date;
-  isDefault?: boolean;
 }
 
 export class ShoppingProfileStore {
@@ -94,7 +80,10 @@ export class ShoppingProfileStore {
           interests: ['Technology', 'Sports', 'Fitness', 'Outdoor Activities'],
           favoriteCategories: ['Electronics', 'Sports Equipment', 'Athletic Wear', 'Outdoor Gear'],
           lastUpdated: new Date(),
-          isDefault: false
+          isDefault: false,
+          relationship: "self",
+          gender: "",
+          favoriteColors: []
         },
         {
           id: 'daughter-1',
@@ -123,7 +112,10 @@ export class ShoppingProfileStore {
           interests: ['Art', 'Reading', 'Dancing', 'Learning'],
           favoriteCategories: ['Toys', 'Books', 'Art Supplies', 'Kids Clothing'],
           lastUpdated: new Date(),
-          isDefault: false
+          isDefault: false,
+          relationship: "self",
+          gender: "",
+          favoriteColors: []
         }
       ];
       
@@ -256,6 +248,10 @@ export class ShoppingProfileStore {
     const profile = this.profiles.find(p => p.id === profileId);
     if (!profile) return;
 
+    if (!profile.preferences) {
+      profile.preferences = [];
+    }
+
     const index = profile.preferences.findIndex(p => p.category === categoryId);
     if (index !== -1) {
       profile.preferences[index] = {
@@ -279,7 +275,7 @@ export class ShoppingProfileStore {
     const profile = this.profiles.find(p => p.id === profileId);
     if (!profile) return;
     
-    const searches = new Set([search, ...profile.recentSearches]);
+    const searches = new Set([search, ...profile.recentSearches || []]);
     profile.recentSearches = Array.from(searches).slice(0, 10);
   }
 

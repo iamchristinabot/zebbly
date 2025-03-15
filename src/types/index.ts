@@ -10,20 +10,33 @@ export interface User {
 }
 
 // Shopping Profile types
+export interface ShoppingPreference {
+  category: string;
+  minPrice: number;
+  maxPrice: number;
+  brands: string[];
+  styles: string[];
+}
+
 export interface ShoppingProfile {
   id: string;
+  userId?: string;
   name: string;
-  relationship: string;
+  relationship: 'self' | 'spouse' | 'child' | 'parent' | 'other';
   age?: number;
   gender: string;
   bio?: string;
-  interests?: string;
-  stylePreferences?: string;
-  favoriteColors?: string;
-  favoriteCategories?: string;
-  favoriteStores?: string;
+  interests: string[];
+  stylePreferences: string[];
+  favoriteColors: string[];
+  favoriteCategories: string[];
+  favoriteStores: string[];
   sizingInfo?: string;
   avatar?: string | null;
+  isDefault?: boolean;
+  preferences?: ShoppingPreference[];
+  recentSearches?: string[];
+  lastUpdated?: Date;
 }
 
 // Product types

@@ -17,6 +17,7 @@ import PlaylistCard from '../components/playlists/PlaylistCard';
 import { playlistCategories } from '../config/categories';
 import { AuthenticatedProps } from '../types/common';
 import { ProductPlaylistStore } from '../stores/productPlaylistStore';
+import PageTitle from 'src/components/elements/PageTitle';
 
 export interface CategoryPlaylistsPageProps extends AuthenticatedProps {
   productPlaylistStore: ProductPlaylistStore;
@@ -115,9 +116,8 @@ const CategoryPlaylistsPage = observer(({
             >
               <category.icon />
             </Box>
-            <Typography variant="h4" component="h1">
-              {category.name} Playlists
-            </Typography>
+
+            <PageTitle title={`${category.name} Playlists`} />
           </Box>
           
           <Typography variant="body1" color="text.secondary" paragraph>
@@ -152,7 +152,8 @@ const CategoryPlaylistsPage = observer(({
                       productId: product.id,
                       product: product,
                       addedAt: new Date().toISOString()
-                    }))
+                    })),
+                    profileTypes: []
                   }}
                 />
               </Grid>

@@ -38,24 +38,12 @@ import {
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import PageTitle from "src/components/elements/PageTitle";
 import Header from "../components/header/Header";
 import { useStores } from "../hooks/useStores";
 import { AuthenticatedProps } from "../types/common";
+import { ShoppingProfile } from "../types/index";
 
-export interface ShoppingProfile {
-  id: string;
-  name: string;
-  relationship: 'self' | 'spouse' | 'child' | 'parent' | 'other';
-  age: number;
-  gender: string;
-  bio: string;
-  interests: string[];
-  stylePreferences: string[];
-  favoriteColors: string[];
-  favoriteCategories: string[];
-  avatar: string;
-  isDefault: boolean;
-}
 
 export interface ShoppingProfilesPageProps extends AuthenticatedProps {}
 
@@ -99,7 +87,8 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
             favoriteColors: ['Navy', 'Beige', 'Olive green'],
             favoriteCategories: ['Clothing', 'Home decor', 'Accessories'],
             avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-            isDefault: true
+            isDefault: true,
+            favoriteStores: ['Zara', 'H&M', 'Uniqlo']
           },
           {
             id: 'profile2',
@@ -113,7 +102,8 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
             favoriteColors: ['Blue', 'Gray', 'Black'],
             favoriteCategories: ['Electronics', 'Outdoor gear', 'Kitchen gadgets'],
             avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-            isDefault: false
+            isDefault: false,
+            favoriteStores: ['Apple', 'Amazon', 'Target']
           },
           {
             id: 'profile3',
@@ -127,7 +117,8 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
             favoriteColors: ['Pink', 'Purple', 'Yellow'],
             favoriteCategories: ['Toys', 'Books', 'Clothing'],
             avatar: 'https://randomuser.me/api/portraits/women/67.jpg',
-            isDefault: false
+            isDefault: false,
+            favoriteStores: ['Toys R Us', 'Amazon', 'Target']
           }
         ];
         setLocalProfiles(mockProfiles);
@@ -305,9 +296,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
             mb: 4,
           }}
         >
-          <Typography variant="h2" component="h1" sx={{ fontWeight: 700 }} gutterBottom>
-            Shopping Profiles
-          </Typography>
+          <PageTitle title="Shopping Profiles" gutterBottom />
 
           <Box>
             <Button
@@ -342,7 +331,7 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
           </Box>
         ) : (
           <Grid container spacing={3} sx={{ mt: 2 }}>
-            {profiles.map((profile: ShoppingProfile) => (
+            {profiles.map((profile) => (
               <Grid item xs={12} sm={6} md={3} key={profile.id}>
                 <Card
                   sx={{
@@ -494,8 +483,8 @@ const ShoppingProfilesPage = observer(({ isAuthenticated = true }: ShoppingProfi
             <ListItemText primary="Edit Profile" />
           </MenuItem>
 
-          {selectedProfileId &&
-            !profiles.find((p: ShoppingProfile) => p.id === selectedProfileId)?.isDefault && (
+          {selectedProfileId && profiles.length > 0 &&
+            !profiles.find(p => p.id === selectedProfileId && p.isDefault) && (
               <MenuItem onClick={handleSetAsDefault}>
                 <ListItemIcon>
                   <PersonIcon fontSize="small" />

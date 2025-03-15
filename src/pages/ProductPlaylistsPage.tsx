@@ -1,33 +1,34 @@
-import React, { useState } from 'react';
-import { observer } from 'mobx-react-lite';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import SearchIcon from '@mui/icons-material/Search';
 import {
   Box,
-  Container,
-  Typography,
-  Grid,
-  Paper,
   Button,
-  TextField,
-  InputAdornment,
   CircularProgress,
+  Container,
+  Grid,
+  InputAdornment,
+  ListItemIcon,
   Menu,
   MenuItem,
-  ListItemIcon,
+  Paper,
+  TextField,
+  Typography,
   useTheme
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import { observer } from 'mobx-react-lite';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import PageTitle from 'src/components/elements/PageTitle';
 import Header from '../components/header/Header';
-import PlaylistCard from '../components/playlists/PlaylistCard';
 import CategoryTiles from '../components/playlists/CategoryTiles';
+import PlaylistCard from '../components/playlists/PlaylistCard';
 import { playlistCategories } from '../config/categories';
-import { AuthenticatedProps } from '../types/common';
 import { ProductPlaylistStore } from '../stores/productPlaylistStore';
-import type { Playlist, Product, PlaylistItem, User } from '../types';
+import type { Playlist, PlaylistItem, Product, User } from '../types';
+import { AuthenticatedProps } from '../types/common';
 
 // Store types
 interface StoreProduct {
@@ -82,7 +83,8 @@ const convertStorePlaylistToUIPlaylist = (storePlaylist: StorePlaylist): Playlis
   itemCount: storePlaylist.products.length,
   likes: 0,
   isPublic: storePlaylist.isPublic,
-  items: storePlaylist.products.map(convertStoreProductToPlaylistItem)
+  items: storePlaylist.products.map(convertStoreProductToPlaylistItem),
+  profileTypes: []
 });
 
 export interface ProductPlaylistsPageProps extends AuthenticatedProps {
@@ -180,9 +182,7 @@ const ProductPlaylistsPage = observer(({
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h2" component="h1" sx={{ fontWeight: 700 }}>
-              Product Playlists
-            </Typography>
+            <PageTitle title="Product Playlists" />
             
             <Box>
               <Button

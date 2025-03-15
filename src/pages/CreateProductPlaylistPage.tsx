@@ -20,6 +20,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/header/Header';
 import { ProductPlaylistStore } from '../stores/productPlaylistStore';
 import { AuthenticatedProps } from '../types/common';
+import PageTitle from 'src/components/elements/PageTitle';
 
 interface FormErrors {
   title?: string;
@@ -136,9 +137,7 @@ const CreateProductPlaylistPage = observer(({
             Back to Playlists
           </Button>
           
-          <Typography variant="h4" component="h1" gutterBottom>
-            Create New Playlist
-          </Typography>
+          <PageTitle title="Create New Playlist" gutterBottom />
           
           <Typography variant="body1" color="text.secondary" paragraph>
             Create a new product playlist to organize and share your favorite items.

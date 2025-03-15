@@ -14,7 +14,6 @@ import CategoryPlaylistsPage from './pages/CategoryPlaylistsPage';
 import CommunitiesPage from './pages/CommunitiesPage';
 import CommunityDetailPage from './pages/CommunityDetailPage';
 import CreateProductPlaylistPage from './pages/CreateProductPlaylistPage';
-import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import MarketingPage from './pages/MarketingPage';
 import PeopleYouMightLikePage from './pages/PeopleYouMightLikePage';
@@ -58,10 +57,9 @@ function App() {
           <Routes>
             {isAuthenticated ? (
               <>
-                <Route path="/" element={<HomePage isAuthenticated={true} />} />
+                <Route path="/" element={<ProductFeedPage isAuthenticated={true} />} />
                 <Route path="/profile" element={<ProfilePage isAuthenticated={true} userId="me" />} />
                 <Route path="/profile/:userId" element={<UserProfileWrapper isAuthenticated={true} />} />
-                <Route path="/feed" element={<ProductFeedPage isAuthenticated={true} />} />
                 <Route path="/categories" element={<CategoriesPage isAuthenticated={true} />} />
                 <Route path="/search" element={<SearchPage isAuthenticated={true} />} />
                 <Route path="/create" element={<PostCreationPage isAuthenticated={true} />} />

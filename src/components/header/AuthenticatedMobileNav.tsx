@@ -73,15 +73,6 @@ const MobileDrawer = () => {
         
         <MobileNavButton 
           component={Link}
-          to="/feed"
-          active={isActive('/feed')}
-          startIcon={<DynamicFeedIcon />}
-        >
-          Feed
-        </MobileNavButton>
-        
-        <MobileNavButton 
-          component={Link}
           to="/categories"
           active={isActive('/categories')}
           startIcon={<CategoryIcon />}

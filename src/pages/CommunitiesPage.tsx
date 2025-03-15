@@ -9,19 +9,18 @@ import {
   InputAdornment,
   Tab,
   Tabs,
-  TextField,
-  Typography,
+  TextField
 } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Header from "../components/header/Header";
+import PageTitle from "src/components/elements/PageTitle";
 import CommunityCard from "../components/communities/CommunityCard";
 import CommunityCategories from "../components/communities/CommunityCategories";
 import FeaturedCommunities from "../components/communities/FeaturedCommunities";
 import RecommendedCommunities from "../components/communities/RecommendedCommunities";
+import Header from "../components/header/Header";
 import { AuthenticatedProps } from "../types/common";
-
 interface Community {
   id: string;
   name: string;
@@ -165,9 +164,7 @@ const CommunitiesPage = observer(
               mb: 4,
             }}
           >
-            <Typography variant="h2" component="h1" sx={{ fontWeight: 700 }}>
-              Communities
-            </Typography>
+            <PageTitle title="Communities" gutterBottom />
             <Button
               variant="contained"
               color="primary"

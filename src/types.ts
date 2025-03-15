@@ -1,3 +1,5 @@
+import { ShoppingProfileType } from './stores/socialFeedStore';
+
 export interface User {
   id: string;
   name: string;
@@ -30,4 +32,5 @@ export interface Playlist {
   likes: number;
   isPublic: boolean;
   items: PlaylistItem[];
+  profileTypes: ShoppingProfileType[];
 } 

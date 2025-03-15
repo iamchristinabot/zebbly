@@ -1,33 +1,31 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Grid,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Collapse,
-  TextField,
-  InputAdornment,
-  Divider,
-  useTheme
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import LaptopIcon from '@mui/icons-material/Laptop';
 import ChairIcon from '@mui/icons-material/Chair';
 import CheckroomIcon from '@mui/icons-material/Checkroom';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
-import SpaIcon from '@mui/icons-material/Spa';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import LaptopIcon from '@mui/icons-material/Laptop';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
+import SearchIcon from '@mui/icons-material/Search';
+import SpaIcon from '@mui/icons-material/Spa';
+import {
+  Collapse,
+  Container,
+  Divider,
+  Grid,
+  InputAdornment,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+  TextField,
+  Typography,
+  useTheme
+} from '@mui/material';
+import React, { useState } from 'react';
 import Header from '../components/header/Header';
-import ProductCard from '../components/ProductCard';
 
 const categories = [
   {
