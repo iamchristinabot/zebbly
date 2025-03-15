@@ -273,14 +273,14 @@ const ShoppingAssistantPage = observer(
           [profile.id]: {
             interests: profile.interests,
             priceRanges: profile.preferences.reduce(
-              (acc: { [key: string]: PriceRange }, pref) => ({
+              (acc: { [key: string]: PriceRange }, pref: any) => ({
                 ...acc,
                 [pref.category]: { min: pref.minPrice, max: pref.maxPrice },
               }),
               {}
             ),
             styles: profile.stylePreferences,
-            colors: profile.stylePreferences.filter((style) =>
+            colors: profile.stylePreferences.filter((style: any) =>
               style.toLowerCase().includes("color")
             ),
             brands: profile.favoriteStores,
